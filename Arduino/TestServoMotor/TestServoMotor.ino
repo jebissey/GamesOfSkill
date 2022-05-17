@@ -16,7 +16,7 @@ void loop()
 
 
 // Catapult
-const int servoPin = 8;
+const int servoPin = 7;
 const int startPosition = 0;
 const int endPosition = 110;
 const int increment = 5;
