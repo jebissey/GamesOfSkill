@@ -13,16 +13,24 @@ void loop()
 {
   if(JoystickPressed())
   {
-    Throw (90);
-    delay(500);
-    Return();
+    Throw (70);
   }
-  PulleyMove(); 
+  PulleyMove();
+
+  if(IsExtremePositionY() > 0)
+  {
+    CatchTheBall();
+  }
+  
+  if(IsExtremePositionY() < 0)
+  {
+    GoDownOneStep();
+  }
 }
 
 
 // ======================================================================
-// Stepper motor
+// Pulley
 
 #include <Stepper.h> 
 const int stepperMotorSteps = 2048;
@@ -60,7 +68,8 @@ const int buttonPressed = 2;
 const int xyMin = 0;
 const int xyMax = 1020;
 const int neutralPosition = (xyMax - xyMin) / 2;
-const int neutralPositionWidth = 120;
+const int neutralPositionWidth = 150;
+const int extremePositionWidth = 50;
 
 void JoystickSetup()
 {
@@ -73,7 +82,6 @@ int GetJoystickX()
   return GetJoystickXY(analogRead(xAxe));
 }
 
-
 int GetJoystickY()
 {
   return GetJoystickXY(analogRead(yAxe));
@@ -84,9 +92,9 @@ int GetJoystickXY(int position)
   if(IsNeutralPosition(position)) return 0;
   if(position > neutralPosition)
   {
-    return rotationalIncrement;
+    return -rotationalIncrement;
   }
-  return -rotationalIncrement;
+  return rotationalIncrement;
 }
 
 bool JoystickPressed()
@@ -99,6 +107,23 @@ bool IsNeutralPosition(int position)
   return abs(neutralPosition - position) < neutralPositionWidth;
 }
 
+int IsExtremePositionX()
+{
+  return IsExtremePosition(analogRead(xAxe));
+}
+
+int IsExtremePositionY()
+{
+  return IsExtremePosition(analogRead(yAxe));
+}
+
+int IsExtremePosition(int position)
+{
+  if( xyMax - position < extremePositionWidth) return 1;
+  if( position + xyMin < extremePositionWidth) return -1;
+  return 0;
+}
+
 // ======================================================================
 // Catapult
 
@@ -106,8 +131,9 @@ bool IsNeutralPosition(int position)
 const int servoPin = 7;
 const int startPosition = 0;
 const int endPosition = 110;
-const int increment = 5;
-const int delayBetweenPositionChange = 25;
+const int catchPosition = 50;
+const int increment = 1;
+const int delayBetweenPositionChange = 20;
 
 Servo catapult;
 
@@ -117,21 +143,43 @@ void ServoSetup()
   SetServoPosition(startPosition);
 }
 
-void Throw(int lastPosition)
+void Throw(int position)
 {
-  SetServoPosition(lastPosition);
+  if(catapult.read() > startPosition)
+  {
+     Return(delayBetweenPositionChange, startPosition);
+     return;
+  }
+  SetServoPosition(position);
+  delay(500);
+  Return(delayBetweenPositionChange, catchPosition);
 }
 
-void Return()
+void Return(int speed, int position)
+{
+  while (catapult.read() > position) 
+  {
+    GoDownOneStep(speed);
+  }
+  SetServoPosition(position);
+}
+
+void CatchTheBall()
+{
+  SetServoPosition(catchPosition);
+}
+
+void GoDownOneStep()
+{
+  GoDownOneStep(delayBetweenPositionChange * 20);
+}
+void GoDownOneStep(int delayInMilisecond)
 {
   int pos = catapult.read();
-  for (pos; pos > startPosition; pos -= increment) 
-  {
-    SetServoPosition(pos);  
-    delay(delayBetweenPositionChange);
-  }
+  SetServoPosition(pos - increment);  
+  delay(delayInMilisecond);
 }
-  
+
 void SetServoPosition(int position)
 {
   if(position >= startPosition && position <= endPosition)
