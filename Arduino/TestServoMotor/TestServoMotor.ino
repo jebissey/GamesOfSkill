@@ -1,8 +1,6 @@
 
 #include <Servo.h>
 
-
-
 void setup() 
 {
  ServoSetup();
@@ -10,21 +8,19 @@ void setup()
 
 void loop() 
 {
-  
-  Throw (70);
+  Throw (90);
   delay(500);
   Return();
-    delay(5000);                       
-
+  delay(10000);                       
 }
 
 
 // Catapult
-const int servoPin = 9;
+const int servoPin = 8;
 const int startPosition = 0;
 const int endPosition = 110;
 const int increment = 5;
-const int delayBetweenPositionChange = 15;
+const int delayBetweenPositionChange = 25;
 
 Servo catapult;
 
@@ -42,10 +38,10 @@ void Throw(int lastPosition)
 void Return()
 {
   int pos = catapult.read();
-  for (pos; pos > startPosition; pos -= 2) 
+  for (pos; pos > startPosition; pos -= increment) 
   {
     SetServoPosition(pos);  
-    delay(delayBetweenPositionChange * 5);
+    delay(delayBetweenPositionChange);
   }
 }
   
