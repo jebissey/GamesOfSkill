@@ -4,20 +4,40 @@
 #include "Pulley.h"
 #include "UltrasonicSensor.h"
 
-Catapult catapult();
+Catapult catapult;
 Joystick joystick;
 Pulley pulley;
 UltrasonicSensor ultrasonicSensor;
 
 
+enum {test_Mode, manual_mode};
+int mode = test_Mode;
+
+
 void setup() 
 {
   Serial.begin(9600);
+
+  catapult.Setup();
 }
 
 void loop() 
 {
-  /*
+
+  switch(mode)
+  {
+    case test_Mode: 
+    TestMode();
+    break;
+
+    case manual_mode: 
+    ManualMode();
+    break;
+  }
+}
+
+void ManualMode()
+{
   if(joystick.JoystickPressed())
   {
     if(catapult.ThrowMovement(70))
@@ -30,10 +50,11 @@ void loop()
 
   if(joystick.IsExtremePositionY() < 0) catapult.GoUpOneStep();
   if(joystick.IsExtremePositionY() > 0) catapult.GoDownOneStep();
-*/
-// /*
+}
+
+void TestMode()
+{
   joystick.Test();
   pulley.Test();
-  //catapult.Test();
-// */
+  catapult.Test();
 }

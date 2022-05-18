@@ -9,9 +9,9 @@ void setup()
 void loop() 
 {
   Throw (90);
-  delay(500);
+  delay(1000);
   Return();
-  delay(10000);                       
+  delay(4000);                       
 }
 
 

@@ -27,6 +27,7 @@ class Catapult : public Servo
   public:
   Catapult();
   void Setup();
+  
   bool ThrowMovement(int position);
   void ReturnMovement(int speed, int position);
   void CatchTheBall();
