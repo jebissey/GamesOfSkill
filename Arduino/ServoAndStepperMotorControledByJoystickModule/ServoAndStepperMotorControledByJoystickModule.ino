@@ -1,4 +1,3 @@
-
 void setup() 
 {
  ServoSetup();
@@ -12,7 +11,7 @@ void loop()
 {
   if(JoystickPressed())
   {
-    if(Throw (70))
+    if(ThrowMovement(70))
     {
       DisplayDistance();
     }
@@ -22,12 +21,13 @@ void loop()
 
   if(IsExtremePositionY() > 0)
   {
-    CatchTheBall();
+    GoUpOneStep();
   }
   
   if(IsExtremePositionY() < 0)
   {
     GoDownOneStep();
+    Serial.println(" IsExtremePositionY < 0");
   }
 }
 
@@ -35,15 +35,20 @@ void loop()
 // ======================================================================
 // Ultrasonic sensor
 #include "SR04.h"
-const int trig = 12;
-const int echo = 13;
+enum 
+{
+  UtrasonicSensor_trig = 12,
+  UtrasonicSensor_echo = 13,
+};
 const int mesures = 5;
+const int delayBetweenReads = 25;
+const int delayBetweenMesures = 100;
 
-SR04 sr04 = SR04(echo,trig);
+SR04 sr04 = SR04(UtrasonicSensor_echo, UtrasonicSensor_trig);
 
 void UltrasonicSensorSetup()
 {
- //sr04 = SR04(echo,trig);
+ //already done
 }
 
 long ReadDistance()
@@ -52,7 +57,7 @@ long ReadDistance()
   for(int i = 0; i <mesures; i++)
   {
     cumulDistance += sr04.Distance();
-    delay(25);    
+    delay(delayBetweenReads);    
   }
   return cumulDistance / mesures;
 }
@@ -63,9 +68,9 @@ void DisplayDistance()
   int mesures = 0;
   do {
     distance1 = ReadDistance();
-    delay(100);
+    delay(delayBetweenMesures);
     distance2 = ReadDistance();
-    delay(100);
+    delay(delayBetweenMesures);
     mesures++;
   } while(abs(distance1 - distance2) > 2);
   Serial.print(distance1);
@@ -79,17 +84,19 @@ void DisplayDistance()
 #include <Stepper.h> 
 const int stepperMotorSteps = 2048;
 const int rotationalIncrement = stepperMotorSteps / 128;
-const int in1 = 8;
-const int in2 = 9;
-const int in3 = 10;
-const int in4 = 11;
+enum 
+{
+  stepperMotor_in1 = 8,
+  stepperMotor_in2 = 9,
+  stepperMotor_in3 = 10,
+  stepperMotor_in4 = 11,
+};
 const int speed = 16; // [1 .. 16]
 
-Stepper pulley(stepperMotorSteps, in1, in3, in2, in4);
+Stepper pulley(stepperMotorSteps, stepperMotor_in1, stepperMotor_in3, stepperMotor_in2, stepperMotor_in4);
 
 void StepperMotorSetup()
 {
- //Stepper pulley = Stepper(stepperMotorSteps, in1, in3, in2, in4);
  pulley.setSpeed(speed);
 }
 
@@ -105,60 +112,36 @@ void PulleyMove()
 
 // ======================================================================
 // Joystick
-const int xAxe = 0;
-const int yAxe = 1;
-const int buttonPressed = 2;
-
+enum
+{
+  joystick_xAxe = 0,
+  joystick_yAxe = 1,
+  joystick_button = 2,
+};
 const int xyMin = 0;
 const int xyMax = 1020;
 const int neutralPosition = (xyMax - xyMin) / 2;
 const int neutralPositionWidth = 150;
-const int extremePositionWidth = 50;
+const int extremePositionWidth = 150;
 
 void JoystickSetup()
 {
-  pinMode(buttonPressed, INPUT);
-  digitalWrite(buttonPressed, HIGH);
+  pinMode(joystick_button, INPUT);
+  digitalWrite(joystick_button, HIGH);
 }
 
-int GetJoystickX()
-{
-  return GetJoystickXY(analogRead(xAxe));
-}
-
-int GetJoystickY()
-{
-  return GetJoystickXY(analogRead(yAxe));
-}
+bool IsNeutralPosition(int position) { return abs(neutralPosition - position) < neutralPositionWidth; }
+bool JoystickPressed()   { return digitalRead(joystick_button) == 0; }
+int IsExtremePositionX() { return IsExtremePosition(analogRead(joystick_xAxe)); }
+int IsExtremePositionY() { return IsExtremePosition(analogRead(joystick_yAxe)); }
+int GetJoystickX()       { return GetJoystickXY(analogRead(joystick_xAxe)); }
+int GetJoystickY()       { return GetJoystickXY(analogRead(joystick_yAxe)); }
 
 int GetJoystickXY(int position)
 {
   if(IsNeutralPosition(position)) return 0;
-  if(position > neutralPosition)
-  {
-    return -rotationalIncrement;
-  }
+  if(position > neutralPosition) return -rotationalIncrement;
   return rotationalIncrement;
-}
-
-bool JoystickPressed()
-{
-  return digitalRead(buttonPressed) == 0;
-}
-
-bool IsNeutralPosition(int position)
-{
-  return abs(neutralPosition - position) < neutralPositionWidth;
-}
-
-int IsExtremePositionX()
-{
-  return IsExtremePosition(analogRead(xAxe));
-}
-
-int IsExtremePositionY()
-{
-  return IsExtremePosition(analogRead(yAxe));
 }
 
 int IsExtremePosition(int position)
@@ -172,64 +155,55 @@ int IsExtremePosition(int position)
 // Catapult with servo motor
 
 #include <Servo.h>
-const int servoPin = 7;
+
+enum { servoMotor_pin = 7};
 const int startPosition = 0;
 const int endPosition = 110;
-const int catchPosition = 50;
+const int catchPosition = 60;
 const int increment = 1;
 const int delayBetweenPositionChange = 20;
+const int delayBeforeReturn = 500;
 
 Servo catapult;
 
 void ServoSetup()
 {
-  catapult.attach(servoPin);
+  catapult.attach(servoMotor_pin);
   SetServoPosition(startPosition);
 }
 
-bool Throw(int position)
+bool ThrowMovement(int position)
 {
   if(catapult.read() > startPosition)
   {
-     Return(delayBetweenPositionChange, startPosition);
+     ReturnMovement(delayBetweenPositionChange, startPosition);
      return false;
   }
   SetServoPosition(position);
-  delay(500);
-  Return(delayBetweenPositionChange, catchPosition);
+  delay(delayBeforeReturn);
+  ReturnMovement(delayBetweenPositionChange, catchPosition);
   return true;
 }
 
-void Return(int speed, int position)
+void ReturnMovement(int speed, int position)
 {
-  while (catapult.read() > position) 
-  {
-    GoDownOneStep(speed);
-  }
+  while (catapult.read() > position) GoOneStep(speed, -increment);
   SetServoPosition(position);
 }
 
-void CatchTheBall()
-{
-  SetServoPosition(catchPosition);
-}
+void CatchTheBall()  { SetServoPosition(catchPosition); }
+void GoDownOneStep() { GoOneStep(delayBetweenPositionChange * 20, -increment); }
+void GoUpOneStep()   { GoOneStep(delayBetweenPositionChange * 20, increment); }
 
-void GoDownOneStep()
-{
-  GoDownOneStep(delayBetweenPositionChange * 20);
-}
-void GoDownOneStep(int delayInMilisecond)
+void GoOneStep(int delayInMilisecond, int increment)
 {
   int pos = catapult.read();
-  SetServoPosition(pos - increment);  
+  SetServoPosition(pos + increment);  
   delay(delayInMilisecond);
 }
 
 void SetServoPosition(int position)
 {
-  if(position >= startPosition && position <= endPosition)
-  {
-    catapult.write(position); 
-  }
+  if(position >= startPosition && position <= endPosition) catapult.write(position); 
 }
 // ======================================================================
