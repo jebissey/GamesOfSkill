@@ -17,18 +17,11 @@ void loop()
     }
   }
   
-  PulleyMove();
+  PulleyMove(GetJoystickX());
 
-  if(IsExtremePositionY() > 0)
-  {
-    GoUpOneStep();
-  }
+  if(IsExtremePositionY() > 0) GoUpOneStep();
+  if(IsExtremePositionY() < 0) GoDownOneStep();
   
-  if(IsExtremePositionY() < 0)
-  {
-    GoDownOneStep();
-    Serial.println(" IsExtremePositionY < 0");
-  }
 }
 
 
@@ -100,13 +93,9 @@ void StepperMotorSetup()
  pulley.setSpeed(speed);
 }
 
-void PulleyMove()
+void PulleyMove(int steps)
 {
-  int steps = GetJoystickX();
-  if(steps != 0)
-  {
-    pulley.step(steps);
-  }
+  if(steps != 0) pulley.step(steps);
 }
 
 
