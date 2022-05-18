@@ -27,7 +27,7 @@ void loop()
 
 // ======================================================================
 // Ultrasonic sensor
-#include "SR04.h"
+#include <SR04.h>
 enum 
 {
   UtrasonicSensor_trig = 12,
@@ -153,17 +153,17 @@ const int increment = 1;
 const int delayBetweenPositionChange = 20;
 const int delayBeforeReturn = 500;
 
-Servo catapult;
+Servo servoCatapult;
 
 void ServoSetup()
 {
-  catapult.attach(servoMotor_pin);
+  servoCatapult.attach(servoMotor_pin);
   SetServoPosition(startPosition);
 }
 
 bool ThrowMovement(int position)
 {
-  if(catapult.read() > startPosition)
+  if(servoCatapult.read() > startPosition)
   {
      ReturnMovement(delayBetweenPositionChange, startPosition);
      return false;
@@ -176,7 +176,7 @@ bool ThrowMovement(int position)
 
 void ReturnMovement(int speed, int position)
 {
-  while (catapult.read() > position) GoOneStep(speed, -increment);
+  while (servoCatapult.read() > position) GoOneStep(speed, -increment);
   SetServoPosition(position);
 }
 
@@ -186,13 +186,13 @@ void GoUpOneStep()   { GoOneStep(delayBetweenPositionChange * 20, increment); }
 
 void GoOneStep(int delayInMilisecond, int increment)
 {
-  int pos = catapult.read();
+  int pos = servoCatapult.read();
   SetServoPosition(pos + increment);  
   delay(delayInMilisecond);
 }
 
 void SetServoPosition(int position)
 {
-  if(position >= startPosition && position <= endPosition) catapult.write(position); 
+  if(position >= startPosition && position <= endPosition) servoCatapult.write(position); 
 }
 // ======================================================================
