@@ -34,6 +34,11 @@ void UltrasonicSensor::DisplayDistance()
   Serial.println(") cm");
 }
 
+void UltrasonicSensor::DisplayMesure()
+{ 
+  Serial.println(ReadDistance());
+}
+
 void UltrasonicSensor::Test()
 {
   DisplayDistance();

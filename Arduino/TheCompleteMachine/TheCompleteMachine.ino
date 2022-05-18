@@ -2,6 +2,7 @@
 #include "Catapult.h"
 #include "Joystick.h"
 #include "Pulley.h"
+#include "Time.h"
 #include "UltrasonicSensor.h"
 
 Catapult catapult;
@@ -11,7 +12,7 @@ UltrasonicSensor ultrasonicSensor;
 
 
 enum {test_Mode, manual_mode};
-int mode = test_Mode;
+int mode = manual_mode;
 
 
 void setup() 
@@ -50,6 +51,17 @@ void ManualMode()
 
   if(joystick.IsExtremePositionY() < 0) catapult.GoUpOneStep();
   if(joystick.IsExtremePositionY() > 0) catapult.GoDownOneStep();
+
+
+    static unsigned long deciSecond;
+    Time myTime;
+    if(myTime.NewDeciSecond(&deciSecond, deciSecond))
+    {          
+      if(deciSecond % 10 == 9)
+      {
+        ultrasonicSensor.DisplayMesure();
+      }
+    }
 }
 
 void TestMode()

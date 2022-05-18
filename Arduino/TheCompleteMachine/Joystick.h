@@ -20,7 +20,7 @@ class Joystick
   const int xyMax = 1020;
   const int neutralPosition = (xyMax - xyMin) / 2;
   const int neutralPositionWidth = 150;
-  const int extremePositionWidth = 150;
+  const int extremePositionWidth = 200;
   
   int GetJoystickXY(int position);
   int IsExtremePosition(int position);

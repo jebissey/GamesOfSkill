@@ -11,7 +11,7 @@ class UltrasonicSensor
     UltrasonicSensor_trig = 12,
     UltrasonicSensor_echo = 13,
   };
-  const int mesures = 5;
+  const int mesures = 2;
   const int delayBetweenReads = 25;
   const int delayBetweenMesures = 100;
   
@@ -21,6 +21,7 @@ class UltrasonicSensor
   UltrasonicSensor();
   long ReadDistance();
   void DisplayDistance();
+  void DisplayMesure();
 
   void Test();
 };
