@@ -16,8 +16,8 @@ int Joystick::GetY() { return GetJoystickXY(analogRead(joystick_yAxe)); }
 int Joystick::GetJoystickXY(int position)
 {
   if(IsNeutralPosition(position)) return 0;
-  if(position > neutralPosition) return map(position, xyMin, neutralPosition, -100, 0);;
-  return map(position, neutralPosition, xyMax, 0, 100);
+  if(position > neutralPosition) return map(position, xyMin, neutralPosition, xyMinSent, 0);;
+  return map(position, neutralPosition, xyMax, 0, xyMaxSent);
 }
 
 int Joystick::IsExtremePosition(int position)

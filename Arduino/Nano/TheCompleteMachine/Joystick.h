@@ -27,6 +27,8 @@ class Joystick
   bool IsNeutralPosition(int position);
   
   public:
+  const int xyMinSent = -100;
+  const int xyMaxSent = 100;
   Joystick();
   bool JoystickPressed();
   int IsExtremePositionX();

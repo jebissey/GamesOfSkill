@@ -17,10 +17,10 @@ class Pulley
   const int speed = 16; // [1 .. 16]
   enum 
   {
-  stepperMotor_in1 = 8,
-  stepperMotor_in2 = 9,
-  stepperMotor_in3 = 10,
-  stepperMotor_in4 = 11,
+  stepperMotor_in1 = 6,
+  stepperMotor_in2 = 7,
+  stepperMotor_in3 = 8,
+  stepperMotor_in4 = 9,
   };
   
   Stepper pulleyStepMotor = Stepper(stepperMotorSteps, stepperMotor_in1, stepperMotor_in3, stepperMotor_in2, stepperMotor_in4);

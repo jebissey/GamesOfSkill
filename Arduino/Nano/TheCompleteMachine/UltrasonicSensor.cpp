@@ -7,13 +7,11 @@ UltrasonicSensor::UltrasonicSensor()
 
 long UltrasonicSensor::ReadDistance()
 {
-  long cumulDistance = 0;
-  for(int i = 0; i <mesures; i++)
-  {
-    cumulDistance += sr04.Distance();
-    delay(delayBetweenReads);    
-  }
-  return cumulDistance / mesures;
+  static long lastDistance = 0;
+  long newlDistance = sr04.Distance();
+  long averageDistance = lastDistance + newlDistance / 2;
+  lastDistance = newlDistance;
+  return averageDistance;
 }
 
 void UltrasonicSensor::DisplayDistance()

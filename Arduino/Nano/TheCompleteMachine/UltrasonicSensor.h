@@ -8,11 +8,10 @@ class UltrasonicSensor
   private:
   enum 
   {
-    UltrasonicSensor_trig = 12,
-    UltrasonicSensor_echo = 13,
+    UltrasonicSensor_trig = 4,
+    UltrasonicSensor_echo = 5,
   };
   const int mesures = 2;
-  const int delayBetweenReads = 25;
   const int delayBetweenMesures = 100;
   
   SR04 sr04 = SR04(UltrasonicSensor_echo, UltrasonicSensor_trig);

@@ -9,8 +9,8 @@
 BuiltInLed builtInLed;
 Catapult catapult;
 Joystick joystick;
-//Pulley pulley;
-//UltrasonicSensor ultrasonicSensor;
+Pulley pulley;
+UltrasonicSensor ultrasonicSensor;
 
 
 enum {test_Mode, manual_mode};
@@ -42,35 +42,33 @@ void loop()
 void ManualMode()
 {
   builtInLed.Display(500);
+  ultrasonicSensor.ReadDistance();
   
   if(joystick.JoystickPressed())
   {
-    if(catapult.ThrowMovement(70))
+    if(catapult.ThrowMovement(55))
     {
-      //ultrasonicSensor.DisplayDistance();
+      ultrasonicSensor.DisplayDistance();
     }
   }
   
-  //pulley.Move(-joystick.GetX());
+  pulley.Move(map(-joystick.GetX(), joystick.xyMinSent, joystick.xyMaxSent, -256, 256));
 
-  if(joystick.IsExtremePositionY() < 0) catapult.GoUpOneStep();
-  if(joystick.IsExtremePositionY() > 0) catapult.GoDownOneStep();
+  if(joystick.IsExtremePositionY() > 0) catapult.GoUpOneStep();
+  if(joystick.IsExtremePositionY() < 0) catapult.GoDownOneStep();
 
 
-    static unsigned long deciSecond;
+    static unsigned long second;
     Time myTime;
-    if(myTime.NewDeciSecond(&deciSecond, deciSecond))
+    if(myTime.NewSecond(&second, second))
     {          
-      if(deciSecond % 10 == 9)
-      {
-        //ultrasonicSensor.DisplayMesure();
-      }
+      ultrasonicSensor.DisplayMesure();
     }
 }
 
 void TestMode()
 {
   joystick.Test();
-  //pulley.Test();
+  pulley.Test();
   catapult.Test();
 }
