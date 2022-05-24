@@ -21,6 +21,7 @@ int mode = manual_mode;
 
 Time time;
 unsigned long tenSeconds;
+const int delayInMs = 500;
 
 
 void setup() 
@@ -47,7 +48,7 @@ void loop()
 
 void ManualMode()
 {
-  builtInLed.Display(500);
+  builtInLed.Display(delayInMs);
   ultrasonicSensor.ReadDistance();
   lcdDisplay.SwitchOff();
   

@@ -7,12 +7,8 @@ BuiltInLed::BuiltInLed()
 
 void BuiltInLed::Display(int halfTimeDuration)
 {
-  static boolean ledStatus;
-  static unsigned long time;
-  
-  if((millis() - time) > halfTimeDuration)
+  if(time.Delay(&timeInMs, timeInMs, halfTimeDuration))
   {
-    time = millis();
     ledStatus = !ledStatus;
     digitalWrite(LED_BUILTIN, ledStatus);
   } 

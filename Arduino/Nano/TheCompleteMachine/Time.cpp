@@ -1,6 +1,18 @@
 #include "Time.h"
 
 
+
+bool Time::Delay(unsigned long *time, unsigned long lastTime, int delayInMilisecond)
+{
+  if((millis() - *time) > delayInMilisecond)
+  {
+    *time = millis();
+    return true;
+  } 
+  return false;
+}
+
+
 bool Time::NewDeciSecond(unsigned long *time, unsigned long lastTime)
 {
   *time = millis() / 100;

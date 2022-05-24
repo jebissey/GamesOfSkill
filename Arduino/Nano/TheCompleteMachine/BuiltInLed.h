@@ -7,8 +7,15 @@
 #include "WProgram.h"
 #endif
 
+#include "Time.h"
+
 class BuiltInLed
 {
+  private:
+  Time time;
+  unsigned long timeInMs;
+  boolean ledStatus;
+  
   public:
   BuiltInLed();
   void Display(int halfTimeDuration);
