@@ -9,13 +9,15 @@ long UltrasonicSensor::ReadDistance()
 {
   static long lastDistance = 0;
   long newlDistance = sr04.Distance();
-  long averageDistance = lastDistance + newlDistance / 2;
+  long averageDistance = (lastDistance + newlDistance) / 2;
   lastDistance = newlDistance;
   return averageDistance;
 }
 
-void UltrasonicSensor::DisplayDistance()
+
+void UltrasonicSensor::Test()
 {
+  const int delayBetweenMesures = 100;
   long distance1, distance2;
   int mesures = 0;
   do {
@@ -30,14 +32,4 @@ void UltrasonicSensor::DisplayDistance()
   Serial.print(" (");
   Serial.print(mesures);
   Serial.println(") cm");
-}
-
-void UltrasonicSensor::DisplayMesure()
-{ 
-  Serial.println(ReadDistance());
-}
-
-void UltrasonicSensor::Test()
-{
-  DisplayDistance();
 }

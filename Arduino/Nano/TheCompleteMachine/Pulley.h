@@ -13,7 +13,6 @@ class Pulley
 {
   private:
   const int stepperMotorSteps = 2048;
-  const int rotationalIncrement = stepperMotorSteps / 128;
   const int speed = 16; // [1 .. 16]
   enum 
   {
@@ -22,10 +21,10 @@ class Pulley
   stepperMotor_in3 = 8,
   stepperMotor_in4 = 9,
   };
-  
   Stepper pulleyStepMotor = Stepper(stepperMotorSteps, stepperMotor_in1, stepperMotor_in3, stepperMotor_in2, stepperMotor_in4);
 
   public:
+  const int rotationalIncrement = stepperMotorSteps / 32;
   Pulley();
   void Move(int steps);
   

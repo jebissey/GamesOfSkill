@@ -31,8 +31,8 @@ void Catapult::ReturnMovement(int speed, int position)
 }
 
 void Catapult::CatchTheBall()  { SetServoPosition(catchPosition); }
-void Catapult::GoDownOneStep() { GoOneStep(delayBetweenPositionChange * 10, -motorIncrement); }
-void Catapult::GoUpOneStep()   { GoOneStep(delayBetweenPositionChange * 10, motorIncrement); }
+void Catapult::GoDownOneStep() { GoOneStep(delayBetweenPositionChange, -motorIncrement); }
+void Catapult::GoUpOneStep()   { GoOneStep(delayBetweenPositionChange, motorIncrement); }
 
 void Catapult::GoOneStep(int delayInMilisecond, int increment)
 {
@@ -45,6 +45,7 @@ void Catapult::SetServoPosition(int position)
 {
   if(position >= startPosition && position <= endPosition) this->write(position); 
 }
+
 
 void Catapult::Test()
 {

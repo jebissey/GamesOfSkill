@@ -10,10 +10,11 @@
 class Time
 {
   public:
-  bool NewDeciSecond(unsigned long *deciSecond, unsigned long lastDeciSecond);
-  bool NewSecond(unsigned long *second, unsigned long lastSecond);
-  bool NewMinute(unsigned long *minute, unsigned long lastMinute);
-  bool NewHour(unsigned long *hour, unsigned long lastHour);
+  bool NewDeciSecond(unsigned long *time, unsigned long lastTime);
+  bool NewSecond(unsigned long *time, unsigned long lastTime);
+  bool NewTenSeconds(unsigned long *time, unsigned long lastTime);
+  bool NewMinute(unsigned long *time, unsigned long lastTime);
+  bool NewHour(unsigned long *time, unsigned long lastTime);
 
   private:
   

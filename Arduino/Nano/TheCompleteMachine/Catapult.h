@@ -14,7 +14,7 @@ class Catapult : public Servo
   private:
   enum { servoMotor_pin = 3, };
   const int startPosition = 0;
-  const int endPosition = 110;
+  const int endPosition = 88;
   const int catchPosition = 60;
   const int motorIncrement = 1;
   const int delayBetweenPositionChange = 20;

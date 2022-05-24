@@ -10,17 +10,12 @@ class UltrasonicSensor
   {
     UltrasonicSensor_trig = 4,
     UltrasonicSensor_echo = 5,
-  };
-  const int mesures = 2;
-  const int delayBetweenMesures = 100;
-  
+  }; 
   SR04 sr04 = SR04(UltrasonicSensor_echo, UltrasonicSensor_trig);
 
   public:
   UltrasonicSensor();
   long ReadDistance();
-  void DisplayDistance();
-  void DisplayMesure();
 
   void Test();
 };
