@@ -11,13 +11,6 @@ class Time
 {
   public:
   bool Delay(unsigned long *time, unsigned long lastTime, int delayInMilisecond);
-  bool NewDeciSecond(unsigned long *time, unsigned long lastTime);
-  bool NewSecond(unsigned long *time, unsigned long lastTime);
-  bool NewTenSeconds(unsigned long *time, unsigned long lastTime);
-  bool NewMinute(unsigned long *time, unsigned long lastTime);
-  bool NewHour(unsigned long *time, unsigned long lastTime);
-
-  private:
-  
+  void Reset(unsigned long *time);
 };
 #endif

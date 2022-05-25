@@ -69,7 +69,7 @@ void ManualMode()
     pulley.Move(map(joystickX, joystick.xyMinSent, joystick.xyMaxSent, pulley.rotationalIncrement, -pulley.rotationalIncrement));
       
     String mesuredDistance = String(ultrasonicSensor.ReadDistance());
-    lcdDisplay.Write("Distance=" + mesuredDistance);
+    lcdDisplay.Write("Distance=" + mesuredDistance + "   ");
 
     String mesuredLight = String(photoCell.Get());
     lcdDisplay.Write("Light=" + mesuredLight,0, 1);

@@ -10,7 +10,7 @@ LcdDisplay::LcdDisplay()
 
 void LcdDisplay::SwitchOff()
 {
-  if(time.NewTenSeconds(&tenSeconds, tenSeconds)) lcd.noDisplay();
+  if(time.Delay(&aTime, aTime, switchOffDelay)) lcd.noDisplay();
 }
 
 void LcdDisplay::Write(String message, int column = 0, int raw = 0)
@@ -18,7 +18,7 @@ void LcdDisplay::Write(String message, int column = 0, int raw = 0)
   lcd.display();
   lcd.setCursor(column, raw);
   lcd.print(message);
-  time.NewTenSeconds(&tenSeconds, tenSeconds);
+  time.Reset(&aTime);
 }
 
 

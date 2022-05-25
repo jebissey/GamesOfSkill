@@ -1,49 +1,13 @@
 #include "Time.h"
 
-
-
 bool Time::Delay(unsigned long *time, unsigned long lastTime, int delayInMilisecond)
 {
-  if((millis() - *time) > delayInMilisecond)
-  {
-    *time = millis();
-    return true;
-  } 
-  return false;
+  if((millis() - *time) <= delayInMilisecond) return false;
+  *time = millis();
+  return true; 
 }
 
-
-bool Time::NewDeciSecond(unsigned long *time, unsigned long lastTime)
+void Time::Reset(unsigned long *time)
 {
-  *time = millis() / 100;
-  if(*time != lastTime) return true;
-  return false;
-}
-
-bool Time::NewSecond(unsigned long *time, unsigned long lastTime)
-{  
-  *time = millis() / 1000; 
-  if(*time != lastTime) return true;
-  return false;
-}
-
-bool Time::NewTenSeconds(unsigned long *time, unsigned long lastTime)
-{  
-  *time = millis() / 10000; 
-  if(*time != lastTime) return true;
-  return false;
-}
-
-bool Time::NewMinute(unsigned long *time, unsigned long lastTime)
-{
-  *time = millis() / (1000 * 60);
-  if(*time != lastTime + 1000 * 60) return true;
-  return false;
-}
-
-bool Time::NewHour(unsigned long *hour, unsigned long lastHour)
-{
-  *hour = millis() / (1000 * 60 * 60);
-  if(*hour != lastHour) return true;
-  return false;
+  *time = millis();
 }

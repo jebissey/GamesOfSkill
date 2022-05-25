@@ -18,7 +18,8 @@ class LcdDisplay
   const int lcdRaws = 2;
   LiquidCrystal lcd = LiquidCrystal(rs_pin, enable_pin, d4_pin, d5_pin, d6_pin, d7_pin);
 
-  unsigned long tenSeconds;
+  const int switchOffDelay = 20*1000;
+  unsigned long aTime;
   Time time;
   
   public:
