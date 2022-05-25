@@ -7,12 +7,12 @@
 #include "WProgram.h"
 #endif
 
+#include "PinsEnum.h"
 #include <Servo.h>
 
 class Catapult : public Servo
 {
   private:
-  enum { servoMotor_pin = 3, };
   const int startPosition = 0;
   const int endPosition = 88;
   const int catchPosition = 60;

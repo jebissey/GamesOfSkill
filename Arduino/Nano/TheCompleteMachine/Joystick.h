@@ -7,15 +7,11 @@
 #include "WProgram.h"
 #endif
 
+#include "PinsEnum.h"
+
 class Joystick
 {
   private:
-  enum
-  {
-    joystick_xAxe = 6,
-    joystick_yAxe = 7,
-    joystick_button = 2,
-  };
   const int xyMin = 0;
   const int xyMax = 1020;
   const int neutralPosition = (xyMax - xyMin) / 2;
