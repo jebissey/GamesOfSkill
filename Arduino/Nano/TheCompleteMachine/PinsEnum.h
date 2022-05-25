@@ -5,17 +5,19 @@ enum
 {
   free0 = 0,                // D0 / RX
   free1 = 1,                // D1 / TX
-  free16 = 16,         // A2 | D16
+  free16 = 16,         // A5 | D16
   free17 = 17,         // A3 | D17
   free18 = 18,         // A4 | D18
-  free19 = 19,         // A5 | D19
 };
 
-
+enum
+{
+  photoCell_basket = 19,//A5
+};
 enum 
 { 
   servoMotor_pin = 3,       //D3
-  }; 
+}; 
 enum
 {
   joystick_xAxe = 6,   //A6

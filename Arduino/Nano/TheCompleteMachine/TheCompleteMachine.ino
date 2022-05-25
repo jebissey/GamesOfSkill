@@ -3,6 +3,7 @@
 #include "Catapult.h"
 #include "Joystick.h"
 #include "LcdDisplay.h"
+#include "PhotoCell.h"
 #include "Pulley.h"
 #include "Time.h"
 #include "UltrasonicSensor.h"
@@ -11,6 +12,7 @@ BuiltInLed builtInLed;
 Catapult catapult;
 Joystick joystick;
 LcdDisplay lcdDisplay;
+PhotoCell photoCell;
 Pulley pulley;
 UltrasonicSensor ultrasonicSensor;
 
@@ -60,17 +62,27 @@ void ManualMode()
       lcdDisplay.Write("Distance=" + mesuredDistance);
     }
   }
-  
-  pulley.Move(map(-joystick.GetX(), joystick.xyMinSent, joystick.xyMaxSent, pulley.rotationalIncrement, -pulley.rotationalIncrement));
+
+  int joystickX = -joystick.GetX();
+  if(joystickX != 0)
+  {
+    pulley.Move(map(joystickX, joystick.xyMinSent, joystick.xyMaxSent, pulley.rotationalIncrement, -pulley.rotationalIncrement));
+      
+    String mesuredDistance = String(ultrasonicSensor.ReadDistance());
+    lcdDisplay.Write("Distance=" + mesuredDistance);
+
+    String mesuredLight = String(photoCell.Get());
+    lcdDisplay.Write("Light=" + mesuredLight,0, 1);
+  }
 
   if(joystick.IsExtremePositionY() > 0) catapult.GoUpOneStep();
   if(joystick.IsExtremePositionY() < 0) catapult.GoDownOneStep();
 
 
-  if(time.NewTenSeconds(&tenSeconds, tenSeconds))
+  if(time.Delay(&tenSeconds, tenSeconds, 2000))
   {          
-    //lcdDisplay.Write(String(ultrasonicSensor.ReadDistance()));
-    //lcdDisplay.Write("!");
+    
+    //Serial.println("Light=" + mesuredLight);
   }
   
 }
