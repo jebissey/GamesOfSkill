@@ -1,7 +1,7 @@
 #ifndef ULTRASONICSENSOR_H
 #define ULTRASONICSENSOR_H
 
-#include "PinsEnum.h"
+#include "AAA_PinsEnum.h"
 #include <SR04.h>
 
 class UltrasonicSensor

@@ -7,7 +7,7 @@
 #include "WProgram.h"
 #endif
 
-#include "PinsEnum.h"
+#include "AAA_PinsEnum.h"
 
 class Joystick
 {

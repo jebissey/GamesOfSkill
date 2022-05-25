@@ -2,8 +2,8 @@
 
 LcdDisplay::LcdDisplay()
 {  
-  pinMode(rs_pin, OUTPUT);
-  pinMode(enable_pin, OUTPUT);
+  pinMode(lcd_rs_pin, OUTPUT);
+  pinMode(lcd_enable_pin, OUTPUT);
   lcd.begin(lcdColumns, lcdRaws);
   lcd.noDisplay();
 }

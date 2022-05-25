@@ -7,7 +7,7 @@
 #include "WProgram.h"
 #endif
 
-#include "PinsEnum.h"
+#include "AAA_PinsEnum.h"
 #include <Stepper.h> 
 
 class Pulley

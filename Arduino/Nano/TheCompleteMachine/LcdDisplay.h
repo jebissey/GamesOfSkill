@@ -7,7 +7,7 @@
 #include "WProgram.h"
 #endif
 
-#include "PinsEnum.h"
+#include "AAA_PinsEnum.h"
 #include "Time.h"
 #include <LiquidCrystal.h> 
 
@@ -16,7 +16,7 @@ class LcdDisplay
   private:
   const int lcdColumns = 16;
   const int lcdRaws = 2;
-  LiquidCrystal lcd = LiquidCrystal(rs_pin, enable_pin, d4_pin, d5_pin, d6_pin, d7_pin);
+  LiquidCrystal lcd = LiquidCrystal(lcd_rs_pin, lcd_enable_pin, lcd_d4_pin, lcd_d5_pin, lcd_d6_pin, lcd_d7_pin);
 
   const int switchOffDelay = 20*1000;
   unsigned long aTime;
