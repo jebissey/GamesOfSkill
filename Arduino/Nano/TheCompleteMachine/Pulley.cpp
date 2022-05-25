@@ -7,6 +7,8 @@ Pulley::Pulley()
 
 void Pulley::Move(int steps)
 {
+  if(cumuledSteps + steps < 0) return;
+  cumuledSteps += steps;
   if(steps != 0) pulleyStepMotor.step(steps);
 } 
 

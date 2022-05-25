@@ -13,11 +13,9 @@
 class Catapult : public Servo
 {
   private:
-  const int startPosition = 0;
   const int endPosition = 88;
-  const int catchPosition = 60;
+  const int catchPosition = 56;
   const int motorIncrement = 1;
-  const int delayBetweenPositionChange = 20;
   const int delayBeforeReturn = 500;
   
   void GoOneStep(int delayInMilisecond, int increment);
@@ -25,13 +23,20 @@ class Catapult : public Servo
 
   
   public:
+  const int startPosition = 0;
+  const int delayBetweenPositionChange = 20;
+  
   Catapult();
   void Setup();
-  bool ThrowMovement(int position);
-  void ReturnMovement(int speed, int position);
-  void CatchTheBall();
+
+  int GetPosition();
+  
+  void GoDown(int delayBetweenPositionChange, int position);
+  void GoUp(int position);
+
   void GoDownOneStep();
   void GoUpOneStep();
+
   
   void Test();
 };

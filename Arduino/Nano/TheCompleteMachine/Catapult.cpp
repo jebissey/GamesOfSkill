@@ -11,26 +11,17 @@ void Catapult::Setup()
   SetServoPosition(startPosition);
 }
 
-bool Catapult::ThrowMovement(int position)
+void Catapult::GoUp(int position)
 {
-  if(this->read() > startPosition)
-  {
-     ReturnMovement(delayBetweenPositionChange, startPosition);
-     return false;
-  }
-  SetServoPosition(position);
-  delay(delayBeforeReturn);
-  ReturnMovement(delayBetweenPositionChange, catchPosition);
-  return true;
-}
-
-void Catapult::ReturnMovement(int speed, int position)
-{
-  while (this->read() > position) GoOneStep(speed, -motorIncrement);
   SetServoPosition(position);
 }
 
-void Catapult::CatchTheBall()  { SetServoPosition(catchPosition); }
+void Catapult::GoDown(int delayBetweenPositionChange, int position)
+{
+  while (this->read() > position) GoOneStep(delayBetweenPositionChange, -motorIncrement);
+  SetServoPosition(position);
+}
+
 void Catapult::GoDownOneStep() { GoOneStep(delayBetweenPositionChange, -motorIncrement); }
 void Catapult::GoUpOneStep()   { GoOneStep(delayBetweenPositionChange, motorIncrement); }
 
@@ -46,18 +37,14 @@ void Catapult::SetServoPosition(int position)
   if(position >= startPosition && position <= endPosition) this->write(position); 
 }
 
+int Catapult::GetPosition()
+{
+  Serial.println(this->read());
+  return this->read(); 
+}
+
 
 void Catapult::Test()
 {
-  Serial.print("Servo=");
-  Serial.println(this->read());
-  ThrowMovement(endPosition );
-  
-  Serial.print("Servo=");
-  Serial.println(this->read());
-  
-  ReturnMovement(delayBetweenPositionChange, startPosition);
-  
-  Serial.print("Servo=");
-  Serial.println(this->read());
+
 }

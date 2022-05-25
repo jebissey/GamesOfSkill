@@ -1,4 +1,5 @@
 
+#include "Ball.h"
 #include "BuiltInLed.h"
 #include "Catapult.h"
 #include "Joystick.h"
@@ -8,6 +9,7 @@
 #include "Time.h"
 #include "UltrasonicSensor.h"
 
+Ball ball;
 BuiltInLed builtInLed;
 Catapult catapult;
 Joystick joystick;
@@ -19,7 +21,7 @@ UltrasonicSensor ultrasonicSensor;
 
 enum {test_Mode, manual_mode};
 int mode = manual_mode;
-
+const int throwAngle = 55;
 
 Time time;
 unsigned long tenSeconds;
@@ -35,7 +37,6 @@ void setup()
 
 void loop() 
 {
-
   switch(mode)
   {
     case test_Mode: 
@@ -56,13 +57,20 @@ void ManualMode()
   
   if(joystick.JoystickPressed())
   {
-    if(catapult.ThrowMovement(55))
+    if(ball.Throw(catapult, throwAngle))
     {
       String mesuredDistance = String(ultrasonicSensor.ReadDistance());
       lcdDisplay.Write("Distance=" + mesuredDistance);
+      ball.Catch();
     }
   }
 
+  MovePulleyAndDisplayDistance();
+  MoveCatapultAndDisplayPosition();
+}
+
+void MovePulleyAndDisplayDistance()
+{
   int joystickX = -joystick.GetX();
   if(joystickX != 0)
   {
@@ -74,17 +82,27 @@ void ManualMode()
     String mesuredLight = String(photoCell.Get());
     lcdDisplay.Write("Light=" + mesuredLight,0, 1);
   }
+}
 
-  if(joystick.IsExtremePositionY() > 0) catapult.GoUpOneStep();
-  if(joystick.IsExtremePositionY() < 0) catapult.GoDownOneStep();
-
-
-  if(time.Delay(&tenSeconds, tenSeconds, 2000))
-  {          
-    
-    //Serial.println("Light=" + mesuredLight);
-  }
+void MoveCatapultAndDisplayPosition()
+{
   
+  if(joystick.IsExtremePositionY() > 0)
+  {
+    catapult.GoUpOneStep();
+    DisplayCatapultPosition();
+  }
+  if(joystick.IsExtremePositionY() < 0)
+  {
+    catapult.GoDownOneStep(); 
+    DisplayCatapultPosition();
+  }
+}
+
+void DisplayCatapultPosition()
+{
+  String servoPosition = String(catapult.GetPosition());
+  lcdDisplay.Write("catapult=" + servoPosition + "   ");
 }
 
 void TestMode()
