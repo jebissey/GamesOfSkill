@@ -4,6 +4,10 @@ LcdDisplay::LcdDisplay()
 {  
   pinMode(lcd_rs_pin, OUTPUT);
   pinMode(lcd_enable_pin, OUTPUT);
+  pinMode(lcd_d4_pin, OUTPUT);
+  pinMode(lcd_d5_pin, OUTPUT);
+  pinMode(lcd_d6_pin, OUTPUT);
+  pinMode(lcd_d7_pin, OUTPUT);
   lcd.begin(lcdColumns, lcdRaws);
   lcd.noDisplay();
 }
