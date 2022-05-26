@@ -18,6 +18,20 @@ class Joystick
   const int neutralPositionWidth = 150;
   const int extremePositionWidth = 200;
   
+  const unsigned long debounceDelay = 50;
+  unsigned long lastDebounceTime = 0;
+  const unsigned long buttonPressedDelay = 2000;
+  unsigned long lastClickTime = 0;
+  enum 
+  {
+    buttonOff = 1,
+    buttonClicked,
+    buttonPressed,
+  };
+  int buttonState;  
+  int lastButtonState = 0; 
+  int button = buttonOff;
+  
   int GetJoystickXY(int position);
   int IsExtremePosition(int position);
   bool IsNeutralPosition(int position);
@@ -26,7 +40,9 @@ class Joystick
   const int xyMinSent = -100;
   const int xyMaxSent = 100;
   Joystick();
-  bool JoystickPressed();
+  void Check();
+  bool IsClicked();
+  bool IsPressed();
   int IsExtremePositionX();
   int IsExtremePositionY();
   int GetX();

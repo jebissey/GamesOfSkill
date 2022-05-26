@@ -6,8 +6,29 @@ Joystick::Joystick()
   digitalWrite(joystick_button, HIGH);
 }
 
+void  Joystick::Check()
+{
+  int reading = digitalRead(joystick_button);
+  if (reading != lastButtonState)
+  {
+    lastButtonState = reading;
+    lastDebounceTime = millis();
+    if(reading != buttonOff) lastClickTime = millis();
+  }
+  else if ((millis() - lastDebounceTime) > debounceDelay)
+  {
+    if(reading != buttonOff)
+    {
+      if ((millis() - lastClickTime) > buttonPressedDelay) button = buttonPressed;
+      else button = buttonClicked;
+    }
+    else button = buttonOff;
+  }
+}
+
 bool Joystick::IsNeutralPosition(int position) { return abs(neutralPosition - position) < neutralPositionWidth; }
-bool Joystick::JoystickPressed()   { return digitalRead(joystick_button) == 0; }
+bool Joystick::IsClicked()   { return button == buttonClicked; }
+bool Joystick::IsPressed()   { return button == buttonPressed; }
 int Joystick::IsExtremePositionX() { return IsExtremePosition(analogRead(joystick_xAxe)); }
 int Joystick::IsExtremePositionY() { return IsExtremePosition(analogRead(joystick_yAxe)); }
 int Joystick::GetX() { return GetJoystickXY(analogRead(joystick_xAxe)); }
@@ -39,6 +60,6 @@ void Joystick::Test()
   Serial.print(", yExt=");
   Serial.print(IsExtremePositionY());
   Serial.print("; Button=");
-  Serial.println(JoystickPressed());
+  Serial.println(IsPressed());
   delay(500);
 }

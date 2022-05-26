@@ -16,7 +16,7 @@ class Pulley
   int cumuledSteps;
   
   const int stepperMotorSteps = 2048;
-  const int speed = 16; // [1 .. 16]
+  const int speed = 15; // [1 .. 17]
   Stepper pulleyStepMotor = Stepper(stepperMotorSteps, stepperMotor_in1, stepperMotor_in3, stepperMotor_in2, stepperMotor_in4);
 
   public:

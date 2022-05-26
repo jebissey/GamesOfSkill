@@ -4,6 +4,7 @@
 #include "Catapult.h"
 #include "Joystick.h"
 #include "LcdDisplay.h"
+#include "OperatingMode.h"
 #include "PhotoCell.h"
 #include "Pulley.h"
 #include "Time.h"
@@ -14,13 +15,13 @@ BuiltInLed builtInLed;
 Catapult catapult;
 Joystick joystick;
 LcdDisplay lcdDisplay;
+OperatingMode operatingMode;
 PhotoCell photoCell;
 Pulley pulley;
 UltrasonicSensor ultrasonicSensor;
 
 
-enum {test_Mode, manual_mode};
-int mode = manual_mode;
+
 const int throwAngle = 55;
 
 Time time;
@@ -33,29 +34,32 @@ void setup()
   Serial.begin(9600);
 
   catapult.Setup();
+  operatingMode.Set(operatingMode.manual);
 }
 
 void loop() 
 {
-  switch(mode)
-  {
-    case test_Mode: 
-    TestMode();
-    break;
+  builtInLed.Display(delayInMs);
+  lcdDisplay.SwitchOff();
+  joystick.Check();
+  ultrasonicSensor.ReadDistance();
 
-    case manual_mode: 
-    ManualMode();
-    break;
-  }
+  if(joystick.IsPressed()) operatingMode.Set(operatingMode.setting);
+  
+  if(operatingMode.Get() == operatingMode.manual) ManualMode();
+  else if(operatingMode.Get() == operatingMode.setting) SettingModeMode();
 }
+
+void SettingModeMode()
+{
+  lcdDisplay.Write("Move up the ball");
+  lcdDisplay.Write("click when top", 0, 1);
+}
+
 
 void ManualMode()
 {
-  builtInLed.Display(delayInMs);
-  ultrasonicSensor.ReadDistance();
-  lcdDisplay.SwitchOff();
-  
-  if(joystick.JoystickPressed())
+  if(joystick.IsClicked())
   {
     if(ball.Throw(catapult, throwAngle))
     {
@@ -80,7 +84,7 @@ void MovePulleyAndDisplayDistance()
     lcdDisplay.Write("Distance=" + mesuredDistance + "   ");
 
     String mesuredLight = String(photoCell.Get());
-    lcdDisplay.Write("Light=" + mesuredLight,0, 1);
+    lcdDisplay.Write("Light=" + mesuredLight, 0, 1);
   }
 }
 
