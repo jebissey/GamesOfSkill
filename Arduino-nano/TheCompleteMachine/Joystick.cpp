@@ -1,4 +1,5 @@
 #include "Joystick.h"
+#include "Time.h"
 
 Joystick::Joystick()
 {
@@ -8,27 +9,40 @@ Joystick::Joystick()
 
 void  Joystick::Check()
 {
-  int reading = digitalRead(joystick_button);
-  if (reading != lastButtonState)
-  {
-    lastButtonState = reading;
-    lastDebounceTime = millis();
-    if(reading != buttonOff) lastClickTime = millis();
+  int buttonState = digitalRead(joystick_button);
+  if (buttonState != lastButtonState)
+  { 
+    lastButtonState = buttonState;
+    debounceTime = millis();
+    if(buttonState != buttonOff) clickTime = millis();
+    buttonFallingEdge = (buttonState == buttonOff);
   }
-  else if ((millis() - lastDebounceTime) > debounceDelay)
+  else if ((millis() - debounceTime) > debounceDelay)
   {
-    if(reading != buttonOff)
+    if(buttonState != buttonOff)
     {
-      if ((millis() - lastClickTime) > buttonPressedDelay) button = buttonPressed;
-      else button = buttonClicked;
+      if(millis() - clickTime > buttonPressedDelay) button = buttonPressed;
+      else button = buttonOn;
     }
-    else button = buttonOff;
+    else 
+    {
+      if(buttonFallingEdge) 
+      {
+        buttonFallingEdge = false;
+        if(button != buttonPressed) buttonClicks++;        
+      }
+      button = buttonOff;
+    }
   }
 }
 
-bool Joystick::IsNeutralPosition(int position) { return abs(neutralPosition - position) < neutralPositionWidth; }
-bool Joystick::IsClicked()   { return button == buttonClicked; }
+bool Joystick::IsClicked()   
+{ 
+  if(buttonClicks == 0) return false;
+  return buttonClicks--; 
+}
 bool Joystick::IsPressed()   { return button == buttonPressed; }
+bool Joystick::IsNeutralPosition(int position) { return abs(neutralPosition - position) < neutralPositionWidth; }
 int Joystick::IsExtremePositionX() { return IsExtremePosition(analogRead(joystick_xAxe)); }
 int Joystick::IsExtremePositionY() { return IsExtremePosition(analogRead(joystick_yAxe)); }
 int Joystick::GetX() { return GetJoystickXY(analogRead(joystick_xAxe)); }
@@ -51,15 +65,24 @@ int Joystick::IsExtremePosition(int position)
 
 void Joystick::Test()
 {
-  Serial.print("x=");
-  Serial.print(GetJoystickXY(analogRead(joystick_xAxe)));
-  Serial.print(", xExt=");
-  Serial.print(IsExtremePositionX());
-  Serial.print("; y=");
-  Serial.print(GetJoystickXY(analogRead(joystick_yAxe)));
-  Serial.print(", yExt=");
-  Serial.print(IsExtremePositionY());
-  Serial.print("; Button=");
-  Serial.println(IsPressed());
-  delay(500);
+  static unsigned long aTime;
+  static Time time;
+  
+  if(time.Delay(&aTime, aTime, 500))
+  {
+    Serial.print("x=");
+    Serial.print(GetJoystickXY(analogRead(joystick_xAxe)));
+    Serial.print(", xExt=");
+    Serial.print(IsExtremePositionX());
+    Serial.print("; y=");
+    Serial.print(GetJoystickXY(analogRead(joystick_yAxe)));
+    Serial.print(", yExt=");
+    Serial.print(IsExtremePositionY());
+    Serial.print("; clicks=");
+    Serial.print(buttonClicks);
+    Serial.print("; Button is clicked=");
+    Serial.print(IsClicked());
+    Serial.print("; Button is pressed=");
+    Serial.println(IsPressed());
+  }
 }

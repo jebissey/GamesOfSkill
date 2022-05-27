@@ -19,18 +19,20 @@ class Joystick
   const int extremePositionWidth = 200;
   
   const unsigned long debounceDelay = 50;
-  unsigned long lastDebounceTime = 0;
+  unsigned long debounceTime = 0;
   const unsigned long buttonPressedDelay = 2000;
-  unsigned long lastClickTime = 0;
+  unsigned long clickTime = 0;
+  int buttonClicks = 0;
   enum 
   {
+    buttonOn = 0,
     buttonOff = 1,
-    buttonClicked,
     buttonPressed,
   };
   int buttonState;  
-  int lastButtonState = 0; 
+  int lastButtonState = buttonOff; 
   int button = buttonOff;
+  bool buttonFallingEdge;
   
   int GetJoystickXY(int position);
   int IsExtremePosition(int position);

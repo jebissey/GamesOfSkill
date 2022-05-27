@@ -45,9 +45,13 @@ void loop()
   ultrasonicSensor.ReadDistance();
 
   if(joystick.IsPressed()) operatingMode.Set(operatingMode.setting);
-  
-  if(operatingMode.Get() == operatingMode.manual) ManualMode();
-  else if(operatingMode.Get() == operatingMode.setting) SettingModeMode();
+
+/*
+  int actualMode = operatingMode.Get();
+  if(actualMode == operatingMode.manual) ManualMode();
+  else if(actualMode == operatingMode.setting) SettingModeMode();
+  */
+  joystick.Test();
 }
 
 void SettingModeMode()
