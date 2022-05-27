@@ -1,0 +1,27 @@
+@startuml
+[*] --> SelectGame
+
+state SelectGame {
+    [*] --> DisplayMenu
+    DisplayMenu --> DisplayMenu : JoystickLeft
+    DisplayMenu --> DisplayMenu : JoystickRight
+    DisplayMenu --> [*] : Joystick pressed
+}
+SelectGame -right-> Catapult : [Catapult]\nselected
+SelectGame -left-> WhackAMole : [What a mole]\nselected
+
+
+state Catapult  {
+    [*] --> SettingMode
+    SettingMode :
+    SettingMode --> PlayCataplult : Joystick pressed
+
+    PlayCataplult --> [*] : Joystick pressed
+}
+Catapult -> SelectGame : Joystick pressed
+
+WhackAMole : PlayWhackAMole
+WhackAMole -right-> SelectGame : Joystick pressed
+
+
+@enduml

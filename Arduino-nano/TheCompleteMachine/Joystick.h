@@ -18,7 +18,7 @@ class Joystick
   const int neutralPositionWidth = 150;
   const int extremePositionWidth = 200;
   
-  const unsigned long debounceDelay = 50;
+  const unsigned long debounceDelay = 10;
   unsigned long debounceTime = 0;
   const unsigned long buttonPressedDelay = 2000;
   unsigned long clickTime = 0;

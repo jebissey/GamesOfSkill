@@ -1,0 +1,19 @@
+@startuml
+state SettingMode {
+    [*] --> StartSettingPulley : Joystick pressed
+    [*] --> MoveUp : Joystick button released
+    StartSettingPulley : Ask to stop to press the joystick button
+    StartSettingPulley --> MoveUp : Joystick button released
+
+    MoveUp : Ask to move the ball up and click to confirm
+    MoveUp --> MoveDown : Joystick clicked
+
+    MoveDown : Ask to move the ball down and click to confirm
+    MoveDown --> MoveTop : Joystick clicked
+
+    MoveTop : Move the ball to the top
+    MoveTop : Axk to press to exit or click to restart
+    MoveTop -->  MoveUp : Joystick clicked
+    MoveTop --> [*] : Joystick pressed
+}
+@enduml
