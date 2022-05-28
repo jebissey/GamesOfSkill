@@ -10,7 +10,7 @@
 class Time
 {
   public:
-  bool Delay(unsigned long *time, unsigned long lastTime, int delayInMilisecond);
+  bool IsOver(int delayForInMilisecond, unsigned long *timerFor);
   void Reset(unsigned long *time);
 };
 #endif

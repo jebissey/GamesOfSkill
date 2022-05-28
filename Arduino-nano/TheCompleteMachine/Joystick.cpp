@@ -68,7 +68,7 @@ void Joystick::Test()
   static unsigned long aTime;
   static Time time;
   
-  if(time.Delay(&aTime, aTime, 500))
+  if(time.IsOver(500, &aTime))
   {
     Serial.print("x=");
     Serial.print(GetJoystickXY(analogRead(joystick_xAxe)));

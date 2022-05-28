@@ -14,7 +14,7 @@ LcdDisplay::LcdDisplay()
 
 void LcdDisplay::SwitchOff()
 {
-  if(time.Delay(&aTime, aTime, switchOffDelay)) lcd.noDisplay();
+  if(time.IsOver(switchOffDelay, &aTime )) lcd.noDisplay();
 }
 
 void LcdDisplay::Write(String message, int column = 0, int raw = 0)

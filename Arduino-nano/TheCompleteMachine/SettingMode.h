@@ -9,16 +9,18 @@
 
 #include <Fsm.h>
 
-
+#include "Joystick.h"
 
 
 class SettingMode
 {
   private:
-  enum State {Start, StartSettingPulley, MoveUp, MoveDown, Movetop, Stop};
-
-
-
+  enum Event {joystickButtonIsPressed, joystickButtonClicked, joystickButtonOff};
+  Joystick joystick;
+  //Fsm fsm;
+  
+  void CheckJoystickButton();
+  
   
   public:
   SettingMode();

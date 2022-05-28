@@ -1,13 +1,13 @@
 #include "Time.h"
 
-bool Time::Delay(unsigned long *time, unsigned long lastTime, int delayInMilisecond)
+bool Time::IsOver(int delayForInMilisecond, unsigned long *timerFor)
 {
-  if((millis() - *time) <= delayInMilisecond) return false;
-  *time = millis();
+  if((millis() - *timerFor) <= delayForInMilisecond) return false;
+  *timerFor = millis();
   return true; 
 }
 
-void Time::Reset(unsigned long *time)
+void Time::Reset(unsigned long *timerFor)
 {
-  *time = millis();
+  *timerFor = millis();
 }

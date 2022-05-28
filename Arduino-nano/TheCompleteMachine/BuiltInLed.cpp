@@ -7,7 +7,7 @@ BuiltInLed::BuiltInLed()
 
 void BuiltInLed::Display(int halfTimeDuration)
 {
-  if(time.Delay(&timeInMs, timeInMs, halfTimeDuration))
+  if(time.IsOver(halfTimeDuration, &timeInMs))
   {
     ledStatus = !ledStatus;
     digitalWrite(LED_BUILTIN, ledStatus);

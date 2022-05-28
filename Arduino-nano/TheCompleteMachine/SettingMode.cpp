@@ -31,17 +31,23 @@ void OnStop()
   
 }
 
+void SettingMode::CheckJoystickButton()
+{
+  /*if (joystick.IsClicked()) fsm.trigger(joystickButtonClicked);
+  if (joystick.IsPressed()) fsm.trigger(joystickButtonIsPressed);
+  fsm.trigger(joystickButtonOff);*/
+}
 
-SettingMode::SettingMode()
-{  
-  State stateStart(&OnStart, NULL, NULL);
-  State stateStartSettingPulley(&OnStartSettingPulley, NULL, NULL);
-  State stateMoveUp(&OnMoveUp, NULL, NULL);
-  State stateMoveDown(&OnMoveDow, NULL, NULL);
-  State stateMoveTop(&OnMoveTop, NULL, NULL);
-  State stateStop(&OnStop, NULL, NULL);
+SettingMode::SettingMode() 
+{  /*
+  State start(&OnStart, &CheckJoystickButton, NULL);
+  State startSettingPulley(&OnStartSettingPulley, &CheckJoystickButton, NULL);
+  State soveUp(&OnMoveUp, &CheckJoystickButton, NULL);
+  State soveDown(&OnMoveDow, &CheckJoystickButton, NULL);
+  State soveTop(&OnMoveTop, &CheckJoystickButton, NULL);
+  State stop(&OnStop, &CheckJoystickButton, NULL);
 
-/*
+
   Fsm fsm(&stateStart);
 
   fsm.add_transition(&stateStart, &StartSettingPulley, joystick.IsPressed(), NULL);
