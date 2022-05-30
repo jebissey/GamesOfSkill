@@ -38,9 +38,11 @@ void SettingMode::CheckJoystickButton()
   fsm.trigger(joystickButtonOff);*/
 }
 
-SettingMode::SettingMode() 
-{  /*
-  State start(&OnStart, &CheckJoystickButton, NULL);
+SettingMode::SettingMode() : 
+  State start(&OnStart, &CheckJoystickButton, NULL),
+  fsm(&start)
+{  
+  
   State startSettingPulley(&OnStartSettingPulley, &CheckJoystickButton, NULL);
   State soveUp(&OnMoveUp, &CheckJoystickButton, NULL);
   State soveDown(&OnMoveDow, &CheckJoystickButton, NULL);
@@ -48,7 +50,9 @@ SettingMode::SettingMode()
   State stop(&OnStop, &CheckJoystickButton, NULL);
 
 
-  Fsm fsm(&stateStart);
+  
+  
+
 
   fsm.add_transition(&stateStart, &StartSettingPulley, joystick.IsPressed(), NULL);
   fsm.add_transition(&stateStart, &MoveUp, !joystick.IsClickeded(), NULL);
@@ -57,5 +61,5 @@ SettingMode::SettingMode()
   fsm.add_transition(&MoveTop, &MoveUp, joystick.IsClickeded(), NULL);
   fsm.add_transition(&MoveTop, &Stop, joystick.IsPressed(), NULL);
 
-  this-r>un_machine();*/
+  this-r>un_machine();
 }

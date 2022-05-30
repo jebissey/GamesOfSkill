@@ -12,15 +12,19 @@
 #include "Joystick.h"
 
 
-class SettingMode
+class SettingMode 
 {
   private:
   enum Event {joystickButtonIsPressed, joystickButtonClicked, joystickButtonOff};
   Joystick joystick;
-  //Fsm fsm;
+  Fsm fsm;
   
   void CheckJoystickButton();
+  void OnStart();
   
+  State start;
+  
+
   
   public:
   SettingMode();
