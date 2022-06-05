@@ -20,22 +20,55 @@ private:
   RowCol squareSize;
   RowCol squareCoordonate;
   SquareLight squareLight;
-  void SetSquare(bool stateLed);
+  
+  void SetSquare(bool stateLed){
+  for(int row = squareCoordonate.row; row < squareCoordonate.row + squareSize.row; row++){
+    for(int col = squareCoordonate.col; col < squareCoordonate.col + squareSize.col; col++){
+      if(row >= 0 && row < matriceSize && col >= 0 && col < matriceSize) matriceLeds.SetLed(row, col, stateLed);
+    }
+  }
+}
   
 public:
   LedsSquare(MatriceLeds matriceLeds_, RowCol squareSize_){
     matriceLeds = matriceLeds_; 
     squareSize = squareSize_;
   }
+
+  RowCol      GetCoordonate() { return squareCoordonate; }
+  SquareLight GetLight()      { return squareLight; }
+  RowCol      GetSize()       { return squareSize; }
+
+  void MoveAbsolute(RowCol squareCoordonate_){
+    if(squareLight == On) SetSquare(false);
+    squareCoordonate = squareCoordonate_;
+    if(squareLight == On) SetSquare(true);
+  }
+
+  void MoveRelative(RowCol squareIncrement){
+    if(squareLight == On) SetSquare(false);
+    
+    squareCoordonate.row += squareIncrement.row;
+    if(squareCoordonate.row < 0) squareCoordonate.row = 0;
+    if(squareCoordonate.row > matriceSize - squareSize.row) squareCoordonate.row =  matriceSize - squareSize.row;
+    
+    squareCoordonate.col += squareIncrement.col;
+    if(squareCoordonate.col < 0) squareCoordonate.col = 0;
+    if(squareCoordonate.col > matriceSize - squareSize.col) squareCoordonate.col =  matriceSize - squareSize.col;
+    
+    if(squareLight == On) SetSquare(true);
+  }
   
-  void Move(RowCol squareCoordonate);
-  void SetLight(SquareLight squareLight);
-  void SetSize(RowCol squareSize);
-
-  RowCol      GetCoordonate()  { return squareCoordonate;  }
-  SquareLight GetLight()       { return squareLight;  }
-  RowCol      GetSize()        { return squareSize;  }
+  void SetLight(SquareLight squareLight_){
+    squareLight = squareLight_;
+    SetSquare(squareLight == On);
+  }
+  
+  void SetSize(RowCol squareSize_){
+    if(squareLight == On) SetSquare(false);
+    squareSize = squareSize_;
+    if(squareLight == On) SetSquare(true);
+  }
 };
-
 
 #endif

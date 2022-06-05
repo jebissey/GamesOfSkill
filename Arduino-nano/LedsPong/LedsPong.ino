@@ -1,72 +1,71 @@
 
-#include<Wire.h>
-const int MPU=0x68; 
-int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
 
 #include "MatriceLeds.h"
-MatriceLeds matriceLeds;
+static MatriceLeds matriceLeds;
+
 
 #include "LedsSquare.h"
-RowCol sizeSquare = RowCol(2, 2);
-LedsSquare ledsSquare = LedsSquare(matriceLeds, sizeSquare);
+RowCol squareSize = RowCol(2, 2);
+LedsSquare ledsSquare = LedsSquare(matriceLeds, squareSize);
 
-/* we always wait a bit between updates of the display */
-unsigned long delaytime1=500;
-unsigned long delaytime2=50;
+
+#include "Gy521.h"
+static Gy_521 gy521;
+
 void setup() {
-
-
-  Wire.begin();
-  Wire.beginTransmission(MPU);
-  Wire.write(0x6B); 
-  Wire.write(0);    
-  Wire.endTransmission(true);
+  gy521.Setup();
+  ledsSquare.MoveAbsolute(RowCol(3, 3));
   
   Serial.begin(9600);
 }
 
 
+void MoveSquare(unsigned long delayOnOf){
+  for(int row = 0; row < matriceLeds.matriceSize; row++){
+    for(int col = 0; col < matriceLeds.matriceSize; col++){
+      ledsSquare.MoveAbsolute(RowCol(row, col));
+      delay(delayOnOf);
+    }
+  }
+}
 
 
 
-
+int ledsSquareSize = 0;
+int  GyAccTemp[gy521.numData];
+float PitchRoll[3];
 
 void loop() { 
 
-
+/*
 
   matriceLeds.SetColumn(0, B11111111);
   matriceLeds.SetColumn(7, B11111111);
-  delay(500);
+  delay(250);
   matriceLeds.SetColumn(0, B00000000);
   matriceLeds.SetColumn(7, B00000000);
   
   matriceLeds.SetRow(0, B11111111);
   matriceLeds.SetRow(7, B11111111);
-  delay(500);
+  delay(250);
+
+  ledsSquareSize = ((ledsSquareSize++) % matriceLeds.matriceSize) + 1;
+  ledsSquare.SetSize(RowCol(ledsSquareSize, ledsSquareSize));
+  MoveSquare(25);
+*/
+  
 
 
-  Wire.beginTransmission(MPU);
-  Wire.write(0x3B);  
-  Wire.endTransmission(false);
-  Wire.requestFrom(MPU,12,true);  
-  AcX=Wire.read()<<8|Wire.read();    
-  AcY=Wire.read()<<8|Wire.read();  
-  AcZ=Wire.read()<<8|Wire.read();  
-  GyX=Wire.read()<<8|Wire.read();  
-  GyY=Wire.read()<<8|Wire.read();  
-  GyZ=Wire.read()<<8|Wire.read();  
-  
-  Serial.print("Accelerometer: ");
-  Serial.print("X = "); Serial.print(AcX);
-  Serial.print(" | Y = "); Serial.print(AcY);
-  Serial.print(" | Z = "); Serial.println(AcZ); 
-  
-  Serial.print("Gyroscope: ");
-  Serial.print("X = "); Serial.print(GyX);
-  Serial.print(" | Y = "); Serial.print(GyY);
-  Serial.print(" | Z = "); Serial.println(GyZ);
-  Serial.println(" ");
-  delay(333);
+
+
+
+  gy521.ReadGY521(GyAccTemp);
+  gy521.ComputeAngle(GyAccTemp,PitchRoll);
+  int ballRowIncrement = round(map(PitchRoll[1], -90, +90, -10, +10) / 3.0);
+  int ballColIncrement = round(map(PitchRoll[2], -90, +90, +10, -10) / 3.0);
+  ledsSquare.MoveRelative(RowCol(ballRowIncrement, ballColIncrement));
+
+
+  delay(100);
   
 }

@@ -13,12 +13,12 @@
 
 class MatriceLeds : LedControl{
 private:
-  static const int matriceSize = 8;
 
 public:
-  MatriceLeds() : LedControl(leds_DataIn,led_CLK,leds_CS){
+  static const int matriceSize = 8;
+  MatriceLeds() : LedControl(leds_DataIn,leds_CLK,leds_CS){
     this->shutdown(0, false);
-    this->setIntensity(0, 8);
+    this->setIntensity(0, 1);
     this->clearDisplay(0);
   }
   
