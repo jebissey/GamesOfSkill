@@ -13,11 +13,11 @@
 class Gy_521{
 private:
   static const int MPU=0x68;
-  double PitchRoll[3];
+  static const int indexForTemperature = 3;
 
 public:
   static const int numData = 7;
-  int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
+  static float temperature;
 
   void Setup(){
     Wire.begin();
@@ -27,24 +27,19 @@ public:
     Wire.endTransmission(true);
   }
 
-  void ReadGY521( int *GyAccTempp){
+  void ReadGY521(int *GyAccTempp){
     Wire.beginTransmission(MPU);
     Wire.write(0x3B);
     Wire.endTransmission(false);
-    Wire.requestFrom(MPU, 14, true);
-  
-    // Lecture des données (3 axes accélérometre + température + 3 axes gyroscope
-    for(int i=0 ; i<numData ; i++){
-      if(i!=3) GyAccTempp[i]=(Wire.read()<<8|Wire.read());
-      else
-      {
-        GyAccTempp[i]=(Wire.read()<<8|Wire.read());
-        GyAccTempp[i] = GyAccTempp[i]/340 + 36.53;
-      }
+    Wire.requestFrom(MPU, numData * 2, true);
+
+    for(int i=0; i<numData; i++){
+      GyAccTempp[i] = Wire.read()<<8 | Wire.read();
+      if(i==indexForTemperature) temperature = GyAccTempp[i] / 340.0 + 36.53; 
     }
   }
 
-  void ComputeAngle(int *GyAccTempp,  float *PitchRol){
+  void ComputeAngle(int *GyAccTempp, float *PitchRol){
     float x = GyAccTempp[0];
     float y = GyAccTempp[1];
     float z = GyAccTempp[2];
@@ -54,5 +49,7 @@ public:
     PitchRol[2] = (atan(z/sqrt((x*x) + (y*y)))) *  180.0 / PI;
   }
 };
+
+float Gy_521::temperature = 0;
 
 #endif

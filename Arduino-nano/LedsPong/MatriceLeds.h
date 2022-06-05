@@ -25,9 +25,11 @@ public:
   void SetLed(int row, int col, bool stateLed){  
     this->setLed(0, row, col, stateLed);
   }
+  
   void SetColumn(int col, byte patern){  
     this->setColumn(0, col, patern);
   }
+  
   void SetRow(int row, byte patern){  
     this->setRow(0, row, patern);
   }
