@@ -12,13 +12,22 @@
 class PhotoCell
 {
   private:
-
   
   public:
-  PhotoCell();
-  int Get();
+  PhotoCell(){
+    pinMode(photoCell_basket, INPUT);
+  }
   
-  void Test();
+  int Get() {
+    return  analogRead(photoCell_basket);
+  }
+  
+    
+  void Test(){
+    Serial.print("photo cell=");
+    Serial.print(Get());
+    delay(500);
+  }
 };
 
 #endif
