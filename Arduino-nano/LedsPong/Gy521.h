@@ -12,21 +12,11 @@
 
 class Gy_521{
 private:
+  static const int numData = 7;
   static const int I2C_AddrOfMPU=0x68;
   static const int indexForTemperature = 3;
-
-public:
-  static const int numData = 7;
-  static float temperature;
-
-  void Setup(){
-    Wire.begin();
-    Wire.beginTransmission(I2C_AddrOfMPU);
-    Wire.write(0x6B); 
-    Wire.write(0);    
-    Wire.endTransmission(true);
-  }
-
+  static int gyAccTemp[numData];
+  
   void ReadGY521(int *GyAccTempp){
     Wire.beginTransmission(I2C_AddrOfMPU);
     Wire.write(0x3B);
@@ -48,8 +38,25 @@ public:
     PitchRol[1] = (atan(y/sqrt((x*x) + (z*z)))) *  180.0 / PI;
     PitchRol[2] = (atan(z/sqrt((x*x) + (y*y)))) *  180.0 / PI;
   }
+
+public:
+  static float temperature;
+
+  void Setup(){
+    Wire.begin();
+    Wire.beginTransmission(I2C_AddrOfMPU);
+    Wire.write(0x6B); 
+    Wire.write(0);    
+    Wire.endTransmission(true);
+  }
+
+  void Read(float *PitchRoll){
+    ReadGY521(gyAccTemp);
+    ComputeAngle(gyAccTemp, PitchRoll);
+  }
 };
 
 float Gy_521::temperature = 0;
+int Gy_521::gyAccTemp[numData];
 
 #endif

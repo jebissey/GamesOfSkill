@@ -8,7 +8,7 @@
 #endif
 
 
-static unsigned long moveTheBallTime;
+static unsigned long timerForMoveTheBall;
 
 #include "MatriceLeds.h"
 static MatriceLeds matriceLeds;
@@ -23,7 +23,6 @@ class Pong
   const RowCol ballSize = RowCol(2, 2);
   const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
   static Gy_521 gy521;
-  int  GyAccTemp[gy521.numData];
   float PitchRoll[3];
   LedsSquare ledsSquare = LedsSquare(matriceLeds, ballSize);
   
@@ -34,9 +33,8 @@ class Pong
   }
   
   void MoveTheBall(){
-    if(time.IsOver(timeBetweenBallMove, &moveTheBallTime)){
-      gy521.ReadGY521(GyAccTemp);
-      gy521.ComputeAngle(GyAccTemp,PitchRoll);
+    if(time.IsOver(timeBetweenBallMove, &timerForMoveTheBall)){
+      gy521.Read(PitchRoll);
       int ballRowIncrement = round(map(PitchRoll[1], -90, +90, -10, +10) / 3.0);
       int ballColIncrement = round(map(PitchRoll[2], -90, +90, +10, -10) / 3.0);
       ledsSquare.MoveRelative(RowCol(ballRowIncrement, ballColIncrement));
