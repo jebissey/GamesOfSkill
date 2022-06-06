@@ -7,6 +7,7 @@
 #include "WProgram.h"
 #endif
 
+#include <Fsm.h>
 
 static unsigned long timerForMoveTheBall;
 
@@ -16,7 +17,9 @@ static MatriceLeds matriceLeds;
 #include "Gy521.h"
 #include "LedsSquare.h"
 
-class Pong
+
+
+class Pong : public Fsm
 {
   private:
   static const int timeBetweenBallMove = 100;
@@ -25,8 +28,66 @@ class Pong
   static Gy_521 gy521;
   float PitchRoll[3];
   LedsSquare ledsSquare = LedsSquare(matriceLeds, ballSize);
+
+  static void CreateWall(){
+    enum WallPosition{noWall, north, est, sud, west};
+    static int wallPosition = noWall;
+
+    while(1==1){
+      int newWallPosition = random(north, west);
+      if(wallPosition != newWallPosition){
+        wallPosition = newWallPosition;
+        break;
+      }
+    }
+    switch(wallPosition){
+      case north:
+        matriceLeds.SetRow(7, B11111111);
+        break;
+      case est:
+        matriceLeds.SetColumn(0, B11111111);
+        break;
+      case sud:
+        matriceLeds.SetRow(0, B11111111);
+        break;
+      case west:
+        matriceLeds.SetColumn(7, B11111111);
+        break;
+    }
+  }
+  
+  static void MoveBall(){
+    
+  }
+  
+  static void BlinkWall(){
+    
+  }
+  
+  static void EraseWall(){
+    
+  }
+  
+  static void EraseBall(){
+    
+  }
+  
+  static void WinPoint(){
+    
+  }
+    
+  static void StartTimerWallBeforeBlink(){
+    
+  }
+  
+  enum Event { ballMovedOutside, ballHitedWall, timeoutWallBeforeBlinkIsOver, timeoutWallBlinkking, boardShaked, wallExist};
+  Event GetEvent()
+  {
+    
+  }
   
   public:
+  
   void Setup(){
     gy521.Setup();
     ledsSquare.MoveAbsolute(ballCoordonateAtStartUp);
@@ -44,5 +105,24 @@ class Pong
   float GetTemperature(){
     return gy521.temperature;
   }
+  
+  void Run(){
+    run_machine();
+    trigger(GetEvent());
+  }
+
+  State createWall = State(CreateWall, NULL, StartTimerWallBeforeBlink);
+  State moveBall =   State(NULL, MoveBall, NULL);
+  State eraseBall =  State(EraseBall, NULL, NULL);
+  State blinkWall =  State(NULL, BlinkWall, NULL);
+  State eraseWall =  State(EraseWall, NULL, NULL);
+  State winPoint =   State(WinPoint, NULL, NULL);
+
+  Pong() : Fsm(&createWall){
+    this->add_transition(&createWall,  &moveBall, wallExist, NULL);
+    this->add_transition(&createWall,  &blinkWall, timeoutWallBeforeBlinkIsOver, NULL);
+  }
+  
 };
+
 #endif
