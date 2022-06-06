@@ -1,0 +1,30 @@
+@startuml
+state LedsPongGame {
+    [*] --> CreateWall
+    CreateWall : Create a wall on a random side
+    CreateWall --> MoveBall 
+    
+    MoveBall --> BlinkWall : imeOutBeforeWallBlinking\nis over
+    MoveBall : Move the ball according the tilt of the board
+    MoveBall --> WinPoint : Ball\nhited\nthe wall
+    MoveBall --> EraseBall : Ball moved\noutside the board
+    
+    WinPoint : A point is earned
+    WinPoint --> CreateWall : Go on with\ntimeOutBeforeWallBlinking\nreduced
+
+    
+    BlinkWall : Wall blinking
+    BlinkWall --> MoveBall 
+    BlinkWall --> EraseWall  : blinkWallTimeOut\nis over
+    
+    EraseWall : Wall erasing
+    EraseWall --> DisplayScore 
+        
+    EraseBall : Ball erasing
+    EraseBall --> DisplayScore 
+
+    DisplayScore : Display score
+    DisplayScore --> CreateWall : Board is shaked
+    DisplayScore --> [*]
+}
+@enduml

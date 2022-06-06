@@ -49,12 +49,12 @@ public:
     if(squareLight == On) SetSquare(false);
     
     squareCoordonate.row += squareIncrement.row;
-    if(squareCoordonate.row < 0) squareCoordonate.row = 0;
-    if(squareCoordonate.row > matriceSize - squareSize.row) squareCoordonate.row =  matriceSize - squareSize.row;
+    if(squareCoordonate.row < 0 - 1) squareCoordonate.row = 0 - 1;
+    if(squareCoordonate.row > matriceSize - squareSize.row + 1) squareCoordonate.row =  matriceSize - squareSize.row + 1;
     
     squareCoordonate.col += squareIncrement.col;
-    if(squareCoordonate.col < 0) squareCoordonate.col = 0;
-    if(squareCoordonate.col > matriceSize - squareSize.col) squareCoordonate.col =  matriceSize - squareSize.col;
+    if(squareCoordonate.col < 0 - 1) squareCoordonate.col = 0 - 1;
+    if(squareCoordonate.col > matriceSize - squareSize.col + 1) squareCoordonate.col =  matriceSize - squareSize.col + 1;
     
     if(squareLight == On) SetSquare(true);
   }

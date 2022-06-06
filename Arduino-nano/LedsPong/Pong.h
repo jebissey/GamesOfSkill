@@ -20,15 +20,17 @@ class Pong
 {
   private:
   static const int timeBetweenBallMove = 100;
+  const RowCol ballSize = RowCol(2, 2);
+  const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
   static Gy_521 gy521;
   int  GyAccTemp[gy521.numData];
   float PitchRoll[3];
-  LedsSquare ledsSquare = LedsSquare(matriceLeds, RowCol(2, 2));
+  LedsSquare ledsSquare = LedsSquare(matriceLeds, ballSize);
   
   public:
   void Setup(){
     gy521.Setup();
-    ledsSquare.MoveAbsolute(RowCol(3, 3));
+    ledsSquare.MoveAbsolute(ballCoordonateAtStartUp);
   }
   
   void MoveTheBall(){

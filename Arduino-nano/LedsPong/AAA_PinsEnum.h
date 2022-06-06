@@ -15,7 +15,7 @@ enum Free{
   free10 = 10,              // D10
   free11 = 11,              // D11
   free12 = 12,              // D12
-  //free13 = 13,              // D13       / SCK
+  free13 = 13,              // D13       / SCK
   free14 = 14,              // D14 / A0
   free15 = 15,              // D15 / A1
   free16 = 16,              // D16 / A2

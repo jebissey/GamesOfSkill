@@ -12,7 +12,7 @@
 
 class Gy_521{
 private:
-  static const int MPU=0x68;
+  static const int I2C_AddrOfMPU=0x68;
   static const int indexForTemperature = 3;
 
 public:
@@ -21,17 +21,17 @@ public:
 
   void Setup(){
     Wire.begin();
-    Wire.beginTransmission(MPU);
+    Wire.beginTransmission(I2C_AddrOfMPU);
     Wire.write(0x6B); 
     Wire.write(0);    
     Wire.endTransmission(true);
   }
 
   void ReadGY521(int *GyAccTempp){
-    Wire.beginTransmission(MPU);
+    Wire.beginTransmission(I2C_AddrOfMPU);
     Wire.write(0x3B);
     Wire.endTransmission(false);
-    Wire.requestFrom(MPU, numData * 2, true);
+    Wire.requestFrom(I2C_AddrOfMPU, numData * 2, true);
 
     for(int i=0; i<numData; i++){
       GyAccTempp[i] = Wire.read()<<8 | Wire.read();
