@@ -23,8 +23,7 @@ static const RowCol ballSize = RowCol(2, 2);
 static LedsSquare ledsSquare = LedsSquare(matriceLeds, ballSize);
 
 
-class Pong : public Fsm
-{
+class Pong : public Fsm {
 private:
   const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
   static Gy_521 gy521;
@@ -40,13 +39,10 @@ private:
     
   }
 
-
-    
+   
   static void StartTimerWallBeforeBlink(){
     time.Reset(&timerForWallStartBlink);
   }
-
-
 
   
 public: 
@@ -65,25 +61,27 @@ public:
   }
 
 
-  State createWall = State(TheWall::Create, NULL, StartTimerWallBeforeBlink);
-  State moveBall =   State(NULL, TheBall::Move, NULL);
-  State eraseBall =  State(TheBall::Erase, NULL, NULL);
-  State blinkWall =  State(NULL, TheWall::Blink, NULL);
-  State eraseWall =  State(TheWall::Erase, NULL, NULL);
-  State winPoint =   State(WinPoint, NULL, NULL);
+  State createWall =  State(TheWall::Create,  NULL, StartTimerWallBeforeBlink);
+  State displayWall = State(TheWall::Display, NULL, StartTimerWallBeforeBlink);
+  State displayBall = State(TheBall::Move,    NULL, StartTimerWallBeforeBlink);
+  State playOver =    State(TheBall::Move,    NULL, StartTimerWallBeforeBlink);
+  State gameOver =    State(TheBall::Move,    NULL, StartTimerWallBeforeBlink);
 
   Pong() : Fsm(&createWall){
-    this->add_transition(&createWall,  &moveBall, Events::wallExist, NULL);
-    this->add_transition(&createWall,  &blinkWall, Events::timeoutWallBeforeBlinkIsOver, NULL);
-
+    this->add_transition(&createWall,  &displayBall, Events::wallExist,        NULL);
+    this->add_transition(&createWall,  &displayWall, Events::wallExist,        NULL);
+    this->add_transition(&displayBall, &playOver,    Events::winnedPoint,      NULL);
+    this->add_transition(&displayWall, &playOver,    Events::ballMovedOutside, NULL);
+    this->add_transition(&playOver,    &createWall,  Events::winnedPoint,      NULL);
+    this->add_transition(&playOver,    &gameOver,    Events::gameOver,         NULL);
     
     Events::SetCheckEvents(Events::CheckEventsDuringGame);
-  }
-  
+  } 
 };
 
 
 float Pong::boardTilts[3];
 Pong::Events::Event (* Pong::Events::checkEvents)();
+int Pong::TheWall::wallPosition;
 
 #endif

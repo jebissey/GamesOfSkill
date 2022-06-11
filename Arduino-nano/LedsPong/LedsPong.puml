@@ -1,42 +1,40 @@
 @startuml
 
-[*] --> CreateWall
-CreateWall : Create a wall on a random side
-
-CreateWall --> Play 
 state Play {
 
     state DisplayBall {
         [*] --> MoveBall
         MoveBall : Move the ball\naccording the tilt\nof the board
-        MoveBall --> MoveBall : Ball is inside the board\nand didn't hit he wall
-        MoveBall --> WinPoint : Ball\nhited\nthe wall
-        MoveBall -->  EraseBall :  Ball moved\noutside the board
+        MoveBall --> MoveBall : ball Inside\nThe Board\nAnd Did Not\nHit the Wall
+        MoveBall --> WinAnimation : Ball\nHited\nThe wall
+        MoveBall --> EraseBall :  Ball Moved\nOutside The Board
+
+        WinAnimation : Added points to the game score
+        WinAnimation --> WinAnimation : winningAnimation
+        WinAnimation --> DisplayWall : winnedPoints
+        WinAnimation --> MoveBall : WallCreated
 
         EraseBall : Ball erasing
-        EraseBall --> GameOver
+        EraseBall --> [*]
     }
 
     state DisplayWall {
-        [*] --> FixWall
-        FixWall --> FixWall : blinkWallTimeOut\nis not over
-        FixWall --> BlinkWall : timeOutBeforeWallBlinking\nis over
+        [*] --> CreateWall
+        CreateWall : Create a wall on a random side
+        CreateWall --> FixWall : wallCreated
+
+        FixWall --> FixWall : timeout\nBefore\nWall Blinking\nIs Not Over
+        FixWall --> BlinkWall : timeout\nBefore\nWall Blinking\nIs Over
         
-        BlinkWall : Wall blinking
-        BlinkWall --> EraseWall : blinkWallTimeOut\nis over
+        BlinkWall --> BlinkWall : wallBlinking
+        BlinkWall --> EraseWall : timeout\nWall Blinking\nIs Over
 
-        EraseWall : Wall erasing
-        EraseWall --> GameOver
+        EraseWall --> EraseWall : wallErasing
+        EraseWall --> [*]
     }
-
-    WinPoint --> [*]
-    GameOver --> [*]
 }
 
-Play -down-> PlayOver
-
-PlayOver : Play is terminated
-PlayOver --> CreateWall : Winned point
-PlayOver --> [*] : Game over
+Play --> GameOver : gameOver
+GameOver : Display score
 
 @enduml

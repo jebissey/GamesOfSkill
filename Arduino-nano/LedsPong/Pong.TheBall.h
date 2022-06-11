@@ -1,6 +1,7 @@
-class TheBall{
+class TheBall : public Fsm{
 private:
   static const int timeBetweenBallMove = 100;
+
   
 public:
   static void Move(){
@@ -11,6 +12,15 @@ public:
       ledsSquare.MoveRelative(RowCol(ballRowIncrement, ballColIncrement));
     }
   }
+  
+  State moveBall =   State(NULL, TheBall::Move, NULL);
+  State eraseBall =  State(TheBall::Erase, NULL, NULL);
+
+  TheBall() : Fsm(&moveBall){
+    this->add_transition(&moveBall,  &eraseBall, Events::ballMovedOutsidetheBoard, NULL);
+  }
+  
+
  
   static void Erase(){
     ledsSquare.SetLight(Off);

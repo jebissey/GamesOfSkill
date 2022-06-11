@@ -1,6 +1,9 @@
 class Events{
 public:
-  enum Event { ballMovedOutside, ballHitedWall, timeoutWallBeforeBlinkIsOver, timeoutWallBlinkking, boardShaked, wallExist};
+  enum Event { ballHitedWall, timeoutWallBeforeBlinkingIsOver, timeoutWallBlinkkingIsOver, boardShaked, ballMovedOutsidetheBoard, 
+              tiemoutBeforeWallBlinkingIsOver, tiemoutWallBlinkingIsOver, WallErasing, 
+              wallErased,
+              wallExist, ballMovedOutside, winnedPoint, gameOver};
   typedef Event (*checkEventsFunction)();
   
   static checkEventsFunction checkEvents;
@@ -13,13 +16,8 @@ public:
   }
 
 
-
-  
   static Event CheckEventsDuringGame(){
     return ballMovedOutside;
   }
-
-
-
 
 };
