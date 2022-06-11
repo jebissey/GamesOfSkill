@@ -15,7 +15,7 @@ void setup() {
 
 
 void loop() { 
-  pong.MoveTheBall();
+  pong.Run();
 
   static unsigned long temperatureTime;
   if(time.IsOver(1000, &temperatureTime)){

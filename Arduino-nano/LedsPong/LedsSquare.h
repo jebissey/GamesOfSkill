@@ -10,7 +10,6 @@
 #include "MatriceLeds.h"
 #include "RowCol.h"
 
-
 enum SquareLight {On, Off}; 
 
 class LedsSquare{

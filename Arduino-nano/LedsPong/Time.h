@@ -9,8 +9,7 @@
 
 class Time
 {
-  public:
-  
+public:
   bool IsOver(int delayForInMilisecond, unsigned long *timerFor){
     if((millis() - *timerFor) <= delayForInMilisecond) return false;
     *timerFor = millis();
@@ -21,4 +20,5 @@ class Time
     *timerFor = millis();
   }
 };
+
 #endif

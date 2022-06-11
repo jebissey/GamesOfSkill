@@ -5,28 +5,34 @@ CreateWall : Create a wall on a random side
 
 CreateWall --> Play 
 state Play {
+
     state DisplayBall {
         [*] --> MoveBall
         MoveBall : Move the ball\naccording the tilt\nof the board
         MoveBall --> MoveBall : Ball is inside the board\nand didn't hit he wall
         MoveBall --> WinPoint : Ball\nhited\nthe wall
-
         MoveBall -->  EraseBall :  Ball moved\noutside the board
+
         EraseBall : Ball erasing
         EraseBall --> GameOver
     }
+
     state DisplayWall {
-        [*] --> BlinkWall : timeOutBeforeWallBlinking\nis over
+        [*] --> FixWall
+        FixWall --> FixWall : blinkWallTimeOut\nis not over
+        FixWall --> BlinkWall : timeOutBeforeWallBlinking\nis over
+        
         BlinkWall : Wall blinking
         BlinkWall --> EraseWall : blinkWallTimeOut\nis over
-        BlinkWall --> BlinkWall : blinkWallTimeOut\nis not over
 
         EraseWall : Wall erasing
         EraseWall --> GameOver
     }
+
     WinPoint --> [*]
     GameOver --> [*]
 }
+
 Play -down-> PlayOver
 
 PlayOver : Play is terminated

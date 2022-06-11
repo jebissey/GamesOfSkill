@@ -7,7 +7,6 @@
 #include "WProgram.h"
 #endif
 
-
 struct RowCol
 {
 private:
@@ -24,6 +23,5 @@ public:
     col = col_;
   }
 };
-
 
 #endif

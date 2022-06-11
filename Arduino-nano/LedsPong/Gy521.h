@@ -7,7 +7,6 @@
 #include "WProgram.h"
 #endif
 
-
 #include<Wire.h>
 
 class Gy_521{
