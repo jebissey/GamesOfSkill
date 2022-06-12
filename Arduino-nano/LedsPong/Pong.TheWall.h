@@ -43,17 +43,22 @@ public:
     Display_(B11111111);
   }
 
+  State createWall = State(Create,  NULL,  NULL);
+  State fixWall =    State(Display, NULL,  NULL);
+  State blinkWall =  State(NULL,    Blink, NULL);
+  State eraseWall =  State(NULL,    Erase, NULL);
+  State wait =       State(NULL,    NULL,  NULL);
   
-  State fixWall =   State(Display, NULL,  NULL);
-  State blinkWall = State(NULL,    Blink, NULL);
-  State eraseWall = State(NULL,    Erase, NULL);
-  State gameOver =  State(NULL,    NULL,  NULL);
-  
-  TheWall() : Fsm(&fixWall){
+  TheWall() : Fsm(&createWall){
     wallPosition = noWall;
     
-    this->add_transition(&fixWall,  &blinkWall, Events::tiemoutBeforeWallBlinkingIsOver, NULL);
-    this->add_transition(&blinkWall, &eraseWall, Events::tiemoutWallBlinkingIsOver, NULL);
-    this->add_transition(&eraseWall, &gameOver,  Events::wallErased, NULL);
+    this->add_transition(&createWall, &fixWall,    Events::wallCreated, NULL);
+    this->add_transition(&fixWall,    &blinkWall,  Events::tiemoutBeforeWallBlinkingIsOver, NULL);
+    this->add_transition(&fixWall,    &wait,       Events::ballHitedTheWall, NULL);
+    this->add_transition(&blinkWall,  &eraseWall,  Events::tiemoutWallBlinkingIsOver, NULL);
+    this->add_transition(&blinkWall,  &wait,       Events::ballHitedTheWall, NULL);
+    this->add_transition(&eraseWall,  &wait,       Events::wallErased, NULL);
+    this->add_transition(&eraseWall,  &wait,       Events::ballHitedTheWall, NULL);
+    this->add_transition(&wait,       &createWall, Events::winAnimationIsOver, NULL);
   }
 };

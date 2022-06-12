@@ -60,20 +60,16 @@ public:
     trigger(events.GetEvent());
   }
 
+  State wait =                   State(NULL, NULL, NULL);
+  State winAnimation =           State(TheWall::Display, NULL, StartTimerWallBeforeBlink);
+  State gameOverAnimation =      State(TheBall::Move,    NULL, StartTimerWallBeforeBlink);
+  State displayScore =           State(TheBall::Move,    NULL, StartTimerWallBeforeBlink);
 
-  State createWall =  State(TheWall::Create,  NULL, StartTimerWallBeforeBlink);
-  State displayWall = State(TheWall::Display, NULL, StartTimerWallBeforeBlink);
-  State displayBall = State(TheBall::Move,    NULL, StartTimerWallBeforeBlink);
-  State playOver =    State(TheBall::Move,    NULL, StartTimerWallBeforeBlink);
-  State gameOver =    State(TheBall::Move,    NULL, StartTimerWallBeforeBlink);
-
-  Pong() : Fsm(&createWall){
-    this->add_transition(&createWall,  &displayBall, Events::wallExist,        NULL);
-    this->add_transition(&createWall,  &displayWall, Events::wallExist,        NULL);
-    this->add_transition(&displayBall, &playOver,    Events::winnedPoint,      NULL);
-    this->add_transition(&displayWall, &playOver,    Events::ballMovedOutside, NULL);
-    this->add_transition(&playOver,    &createWall,  Events::winnedPoint,      NULL);
-    this->add_transition(&playOver,    &gameOver,    Events::gameOver,         NULL);
+  Pong() : Fsm(&wait){
+    this->add_transition(&wait,              &winAnimation,      Events::ballHitedTheWall,        NULL);
+    this->add_transition(&wait,              &gameOverAnimation, Events::ballErased,              NULL);
+    this->add_transition(&winAnimation,      &wait,              Events::winAnimationIsOver,      NULL);
+    this->add_transition(&gameOverAnimation, &displayScore,      Events::gameOverAnimationIsOver, NULL);
     
     Events::SetCheckEvents(Events::CheckEventsDuringGame);
   } 

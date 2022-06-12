@@ -1,40 +1,56 @@
 @startuml
 
-state Play {
 
-    state DisplayBall {
-        [*] --> MoveBall
-        MoveBall : Move the ball\naccording the tilt\nof the board
-        MoveBall --> MoveBall : ball Inside\nThe Board\nAnd Did Not\nHit the Wall
-        MoveBall --> WinAnimation : Ball\nHited\nThe wall
-        MoveBall --> EraseBall :  Ball Moved\nOutside The Board
 
-        WinAnimation : Added points to the game score
-        WinAnimation --> WinAnimation : winningAnimation
-        WinAnimation --> DisplayWall : winnedPoints
-        WinAnimation --> MoveBall : WallCreated
+state DisplayBall {
+    [*] --> MoveBall
 
-        EraseBall : Ball erasing
-        EraseBall --> [*]
-    }
+    MoveBall : Move the ball\naccording the tilt\nof the board
+    MoveBall --> MoveBall : ball Inside\nThe Board\nAnd Did Not\nHit the Wall
+    MoveBall --> EraseBall :  Ball Moved\nOutside The Board
+    MoveBall --> [*] : Ball\nHited\nThe wall
 
-    state DisplayWall {
-        [*] --> CreateWall
-        CreateWall : Create a wall on a random side
-        CreateWall --> FixWall : wallCreated
+    EraseBall : Ball erasing
+    EraseBall --> EraseBall : BallErasing
+    EraseBall --> [*] : BallErased
+}
+DisplayBall --> WinAnimation : Ball\nHited\nThe wall
+DisplayBall --> GameOverAnimation : BallErased
 
-        FixWall --> FixWall : timeout\nBefore\nWall Blinking\nIs Not Over
-        FixWall --> BlinkWall : timeout\nBefore\nWall Blinking\nIs Over
-        
-        BlinkWall --> BlinkWall : wallBlinking
-        BlinkWall --> EraseWall : timeout\nWall Blinking\nIs Over
+state DisplayWall {
+    [*] --> CreateWall
 
-        EraseWall --> EraseWall : wallErasing
-        EraseWall --> [*]
-    }
+    CreateWall : Create a wall on a random side
+    CreateWall --> FixWall : wallCreated
+    CreateWall --> DisplayBall : wallCreated
+
+    FixWall --> FixWall : timeout\nBefore\nWall Blinking\nIs Not Over
+    FixWall --> BlinkWall : timeout\nBefore\nWall Blinking\nIs Over
+    FixWall -->  [*] :  Ball\nHited\nThe wall
+    
+    BlinkWall --> BlinkWall : wallBlinking
+    BlinkWall --> EraseWall : timeout\nWall Blinking\nIs Over
+    BlinkWall -->  [*] :  Ball\nHited\nThe wall
+
+    EraseWall --> EraseWall : wallErasing
+    EraseWall --> [*] : WallErased
+    EraseWall -->  [*] :  Ball\nHited\nThe wall
 }
 
-Play --> GameOver : gameOver
-GameOver : Display score
+
+DisplayWall --> GameOverAnimation : WallErased
+DisplayWall --> WinAnimation : Ball\nHited\nThe wall
+
+WinAnimation : Added points to the game score
+WinAnimation --> WinAnimation : win\nAnimation\nIs\nNot\nOver
+WinAnimation --> DisplayWall : win\nAnimation\nIs\nOver
+
+GameOverAnimation --> GameOverAnimation : game\nOver\nAnimation\nIs\nNotOver
+GameOverAnimation --> DisplayScore : game\nOver\nAnimation\nIs\nOver
+DisplayScore : Display score
+DisplayScore --> [*]
+
+
+
 
 @enduml
