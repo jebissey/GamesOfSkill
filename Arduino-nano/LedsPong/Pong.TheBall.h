@@ -1,8 +1,11 @@
 class TheBall : public Fsm{
 private:
   static const int timeBetweenBallMove = 100;
+  
+  State moveBall =  State(NULL,  Move, NULL);
+  State eraseBall = State(Erase, NULL, NULL);
+  State wait =      State(NULL,  NULL, NULL);
 
-public:
   static void Move(){
     if(time.IsOver(timeBetweenBallMove, &timerForMoveTheBall)){
       gy521.Read(boardTilts);
@@ -12,14 +15,9 @@ public:
     }
   }
     
-  static void Erase(){
-    ledsSquare.SetLight(Off);
-  }
+  static void Erase(){ ledsSquare.SetLight(Off); }
   
-  State moveBall =  State(NULL, TheBall::Move, NULL);
-  State eraseBall = State(TheBall::Erase, NULL, NULL);
-  State wait =      State(NULL, NULL, NULL);
-
+public:
   TheBall() : Fsm(&moveBall){
     this->add_transition(&moveBall, &eraseBall, Events::ballMovedOutsidetheBoard, NULL);
     this->add_transition(&moveBall, &wait,      Events::ballHitedTheWall, NULL);

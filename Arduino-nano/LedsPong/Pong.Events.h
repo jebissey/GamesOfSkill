@@ -11,20 +11,20 @@ public:
     wallErased,
     winAnimationIsOver,
   };
-  typedef Event (*checkEventsFunction)();
   
+  typedef Event (*checkEventsFunction)();
   static checkEventsFunction checkEvents;
-  static void SetCheckEvents(checkEventsFunction checkEvents_){
-      checkEvents = checkEvents_;
-  }
+  
+  static void SetCheckEvents(checkEventsFunction checkEvents_){ checkEvents = checkEvents_; }
   
   Event GetEvent(){
-    return checkEvents();
+    Event newEvent = checkEvents();
+    Serial.println(newEvent);
+    return newEvent;
   }
-
 
   static Event CheckEventsDuringGame(){
+    if(TheWall::GetStatus() == TheWall::wallErased) return wallErased;
     return ballHitedTheWall;
   }
-
 };

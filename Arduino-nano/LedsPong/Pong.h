@@ -25,13 +25,22 @@ static LedsSquare ledsSquare = LedsSquare(matriceLeds, ballSize);
 
 class Pong : public Fsm {
 private:
+  State wait =              State(NULL, NULL, NULL);
+  State winAnimation =      State(NULL, WinAnimation, NULL);
+  State gameOverAnimation = State(NULL, GameOverAnimation, NULL);
+  State displayScore =      State(NULL, DisplayScore, NULL);
+  
   const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
   static Gy_521 gy521;
   static float boardTilts[3];
 
 
 #include "Pong.TheWall.h"
+  TheWall theWall;
+  
 #include "Pong.TheBall.h"
+  TheBall theBall;
+
 #include "Pong.Events.h"
   Events events;
   
@@ -44,6 +53,17 @@ private:
     time.Reset(&timerForWallStartBlink);
   }
 
+  static void WinAnimation(){
+    
+  }
+
+  static void GameOverAnimation(){
+    
+  }
+  
+  static void DisplayScore(){
+    
+  }
   
 public: 
   void Setup(){
@@ -51,19 +71,20 @@ public:
     ledsSquare.MoveAbsolute(ballCoordonateAtStartUp);
   }
 
-  float GetTemperature(){
-    return gy521.temperature;
-  }
+  float GetTemperature(){ return gy521.temperature; }
   
   void Run(){
+    int event = events.GetEvent();
+    
+    theWall.run_machine();
+    theWall.trigger(event);
+        
+    theBall.run_machine();
+    theBall.trigger(event);
+    
     run_machine();
-    trigger(events.GetEvent());
+    trigger(event);
   }
-
-  State wait =                   State(NULL, NULL, NULL);
-  State winAnimation =           State(TheWall::Display, NULL, StartTimerWallBeforeBlink);
-  State gameOverAnimation =      State(TheBall::Move,    NULL, StartTimerWallBeforeBlink);
-  State displayScore =           State(TheBall::Move,    NULL, StartTimerWallBeforeBlink);
 
   Pong() : Fsm(&wait){
     this->add_transition(&wait,              &winAnimation,      Events::ballHitedTheWall,        NULL);
@@ -79,5 +100,8 @@ public:
 float Pong::boardTilts[3];
 Pong::Events::Event (* Pong::Events::checkEvents)();
 int Pong::TheWall::wallPosition;
+int Pong::TheWall::wallStatus;
+unsigned long Pong::TheWall::beforeWallBlinkingTimer;
+unsigned long Pong::TheWall::wallBlinkingTimer;
 
 #endif

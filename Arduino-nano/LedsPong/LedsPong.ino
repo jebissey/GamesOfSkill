@@ -22,5 +22,4 @@ void loop() {
     Serial.print("temperature=");
     Serial.println(pong.GetTemperature());
   }
-  
 }
