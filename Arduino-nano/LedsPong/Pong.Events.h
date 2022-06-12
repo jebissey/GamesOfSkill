@@ -11,20 +11,31 @@ public:
     wallErased,
     winAnimationIsOver,
   };
-  
-  typedef Event (*checkEventsFunction)();
-  static checkEventsFunction checkEvents;
-  
-  static void SetCheckEvents(checkEventsFunction checkEvents_){ checkEvents = checkEvents_; }
-  
-  Event GetEvent(){
-    Event newEvent = checkEvents();
-    Serial.println(newEvent);
-    return newEvent;
+    
+  Event GetBallEvent(){
+    Serial.println("GetBallEvent");
+
+    int theWallStatus = TheWall::GetStatus();
+    if( theWallStatus == TheWall::wallErased) return wallErased;
+    if( theWallStatus == TheWall::wallCreated) return wallCreated;
+    return ballHitedTheWall;
   }
 
-  static Event CheckEventsDuringGame(){
-    if(TheWall::GetStatus() == TheWall::wallErased) return wallErased;
+  Event GetWallEvent(){
+    Serial.println("GeGetWallEvent");
+
+    int theWallStatus = TheWall::GetStatus();
+    if( theWallStatus == TheWall::wallErased) return wallErased;
+    if( theWallStatus == TheWall::wallCreated) return wallCreated;
+    return ballHitedTheWall;
+  }
+
+  Event GetGameEvent(){
+    Serial.println("GetGameEvent");
+
+    int theWallStatus = TheWall::GetStatus();
+    if( theWallStatus == TheWall::wallErased) return wallErased;
+    if( theWallStatus == TheWall::wallCreated) return wallCreated;
     return ballHitedTheWall;
   }
 };

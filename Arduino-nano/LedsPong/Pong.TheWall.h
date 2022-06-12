@@ -18,6 +18,8 @@ private:
       case sud:   matriceLeds.SetRow(0, mask); break;
       case west:  matriceLeds.SetColumn(7, mask); break;
     }
+    Serial.print("Display the wall: ");
+    Serial.println(mask);
   }
 
 
@@ -57,11 +59,16 @@ private:
         break;
       }
     }
+    Serial.print("Create the wall: ");
+    Serial.println(wallPosition);
   }
   
   static void Display(){ Display_(B11111111); }
   static void Erase(){ Display_(0); }
-  static void SetWallStatusToWallCreated(){ wallStatus = wallCreated; }
+  static void SetWallStatusToWallCreated(){ wallStatus = wallCreated; 
+    Serial.print("wallStaus: ");
+    Serial.println(wallStatus);
+  }
   
 public:
   enum WallStatus{wallDoesNotExist, wallCreated, wallBlinking, wallErasing, wallErased};

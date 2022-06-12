@@ -74,16 +74,14 @@ public:
   float GetTemperature(){ return gy521.temperature; }
   
   void Run(){
-    int event = events.GetEvent();
-    
     theWall.run_machine();
-    theWall.trigger(event);
+    theWall.trigger(events.GetWallEvent());
         
     theBall.run_machine();
-    theBall.trigger(event);
+    theBall.trigger(events.GetBallEvent());
     
     run_machine();
-    trigger(event);
+    trigger(events.GetGameEvent());
   }
 
   Pong() : Fsm(&wait){
@@ -91,14 +89,11 @@ public:
     this->add_transition(&wait,              &gameOverAnimation, Events::ballErased,              NULL);
     this->add_transition(&winAnimation,      &wait,              Events::winAnimationIsOver,      NULL);
     this->add_transition(&gameOverAnimation, &displayScore,      Events::gameOverAnimationIsOver, NULL);
-    
-    Events::SetCheckEvents(Events::CheckEventsDuringGame);
   } 
 };
 
 
 float Pong::boardTilts[3];
-Pong::Events::Event (* Pong::Events::checkEvents)();
 int Pong::TheWall::wallPosition;
 int Pong::TheWall::wallStatus;
 unsigned long Pong::TheWall::beforeWallBlinkingTimer;
