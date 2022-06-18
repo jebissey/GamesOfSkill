@@ -26,15 +26,17 @@ state DisplayWall {
 
     FixWall --> FixWall : timeout\nBefore\nWall Blinking\nIs Not Over
     FixWall --> BlinkWall : timeout\nBefore\nWall Blinking\nIs Over
-    FixWall -->  [*] :  Ball\nHited\nThe wall
+    FixWall -->  Wait :  Ball\nHited\nThe wall
     
     BlinkWall --> BlinkWall : wallBlinking
     BlinkWall --> EraseWall : timeout\nWall Blinking\nIs Over
-    BlinkWall -->  [*] :  Ball\nHited\nThe wall
+    BlinkWall -->  Wait :  Ball\nHited\nThe wall
 
     EraseWall --> EraseWall : wallErasing
-    EraseWall --> [*] : WallErased
-    EraseWall -->  [*] :  Ball\nHited\nThe wall
+    EraseWall --> Wait : WallErased
+    EraseWall -->  Wait :  Ball\nHited\nThe wall
+
+    Wait --> CreateWall : win\nAnimation\nIs\nOver
 }
 
 

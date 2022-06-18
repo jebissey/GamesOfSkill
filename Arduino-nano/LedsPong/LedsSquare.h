@@ -14,7 +14,6 @@ enum SquareLight {On, Off};
 
 class LedsSquare{
 private:
-  const int matriceSize = 8;
   MatriceLeds matriceLeds;
   RowCol squareSize;
   RowCol squareCoordonate;
@@ -29,6 +28,7 @@ private:
 }
   
 public:
+  const int matriceSize = 8;
   LedsSquare(MatriceLeds matriceLeds_, RowCol squareSize_){
     matriceLeds = matriceLeds_; 
     squareSize = squareSize_;

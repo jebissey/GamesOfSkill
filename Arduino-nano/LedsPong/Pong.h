@@ -49,9 +49,7 @@ private:
   }
 
    
-  static void StartTimerWallBeforeBlink(){
-    time.Reset(&timerForWallStartBlink);
-  }
+  static void StartTimerWallBeforeBlink(){ time.Reset(&timerForWallStartBlink); }
 
   static void WinAnimation(){
     
@@ -77,11 +75,11 @@ public:
     theWall.run_machine();
     theWall.trigger(events.GetWallEvent());
         
-    theBall.run_machine();
+    /*theBall.run_machine();
     theBall.trigger(events.GetBallEvent());
     
     run_machine();
-    trigger(events.GetGameEvent());
+    trigger(events.GetGameEvent());*/
   }
 
   Pong() : Fsm(&wait){
@@ -96,6 +94,7 @@ public:
 float Pong::boardTilts[3];
 int Pong::TheWall::wallPosition;
 int Pong::TheWall::wallStatus;
+int Pong::TheBall::ballStatus;
 unsigned long Pong::TheWall::beforeWallBlinkingTimer;
 unsigned long Pong::TheWall::wallBlinkingTimer;
 

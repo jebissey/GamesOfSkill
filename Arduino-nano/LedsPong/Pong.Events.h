@@ -1,41 +1,43 @@
 class Events{
 public:
   enum Event{
+    nothing,
+    
     ballErased,
     ballHitedTheWall, 
     ballMovedOutsidetheBoard, 
-    gameOverAnimationIsOver,
-    tiemoutBeforeWallBlinkingIsOver, 
-    tiemoutWallBlinkingIsOver, 
+    
+    wallDoesNotExist,
     wallCreated,
+    timeoutBeforeWallBlinkingIsOver, 
+    wallBlinking,
+    timeoutWallBlinkingIsOver, 
+    wallErasing,
     wallErased,
+    
     winAnimationIsOver,
+    gameOverAnimationIsOver,
   };
     
-  Event GetBallEvent(){
+  static Event GetBallEvent(){
     Serial.println("GetBallEvent");
 
-    int theWallStatus = TheWall::GetStatus();
-    if( theWallStatus == TheWall::wallErased) return wallErased;
-    if( theWallStatus == TheWall::wallCreated) return wallCreated;
-    return ballHitedTheWall;
+    if(TheBall::IsBallMovedOutsideTheBoard()) return ballMovedOutsidetheBoard;
+    if(TheBall::IsBallHitedTheWall())         return ballHitedTheWall;
+    if(TheBall::IsBallErased())               return ballErased;
+    return nothing;
   }
 
-  Event GetWallEvent(){
-    Serial.println("GeGetWallEvent");
-
-    int theWallStatus = TheWall::GetStatus();
-    if( theWallStatus == TheWall::wallErased) return wallErased;
-    if( theWallStatus == TheWall::wallCreated) return wallCreated;
-    return ballHitedTheWall;
+  static Event GetWallEvent(){
+    Serial.print(".");
+    return TheWall::GetStatus();
   }
 
   Event GetGameEvent(){
     Serial.println("GetGameEvent");
 
-    int theWallStatus = TheWall::GetStatus();
-    if( theWallStatus == TheWall::wallErased) return wallErased;
-    if( theWallStatus == TheWall::wallCreated) return wallCreated;
-    return ballHitedTheWall;
+
+    
+    return nothing;
   }
 };
