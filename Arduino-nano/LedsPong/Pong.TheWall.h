@@ -71,9 +71,9 @@ private:
         case 2 : mask = B00111100; break;
         case 3 : mask = B00011000; break;
         case 4 : mask = B00000000; break;
+        default : wallEvent = Events::wallErased; break;
       }
       Display_(mask);
-      if(step > 4) wallEvent = Events::wallErased;
     }
   }
 

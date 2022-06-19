@@ -74,8 +74,8 @@ public:
   float GetTemperature(){ return gy521.temperature; }
   
   void Run(){
-    /*theWall.run_machine();
-    theWall.trigger(events.GetWallEvent());*/
+    theWall.run_machine();
+    theWall.trigger(events.GetWallEvent());
         
     theBall.run_machine();
     theBall.trigger(events.GetBallEvent());

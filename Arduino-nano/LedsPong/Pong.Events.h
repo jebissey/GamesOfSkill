@@ -26,9 +26,9 @@ public:
       ballEvent = nothing; 
       return wallCreated;
     }
-    if(TheBall::IsBallMovedOutsideTheBoard()) return ballMovedOutsidetheBoard;
-    if(TheBall::IsBallHitedTheWall())         return ballHitedTheWall;
     if(TheBall::IsBallErased())               return ballErased;
+    if(TheBall::IsBallHitedTheWall())         return ballHitedTheWall;
+    if(TheBall::IsBallMovedOutsideTheBoard()) return ballMovedOutsidetheBoard;
     return nothing;
   }
 

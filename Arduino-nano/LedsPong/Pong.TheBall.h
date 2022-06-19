@@ -3,9 +3,9 @@ private:
   static const int timeBetweenBallMove = 100;
   static int ballStatus;
   
-  State moveBall =  State(Display,   Move,    NULL);
-  State eraseBall = State(NULL,      Erasing, NULL);
-  State wait =      State(WaitEntry, NULL,    WaitExit);
+  State moveBall =  State(Display,   Move,      NULL);
+  State eraseBall = State(NULL,      Erasing,   NULL);
+  State wait =      State(WaitEntry, WaitState, WaitExit);
 
 
   enum BallExit{inside, north, est, south, west};
@@ -29,6 +29,7 @@ private:
 
   
   static void WaitEntry(){ Serial.println("WaitEntry(ball)"); }
+  static void WaitState(){ Serial.print("#"); }
   static void WaitExit(){ Serial.println("WaitExit(ball)"); }
 
   static void Move(){
@@ -59,7 +60,7 @@ private:
         case 7 : mask = B01000010; break;
         case 8 : mask = B10000001; break;
         case 9 : mask = B00000000; break;
-        default : Events::wallErased;
+        default : ledsSquare.SetLight(Off);
       }
       Display(mask);
     }
@@ -78,7 +79,6 @@ private:
   }
   
 public:
-
   TheBall() : Fsm(&moveBall/*wait*/){
     this->add_transition(&wait,     &moveBall,  Events::wallCreated,              NULL);
     this->add_transition(&moveBall, &eraseBall, Events::ballMovedOutsidetheBoard, NULL);
