@@ -25,7 +25,7 @@ static LedsSquare ledsSquare = LedsSquare(matriceLeds, ballSize);
 
 class Pong : public Fsm {
 private:
-  State wait =              State(NULL, NULL, NULL);
+  State wait =              State(NULL, WaitAnimation, NULL);
   State winAnimation =      State(NULL, WinAnimation, NULL);
   State gameOverAnimation = State(NULL, GameOverAnimation, NULL);
   State displayScore =      State(NULL, DisplayScore, NULL);
@@ -48,20 +48,26 @@ private:
     
   }
 
-   
-  static void StartTimerWallBeforeBlink(){ time.Reset(&timerForWallStartBlink); }
+  
+  static void WaitAnimation(){
+    static const int eraseTime = 2000;
+    static unsigned long eraseTimer;
+    if(time.IsOver(eraseTime, &eraseTimer)) TheWall::TestWallCreation();
+    else TheWall::TestWallErasing();
+  }
+
 
   static void WinAnimation(){
     Serial.println("WinAnimation");
   }
 
   static void GameOverAnimation(){
-    Serial.println("WinAnimation");
+    Serial.println("GameOverAnimation");
     
   }
   
   static void DisplayScore(){
-    Serial.println("WinAnimation");
+    Serial.println("DisplayScoreAnimation");
     
   }
   
@@ -74,15 +80,14 @@ public:
   float GetTemperature(){ return gy521.temperature; }
   
   void Run(){
-    theWall.run_machine();
+    /*theWall.run_machine();
     theWall.trigger(events.GetWallEvent());
         
     theBall.run_machine();
-    theBall.trigger(events.GetBallEvent());
+    theBall.trigger(events.GetBallEvent());*/
 
-    /*
     run_machine();
-    trigger(events.GetGameEvent());*/
+    trigger(events.GetGameEvent());
   }
 
   Pong() : Fsm(&wait){

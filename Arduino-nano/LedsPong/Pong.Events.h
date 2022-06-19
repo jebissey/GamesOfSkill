@@ -39,7 +39,6 @@ public:
   }
 
   StateEvent GetGameEvent(){
-    Serial.println("GetGameEvent");
 
 
     

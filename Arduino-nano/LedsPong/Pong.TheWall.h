@@ -30,8 +30,9 @@ private:
 
 
   static void Create(){
+    Display_(0);
     while(1==1){
-      int newWallPosition = random(north, west);
+      int newWallPosition = random(north, west + 1);
       if(wallPosition != newWallPosition){
         wallPosition = newWallPosition;
         break;
@@ -71,7 +72,10 @@ private:
         case 2 : mask = B00111100; break;
         case 3 : mask = B00011000; break;
         case 4 : mask = B00000000; break;
-        default : wallEvent = Events::wallErased; break;
+        default : 
+          wallEvent = Events::wallErased; 
+          step = 0; 
+          break;
       }
       Display_(mask);
     }
@@ -95,4 +99,12 @@ public:
   }
 
   static int GetEvent(){ return wallEvent; }
+
+  static void TestWallCreation(){
+    Create();
+    Display();
+  }
+  static void TestWallErasing(){
+    WallErasing();
+  }
 };
