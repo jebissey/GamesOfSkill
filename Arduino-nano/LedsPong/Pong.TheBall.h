@@ -11,10 +11,10 @@ private:
   enum BallExit{inside, north, est, south, west};
   static GetBalStatus_(){
     RowCol ballCoordonate = ledsSquare.GetCoordonate();
-    if(ballCoordonate.row == 0) return west;
-    if(ballCoordonate.col == 0) return south;
-    if(ballCoordonate.row + ballSize.row >= ledsSquare.matriceSize) return est;
-    if(ballCoordonate.col + ballSize.col >= ledsSquare.matriceSize) return north;
+    if(ballCoordonate.row < 0) return west;
+    if(ballCoordonate.col < 0) return south;
+    if(ballCoordonate.row + ballSize.row - 1 >= ledsSquare.matriceSize) return est;
+    if(ballCoordonate.col + ballSize.col - 1 >= ledsSquare.matriceSize) return north;
     return inside;
   }
 
@@ -45,7 +45,7 @@ private:
   static void Erasing(){
     static int step = 0;
     static int mask;
-    static const int eraseTime = 250;
+    static const int eraseTime = 100;
     static unsigned long eraseTimer;
     if(time.IsOver(eraseTime, &eraseTimer)){
       switch(step++){

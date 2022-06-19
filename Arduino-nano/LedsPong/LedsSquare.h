@@ -61,7 +61,7 @@ public:
     
     squareCoordonate.row += squareIncrement.row;
     if(squareCoordonate.row < -squareSize.row + 1) squareCoordonate.row = -squareSize.row + 1;
-    if(squareCoordonate.row > matriceSize - squareSize.row + 2) squareCoordonate.row = matriceSize - squareSize.row + 2;
+    if(squareCoordonate.row > matriceSize - squareSize.row + 1) squareCoordonate.row = matriceSize - squareSize.row + 1;
     
     squareCoordonate.col += squareIncrement.col;
     if(squareCoordonate.col < -squareSize.col + 1) squareCoordonate.col = -squareSize.col + 1;
