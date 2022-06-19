@@ -52,14 +52,16 @@ private:
   static void StartTimerWallBeforeBlink(){ time.Reset(&timerForWallStartBlink); }
 
   static void WinAnimation(){
-    
+    Serial.println("WinAnimation");
   }
 
   static void GameOverAnimation(){
+    Serial.println("WinAnimation");
     
   }
   
   static void DisplayScore(){
+    Serial.println("WinAnimation");
     
   }
   
@@ -72,12 +74,13 @@ public:
   float GetTemperature(){ return gy521.temperature; }
   
   void Run(){
-    theWall.run_machine();
-    theWall.trigger(events.GetWallEvent());
+    /*theWall.run_machine();
+    theWall.trigger(events.GetWallEvent());*/
         
-    /*theBall.run_machine();
+    theBall.run_machine();
     theBall.trigger(events.GetBallEvent());
-    
+
+    /*
     run_machine();
     trigger(events.GetGameEvent());*/
   }
@@ -97,5 +100,6 @@ int Pong::TheWall::wallEvent;
 int Pong::TheBall::ballStatus;
 unsigned long Pong::TheWall::beforeWallBlinkingTimer;
 unsigned long Pong::TheWall::wallBlinkingTimer;
+int Pong::Events::ballEvent;
 
 #endif

@@ -16,7 +16,7 @@ private:
 
 public:
   static const int matriceSize = 8;
-  MatriceLeds() : LedControl(leds_DataIn,leds_CLK,leds_CS){
+  MatriceLeds() : LedControl(leds_DataIn, leds_CLK, leds_CS){
     this->shutdown(0, false);
     this->setIntensity(0, 1);
     this->clearDisplay(0);

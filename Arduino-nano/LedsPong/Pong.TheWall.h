@@ -9,7 +9,7 @@ private:
   State blinkWall =  State(InitWallBlinkingTimer,       FixThenBlink, NULL);
   State eraseWall =  State(NULL,                        WallErasing,  NULL);
   State wait =       State(WaitEntry,                   NULL,         WaitExit);
-  
+
   static void Display_(int mask){
     switch(wallPosition){
       case north: matriceLeds.SetRow(7, mask); break;

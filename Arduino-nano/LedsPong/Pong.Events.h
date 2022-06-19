@@ -1,5 +1,9 @@
 class Events{
 public:
+  Events(){
+    ballEvent = nothing;
+  }
+  
   enum StateEvent{
     nothing,
     
@@ -15,10 +19,13 @@ public:
     winAnimationIsOver,
     gameOverAnimationIsOver,
   };
-    
-  static StateEvent GetBallEvent(){
-    Serial.println("GetBallEvent");
 
+  static int ballEvent;  
+  static StateEvent GetBallEvent(){
+    if(ballEvent == wallCreated){
+      ballEvent = nothing; 
+      return wallCreated;
+    }
     if(TheBall::IsBallMovedOutsideTheBoard()) return ballMovedOutsidetheBoard;
     if(TheBall::IsBallHitedTheWall())         return ballHitedTheWall;
     if(TheBall::IsBallErased())               return ballErased;
@@ -26,7 +33,8 @@ public:
   }
 
   static StateEvent GetWallEvent(){
-    Serial.print(".");
+    int wallEvent = TheWall::GetEvent();
+    if(wallEvent == wallCreated) ballEvent = wallCreated;
     return TheWall::GetEvent();
   }
 

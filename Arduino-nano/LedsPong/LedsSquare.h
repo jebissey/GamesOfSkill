@@ -20,12 +20,22 @@ private:
   SquareLight squareLight;
   
   void SetSquare(bool stateLed){
-  for(int row = squareCoordonate.row; row < squareCoordonate.row + squareSize.row; row++){
-    for(int col = squareCoordonate.col; col < squareCoordonate.col + squareSize.col; col++){
-      if(row >= 0 && row < matriceSize && col >= 0 && col < matriceSize) matriceLeds.SetLed(row, col, stateLed);
+    Serial.print(", stateLed=");
+    Serial.print(stateLed);
+    for(int row = squareCoordonate.row; row < squareCoordonate.row + squareSize.row; row++){
+      for(int col = squareCoordonate.col; col < squareCoordonate.col + squareSize.col; col++){
+        if(row >= 0 && row < matriceSize && col >= 0 && col < matriceSize){ 
+          matriceLeds.SetLed(row, col, stateLed);
+          Serial.print(", row=");
+          Serial.print(row);
+          Serial.print(", col=");
+          Serial.print(col);
+          Serial.print(". ");
+        }
+      }
     }
+    Serial.println("___");
   }
-}
   
 public:
   const int matriceSize = 8;
@@ -45,15 +55,17 @@ public:
   }
 
   void MoveRelative(RowCol squareIncrement){
+    if(squareIncrement.row == 0 && squareIncrement.col == 0) return;
+     
     if(squareLight == On) SetSquare(false);
     
     squareCoordonate.row += squareIncrement.row;
-    if(squareCoordonate.row < 0 - 1) squareCoordonate.row = 0 - 1;
-    if(squareCoordonate.row > matriceSize - squareSize.row + 1) squareCoordonate.row =  matriceSize - squareSize.row + 1;
+    if(squareCoordonate.row < -squareSize.row + 1) squareCoordonate.row = -squareSize.row + 1;
+    if(squareCoordonate.row > matriceSize - squareSize.row + 2) squareCoordonate.row = matriceSize - squareSize.row + 2;
     
     squareCoordonate.col += squareIncrement.col;
-    if(squareCoordonate.col < 0 - 1) squareCoordonate.col = 0 - 1;
-    if(squareCoordonate.col > matriceSize - squareSize.col + 1) squareCoordonate.col =  matriceSize - squareSize.col + 1;
+    if(squareCoordonate.col < -squareSize.col + 1) squareCoordonate.col = -squareSize.col + 1;
+    if(squareCoordonate.col > matriceSize - squareSize.col + 1) squareCoordonate.col = matriceSize - squareSize.col + 1;
     
     if(squareLight == On) SetSquare(true);
   }
