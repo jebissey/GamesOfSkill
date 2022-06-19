@@ -1,25 +1,22 @@
 class Events{
 public:
-  enum Event{
+  enum StateEvent{
     nothing,
     
     ballErased,
     ballHitedTheWall, 
     ballMovedOutsidetheBoard, 
-    
-    wallDoesNotExist,
+
     wallCreated,
     timeoutBeforeWallBlinkingIsOver, 
-    wallBlinking,
-    timeoutWallBlinkingIsOver, 
-    wallErasing,
+    timeoutWallBlinkingIsOver,
     wallErased,
-    
+  
     winAnimationIsOver,
     gameOverAnimationIsOver,
   };
     
-  static Event GetBallEvent(){
+  static StateEvent GetBallEvent(){
     Serial.println("GetBallEvent");
 
     if(TheBall::IsBallMovedOutsideTheBoard()) return ballMovedOutsidetheBoard;
@@ -28,12 +25,12 @@ public:
     return nothing;
   }
 
-  static Event GetWallEvent(){
+  static StateEvent GetWallEvent(){
     Serial.print(".");
-    return TheWall::GetStatus();
+    return TheWall::GetEvent();
   }
 
-  Event GetGameEvent(){
+  StateEvent GetGameEvent(){
     Serial.println("GetGameEvent");
 
 

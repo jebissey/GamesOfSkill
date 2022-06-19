@@ -1,15 +1,15 @@
 class TheWall : public Fsm{
 private:
   static const int beforeWallBlinkingTime = 5000;
-  static const int wallBlinkingTime = 2000;
+  static const int wallBlinkingTime = 3000;
+  static const int blinkTime = 200;
   
-  State createWall = State(Create,  NULL,         InitBeforeWallBlinkingTimer);
-  State fixWall =    State(Display, FixThenBlink, NULL);
-  State blinkWall =  State(NULL,    FixThenBlink, NULL);
-  State eraseWall =  State(NULL,    WallErasing,  NULL);
-  State wait =       State(NULL,    NULL,       NULL);
+  State createWall = State(Create,                      Display,      NULL);
+  State fixWall =    State(InitBeforeWallBlinkingTimer, FixThenBlink, NULL);
+  State blinkWall =  State(InitWallBlinkingTimer,       FixThenBlink, NULL);
+  State eraseWall =  State(NULL,                        WallErasing,  NULL);
+  State wait =       State(WaitEntry,                   NULL,         WaitExit);
   
-
   static void Display_(int mask){
     switch(wallPosition){
       case north: matriceLeds.SetRow(7, mask); break;
@@ -17,27 +17,40 @@ private:
       case south: matriceLeds.SetRow(0, mask); break;
       case west:  matriceLeds.SetColumn(7, mask); break;
     }
-    Serial.print("Display the wall: ");
-    Serial.println(mask);
   }
-
 
   static unsigned long beforeWallBlinkingTimer;
   static void InitBeforeWallBlinkingTimer(){ time.Reset(&beforeWallBlinkingTimer); }
   
   static unsigned long wallBlinkingTimer;
-  static void InitWallBlinkingTimer(){ time.Reset(&wallBlinkingTimer); Serial.println("InitWallBlinkingTimer"); }
+  static void InitWallBlinkingTimer(){ time.Reset(&wallBlinkingTimer); }
+
+  static void WaitEntry(){ Serial.println("WaitEntry"); }
+  static void WaitExit(){ Serial.println("WaitExit"); }
+
+
+  static void Create(){
+    while(1==1){
+      int newWallPosition = random(north, west);
+      if(wallPosition != newWallPosition){
+        wallPosition = newWallPosition;
+        break;
+      }
+    }
+    wallEvent = Events::wallCreated;
+  }
   
-  static void IsWallBlinkingTimerOver(){ if(time.IsOver(wallBlinkingTime, &wallBlinkingTimer)) wallStatus = Events::wallErasing; }
-  
+  static void Display(){ Display_(B11111111); }
+    
   static void FixThenBlink(){
-    Serial.print("-");
     static int mask = 0;
-    static const int blinkTime = 200;
     static unsigned long blinkTimer;
-    if(time.IsOver(beforeWallBlinkingTime, &beforeWallBlinkingTimer)) wallStatus = Events::wallBlinking;
-    if(wallStatus == Events::wallBlinking){
-      //if(time.IsOver(wallBlinkingTime, &wallBlinkingTimer)) wallStatus = Events::timeoutWallBlinkingIsOver;
+    if(wallEvent == Events::wallCreated && time.IsOver(beforeWallBlinkingTime, &beforeWallBlinkingTimer)){
+      wallEvent = Events::timeoutBeforeWallBlinkingIsOver;
+      return; // mandatory for fsm
+    }
+    if(wallEvent == Events::timeoutBeforeWallBlinkingIsOver){
+      if(time.IsOver(wallBlinkingTime, &wallBlinkingTimer)) wallEvent = Events::timeoutWallBlinkingIsOver;
       if(time.IsOver(blinkTime, &blinkTimer)){
         Display_(mask);
         if(mask == 0) mask = B11111111;
@@ -47,7 +60,6 @@ private:
   }
   
   static void WallErasing(){
-    Serial.print("=");
     static int step = 0;
     static int mask;
     static const int eraseTime = 250;
@@ -61,31 +73,17 @@ private:
         case 4 : mask = B00000000; break;
       }
       Display_(mask);
-      if(step > 4) wallStatus = Events::wallBlinking;
+      if(step > 4) wallEvent = Events::wallErased;
     }
   }
-  
-  static void Create(){
-    while(1==1){
-      int newWallPosition = random(north, west);
-      if(wallPosition != newWallPosition){
-        wallPosition = newWallPosition;
-        break;
-      }
-    }
-    wallStatus = Events::wallCreated;
-  }
-  
-  static void Display(){ Display_(B11111111); }
-  
+
 public:
-  static int wallStatus; 
+  static int wallEvent; 
   enum WallPosition{noWall, north, est, south, west};
   static int wallPosition;
   
   TheWall() : Fsm(&createWall){
     wallPosition = noWall;
-    wallStatus = Events::wallDoesNotExist;
     
     this->add_transition(&createWall, &fixWall,    Events::wallCreated, NULL);
     this->add_transition(&fixWall,    &blinkWall,  Events::timeoutBeforeWallBlinkingIsOver, NULL);
@@ -96,5 +94,5 @@ public:
     this->add_transition(&wait,       &createWall, Events::winAnimationIsOver, NULL);
   }
 
-  static int GetStatus(){ return wallStatus; }
+  static int GetEvent(){ return wallEvent; }
 };

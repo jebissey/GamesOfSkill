@@ -93,7 +93,7 @@ public:
 
 float Pong::boardTilts[3];
 int Pong::TheWall::wallPosition;
-int Pong::TheWall::wallStatus;
+int Pong::TheWall::wallEvent;
 int Pong::TheBall::ballStatus;
 unsigned long Pong::TheWall::beforeWallBlinkingTimer;
 unsigned long Pong::TheWall::wallBlinkingTimer;
