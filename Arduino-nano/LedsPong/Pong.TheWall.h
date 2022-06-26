@@ -1,8 +1,10 @@
 class TheWall : public Fsm{
-private:
+private: 
   static const int beforeWallBlinkingTime = 5000;
   static const int wallBlinkingTime = 3000;
   static const int blinkTime = 200;
+  
+  static int wallEvent;
   
   State createWall = State(Create,                      Display,      NULL);
   State fixWall =    State(InitBeforeWallBlinkingTimer, FixThenBlink, NULL);
@@ -82,7 +84,6 @@ private:
   }
 
 public:
-  static int wallEvent; 
   enum WallPosition{noWall, north, est, south, west};
   static int wallPosition;
   

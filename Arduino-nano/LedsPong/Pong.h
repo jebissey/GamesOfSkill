@@ -18,7 +18,6 @@ static MatriceLeds matriceLeds;
 #include "Gy521.h"
 #include "LedsSquare.h"
 
-
 static const RowCol ballSize = RowCol(2, 2);
 static LedsSquare ledsSquare = LedsSquare(matriceLeds, ballSize);
 
@@ -34,7 +33,6 @@ private:
   static Gy_521 gy521;
   static float boardTilts[3];
 
-
 #include "Pong.TheWall.h"
   TheWall theWall;
   
@@ -48,14 +46,12 @@ private:
     
   }
 
-  
   static void WaitAnimation(){
     static const int eraseTime = 2000;
     static unsigned long eraseTimer;
     if(time.IsOver(eraseTime, &eraseTimer)) TheWall::TestWallCreation();
     else TheWall::TestWallErasing();
   }
-
 
   static void WinAnimation(){
     Serial.println("WinAnimation");

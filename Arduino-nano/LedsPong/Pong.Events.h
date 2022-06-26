@@ -1,10 +1,13 @@
 class Events{
+private:
+  static int ballEvent;  
+
 public:
   Events(){
     ballEvent = nothing;
   }
   
-  enum StateEvent{
+  enum Event{
     nothing,
     
     ballErased,
@@ -20,8 +23,7 @@ public:
     gameOverAnimationIsOver,
   };
 
-  static int ballEvent;  
-  static StateEvent GetBallEvent(){
+  static Event GetBallEvent(){
     if(ballEvent == wallCreated){
       ballEvent = nothing; 
       return wallCreated;
@@ -32,13 +34,13 @@ public:
     return nothing;
   }
 
-  static StateEvent GetWallEvent(){
+  static Event GetWallEvent(){
     int wallEvent = TheWall::GetEvent();
     if(wallEvent == wallCreated) ballEvent = wallCreated;
     return TheWall::GetEvent();
   }
 
-  StateEvent GetGameEvent(){
+  Event GetGameEvent(){
 
 
     
