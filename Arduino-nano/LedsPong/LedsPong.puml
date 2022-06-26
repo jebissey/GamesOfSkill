@@ -1,58 +1,52 @@
 @startuml
 
-
-
 state DisplayBall {
     [*] --> MoveBall
 
     MoveBall : Move the ball\naccording the tilt\nof the board
-    MoveBall --> MoveBall : ball Inside\nThe Board\nAnd Did Not\nHit the Wall
+    MoveBall -up-> MoveBall : ball Inside\nThe Board\nAnd Did Not\nHit the Wall
     MoveBall --> EraseBall :  Ball Moved\nOutside The Board
     MoveBall --> [*] : Ball\nHited\nThe wall
 
     EraseBall : Ball erasing
-    EraseBall --> EraseBall : BallErasing
+    EraseBall -> EraseBall : BallErasing
     EraseBall --> [*] : BallErased
 }
 DisplayBall --> WinAnimation : Ball\nHited\nThe wall
-DisplayBall --> GameOverAnimation : BallErased
+DisplayBall -up-> GameOverAnimation : BallErased
 
 state DisplayWall {
     [*] --> CreateWall
 
     CreateWall : Create a wall on a random side
-    CreateWall --> FixWall : wallCreated
+    CreateWall -> FixWall : wallCreated
     CreateWall --> DisplayBall : wallCreated
 
-    FixWall --> FixWall : timeout\nBefore\nWall Blinking\nIs Not Over
+    FixWall -up-> FixWall : timeout\nBefore\nWall Blinking\nIs Not Over
     FixWall --> BlinkWall : timeout\nBefore\nWall Blinking\nIs Over
-    FixWall -->  Wait :  Ball\nHited\nThe wall
+    FixWall ->  Wait :  Ball\nHited\nThe wall
     
-    BlinkWall --> BlinkWall : wallBlinking
+    BlinkWall -up-> BlinkWall : wallBlinking
     BlinkWall --> EraseWall : timeout\nWall Blinking\nIs Over
-    BlinkWall -->  Wait :  Ball\nHited\nThe wall
+    BlinkWall ->  Wait :  Ball\nHited\nThe wall
 
-    EraseWall --> EraseWall : wallErasing
+    EraseWall -up-> EraseWall : wallErasing
     EraseWall --> Wait : WallErased
-    EraseWall -->  Wait :  Ball\nHited\nThe wall
+    EraseWall ->  Wait :  Ball\nHited\nThe wall
 
-    Wait --> CreateWall : win\nAnimation\nIs\nOver
+    Wait -> CreateWall : winAnimation\nIs Over
 }
 
-
-DisplayWall --> GameOverAnimation : WallErased
+DisplayWall -up-> GameOverAnimation : WallErased
 DisplayWall --> WinAnimation : Ball\nHited\nThe wall
 
 WinAnimation : Added points to the game score
-WinAnimation --> WinAnimation : win\nAnimation\nIs\nNot\nOver
-WinAnimation --> DisplayWall : win\nAnimation\nIs\nOver
+WinAnimation -up-> WinAnimation : winAnimation\nIs Not Over
+WinAnimation -down-> DisplayWall : winAnimation\nIs Over
 
-GameOverAnimation --> GameOverAnimation : game\nOver\nAnimation\nIs\nNotOver
-GameOverAnimation --> DisplayScore : game\nOver\nAnimation\nIs\nOver
-DisplayScore : Display score
-DisplayScore --> [*]
+GameOverAnimation -up-> GameOverAnimation : gameOverAnimation\nIs Not Over
+GameOverAnimation -left-> DisplayScore : gameOverAnimation\nIs Over
 
-
-
+DisplayScore -left-> [*]
 
 @enduml
