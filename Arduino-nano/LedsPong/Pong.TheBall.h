@@ -9,6 +9,7 @@ private:
 
 
   enum BallExit{inside, north, est, south, west};
+  
   static GetBalStatus_(){
     RowCol ballCoordonate = ledsSquare.GetCoordonate();
     if(ballCoordonate.row < 0) return west;
@@ -27,7 +28,6 @@ private:
     }
   }
 
-  
   static void WaitEntry(){ Serial.println("WaitEntry(ball)"); }
   static void WaitState(){ Serial.print("#"); }
   static void WaitExit(){ Serial.println("WaitExit(ball)"); }
@@ -79,7 +79,7 @@ private:
   }
   
 public:
-  TheBall() : Fsm(&moveBall/*wait*/){
+  TheBall() : Fsm(&wait){
     this->add_transition(&wait,     &moveBall,  Events::wallCreated,              NULL);
     this->add_transition(&moveBall, &eraseBall, Events::ballMovedOutsidetheBoard, NULL);
     this->add_transition(&moveBall, &wait,      Events::ballHitedTheWall,         NULL);

@@ -43,14 +43,11 @@ private:
   Events events;
   
   static void WinPoint(){
-    
+    Serial.println("WinPoint");
   }
 
   static void WaitAnimation(){
-    static const int eraseTime = 2000;
-    static unsigned long eraseTimer;
-    if(time.IsOver(eraseTime, &eraseTimer)) TheWall::TestWallCreation();
-    else TheWall::TestWallErasing();
+    Serial.print("-");
   }
 
   static void WinAnimation(){
@@ -76,10 +73,10 @@ public:
   float GetTemperature(){ return gy521.temperature; }
   
   void Run(){
-    /*theWall.run_machine();
+    theWall.run_machine();
     theWall.trigger(events.GetWallEvent());
         
-    theBall.run_machine();
+    /*theBall.run_machine();
     theBall.trigger(events.GetBallEvent());*/
 
     run_machine();
@@ -89,6 +86,7 @@ public:
   Pong() : Fsm(&wait){
     this->add_transition(&wait,              &winAnimation,      Events::ballHitedTheWall,        NULL);
     this->add_transition(&wait,              &gameOverAnimation, Events::ballErased,              NULL);
+    this->add_transition(&wait,              &gameOverAnimation, Events::wallErased,              NULL);
     this->add_transition(&winAnimation,      &wait,              Events::winAnimationIsOver,      NULL);
     this->add_transition(&gameOverAnimation, &displayScore,      Events::gameOverAnimationIsOver, NULL);
   } 

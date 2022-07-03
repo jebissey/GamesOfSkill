@@ -37,7 +37,7 @@ public:
   static Event GetWallEvent(){
     int wallEvent = TheWall::GetEvent();
     if(wallEvent == wallCreated) ballEvent = wallCreated;
-    return TheWall::GetEvent();
+    return wallEvent;
   }
 
   Event GetGameEvent(){

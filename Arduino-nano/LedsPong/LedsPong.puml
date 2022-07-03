@@ -1,52 +1,61 @@
 @startuml
 
 state DisplayBall {
-    [*] --> MoveBall
+    [*] --> WaitEvent_B
+
+    WaitEvent_B : Wait for wall event
+    WaitEvent_B -> MoveBall : wallCreated
 
     MoveBall : Move the ball\naccording the tilt\nof the board
     MoveBall -up-> MoveBall : ball Inside\nThe Board\nAnd Did Not\nHit the Wall
     MoveBall --> EraseBall :  Ball Moved\nOutside The Board
-    MoveBall --> [*] : Ball\nHited\nThe wall
+    MoveBall --> WaitEvent_B : Ball\nHited\nThe wall
 
     EraseBall : Ball erasing
-    EraseBall -> EraseBall : BallErasing
-    EraseBall --> [*] : BallErased
+    EraseBall -up-> EraseBall : BallErasing
+    EraseBall --> WaitEvent_B : BallErased
+
 }
-DisplayBall --> WinAnimation : Ball\nHited\nThe wall
-DisplayBall -up-> GameOverAnimation : BallErased
 
 state DisplayWall {
     [*] --> CreateWall
 
     CreateWall : Create a wall on a random side
-    CreateWall -> FixWall : wallCreated
-    CreateWall --> DisplayBall : wallCreated
+    CreateWall --> FixWall : wallCreated
 
     FixWall -up-> FixWall : timeout\nBefore\nWall Blinking\nIs Not Over
     FixWall --> BlinkWall : timeout\nBefore\nWall Blinking\nIs Over
-    FixWall ->  Wait :  Ball\nHited\nThe wall
+    FixWall ->  WaitEvent_W :  Ball\nHited\nThe wall
     
     BlinkWall -up-> BlinkWall : wallBlinking
     BlinkWall --> EraseWall : timeout\nWall Blinking\nIs Over
-    BlinkWall ->  Wait :  Ball\nHited\nThe wall
+    BlinkWall ->  WaitEvent_W :  Ball\nHited\nThe wall
 
     EraseWall -up-> EraseWall : wallErasing
-    EraseWall --> Wait : WallErased
-    EraseWall ->  Wait :  Ball\nHited\nThe wall
+    EraseWall --> WaitEvent_W : WallErased
+    EraseWall ->  WaitEvent_W :  Ball\nHited\nThe wall
 
-    Wait -> CreateWall : winAnimation\nIs Over
+    WaitEvent_W : Wait for game event
+    WaitEvent_W -> CreateWall : winAnimation\nIs Over
 }
 
-DisplayWall -up-> GameOverAnimation : WallErased
-DisplayWall --> WinAnimation : Ball\nHited\nThe wall
+state Game {
+    [*] --> WaitEvent_G
 
-WinAnimation : Added points to the game score
-WinAnimation -up-> WinAnimation : winAnimation\nIs Not Over
-WinAnimation -down-> DisplayWall : winAnimation\nIs Over
+    WaitEvent_G : Wait for ball and wall events
+    WaitEvent_G --> GameOverAnimation : WallErased
+    WaitEvent_G --> GameOverAnimation : BallErased
 
-GameOverAnimation -up-> GameOverAnimation : gameOverAnimation\nIs Not Over
-GameOverAnimation -left-> DisplayScore : gameOverAnimation\nIs Over
+    WaitEvent_G --> WinAnimation : Ball\nHited\nThe wall
 
-DisplayScore -left-> [*]
+    WinAnimation : Added points to the game score
+    WinAnimation -up-> WinAnimation : winAnimation\nIs Not Over
+    WinAnimation --> WaitEvent_G : winAnimation\nIs Over
+
+    GameOverAnimation -up-> GameOverAnimation : gameOverAnimation\nIs Not Over
+    GameOverAnimation --> DisplayScore : gameOverAnimation\nIs Over
+
+    DisplayScore --> [*]
+}
 
 @enduml

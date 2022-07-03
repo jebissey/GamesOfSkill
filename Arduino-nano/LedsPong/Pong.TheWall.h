@@ -10,7 +10,7 @@ private:
   State fixWall =    State(InitBeforeWallBlinkingTimer, FixThenBlink, NULL);
   State blinkWall =  State(InitWallBlinkingTimer,       FixThenBlink, NULL);
   State eraseWall =  State(NULL,                        WallErasing,  NULL);
-  State wait =       State(WaitEntry,                   NULL,         WaitExit);
+  State wait =       State(WaitEntry,                   Wait,         WaitExit);
 
   static void Display_(int mask){
     switch(wallPosition){
@@ -28,6 +28,7 @@ private:
   static void InitWallBlinkingTimer(){ time.Reset(&wallBlinkingTimer); }
 
   static void WaitEntry(){ Serial.println("WaitEntry"); }
+  static void Wait(){ Serial.print("+"); }
   static void WaitExit(){ Serial.println("WaitExit"); }
 
 
@@ -92,20 +93,13 @@ public:
     
     this->add_transition(&createWall, &fixWall,    Events::wallCreated, NULL);
     this->add_transition(&fixWall,    &blinkWall,  Events::timeoutBeforeWallBlinkingIsOver, NULL);
-    this->add_transition(&blinkWall,  &eraseWall,  Events::timeoutWallBlinkingIsOver, NULL);
     this->add_transition(&fixWall,    &wait,       Events::ballHitedTheWall, NULL);
+    this->add_transition(&blinkWall,  &eraseWall,  Events::timeoutWallBlinkingIsOver, NULL);
+    this->add_transition(&blinkWall,  &wait,       Events::ballHitedTheWall, NULL);
     this->add_transition(&eraseWall,  &wait,       Events::wallErased, NULL);
     this->add_transition(&eraseWall,  &wait,       Events::ballHitedTheWall, NULL);
     this->add_transition(&wait,       &createWall, Events::winAnimationIsOver, NULL);
   }
 
   static int GetEvent(){ return wallEvent; }
-
-  static void TestWallCreation(){
-    Create();
-    Display();
-  }
-  static void TestWallErasing(){
-    WallErasing();
-  }
 };

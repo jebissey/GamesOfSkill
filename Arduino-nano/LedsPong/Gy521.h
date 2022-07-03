@@ -16,26 +16,26 @@ private:
   static const int indexForTemperature = 3;
   static int gyAccTemp[numData];
   
-  void ReadGY521(int *GyAccTempp){
+  void ReadGY521(){
     Wire.beginTransmission(I2C_AddrOfMPU);
     Wire.write(0x3B);
     Wire.endTransmission(false);
     Wire.requestFrom(I2C_AddrOfMPU, numData * 2, true);
 
     for(int i=0; i<numData; i++){
-      GyAccTempp[i] = Wire.read()<<8 | Wire.read();
-      if(i==indexForTemperature) temperature = GyAccTempp[i] / 340.0 + 36.53; 
+      gyAccTemp[i] = Wire.read()<<8 | Wire.read();
+      if(i==indexForTemperature) temperature = gyAccTemp[i] / 340.0 + 36.53; 
     }
   }
 
-  void ComputeAngle(int *GyAccTempp, float *PitchRol){
-    float x = GyAccTempp[0];
-    float y = GyAccTempp[1];
-    float z = GyAccTempp[2];
+  void ComputeAngle(float boardTilts[]){
+    float x = gyAccTemp[0];
+    float y = gyAccTemp[1];
+    float z = gyAccTemp[2];
   
-    PitchRol[0] = (atan(x/sqrt((y*y) + (z*z)))) *  180.0 / PI;
-    PitchRol[1] = (atan(y/sqrt((x*x) + (z*z)))) *  180.0 / PI;
-    PitchRol[2] = (atan(z/sqrt((x*x) + (y*y)))) *  180.0 / PI;
+    boardTilts[0] = (atan(x/sqrt((y*y) + (z*z)))) *  180.0 / PI;
+    boardTilts[1] = (atan(y/sqrt((x*x) + (z*z)))) *  180.0 / PI;
+    boardTilts[2] = (atan(z/sqrt((x*x) + (y*y)))) *  180.0 / PI;
   }
 
 public:
@@ -49,9 +49,9 @@ public:
     Wire.endTransmission(true);
   }
 
-  void Read(float *PitchRoll){
-    ReadGY521(gyAccTemp);
-    ComputeAngle(gyAccTemp, PitchRoll);
+  void Read(float boardTilts[]){
+    ReadGY521();
+    ComputeAngle(boardTilts);
   }
 };
 
