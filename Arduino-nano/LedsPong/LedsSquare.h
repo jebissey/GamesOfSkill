@@ -7,14 +7,15 @@
 #include "WProgram.h"
 #endif
 
-#include "MatriceLeds.h"
 #include "RowCol.h"
+
+#include <LedControl.h>
+#include "AAA_PinsEnum.h"
 
 enum SquareLight {On, Off}; 
 
-class LedsSquare{
+class LedsSquare : public LedControl{
 private:
-  MatriceLeds matriceLeds;
   RowCol squareSize;
   RowCol squareCoordonate;
   SquareLight squareLight;
@@ -23,17 +24,20 @@ private:
     for(int row = squareCoordonate.row; row < squareCoordonate.row + squareSize.row; row++){
       for(int col = squareCoordonate.col; col < squareCoordonate.col + squareSize.col; col++){
         if(row >= 0 && row < matriceSize && col >= 0 && col < matriceSize){ 
-          matriceLeds.SetLed(row, col, stateLed);
+          this->setLed(0, row, col, stateLed);
         }
       }
     }
   }
   
 public:
-  const int matriceSize = 8;
-  LedsSquare(MatriceLeds matriceLeds_, RowCol squareSize_){
-    matriceLeds = matriceLeds_; 
+  static const int matriceSize = 8;
+  LedsSquare(RowCol squareSize_) : LedControl(leds_DataIn, leds_CLK, leds_CS, 1){
     squareSize = squareSize_;
+    
+    this->shutdown(0, false);
+    this->setIntensity(0, 1);
+    this->clearDisplay(0);
   }
 
   RowCol      GetCoordonate() { return squareCoordonate; }

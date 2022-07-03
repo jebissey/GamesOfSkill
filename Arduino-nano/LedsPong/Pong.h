@@ -12,14 +12,11 @@
 static unsigned long timerForMoveTheBall;
 static unsigned long timerForWallStartBlink;
 
-#include "MatriceLeds.h"
-static MatriceLeds matriceLeds;
-
 #include "Gy521.h"
 #include "LedsSquare.h"
 
 static const RowCol ballSize = RowCol(2, 2);
-static LedsSquare ledsSquare = LedsSquare(matriceLeds, ballSize);
+static LedsSquare ledsSquare = LedsSquare(ballSize);
 
 
 class Pong : public Fsm {

@@ -14,10 +14,10 @@ private:
 
   static void Display_(int mask){
     switch(wallPosition){
-      case north: matriceLeds.SetRow(7, mask); break;
-      case est:   matriceLeds.SetColumn(0, mask); break;
-      case south: matriceLeds.SetRow(0, mask); break;
-      case west:  matriceLeds.SetColumn(7, mask); break;
+      case north: ledsSquare.setRow(0, 7, mask); break;
+      case est:   ledsSquare.setColumn(0, 0, mask); break;
+      case south: ledsSquare.setRow(0, 0, mask); break;
+      case west:  ledsSquare.setColumn(0, 7, mask); break;
     }
   }
 

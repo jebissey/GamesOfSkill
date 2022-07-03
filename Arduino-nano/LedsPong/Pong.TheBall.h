@@ -21,10 +21,10 @@ private:
 
   static void Display(int mask){
     switch(GetBalStatus_()){
-      case north: matriceLeds.SetColumn(ledsSquare.matriceSize - 1, mask); break;
-      case south: matriceLeds.SetColumn(0, mask); break;
-      case est:   matriceLeds.SetRow(ledsSquare.matriceSize - 1, mask); break;
-      case west:  matriceLeds.SetRow(0, mask); break;
+      case north: ledsSquare.setColumn(0, ledsSquare.matriceSize - 1, mask); break;
+      case south: ledsSquare.setColumn(0, 0, mask); break;
+      case est:   ledsSquare.setRow(0, ledsSquare.matriceSize - 1, mask); break;
+      case west:  ledsSquare.setRow(0, 0, mask); break;
     }
   }
 
