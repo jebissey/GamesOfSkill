@@ -76,8 +76,8 @@ public:
     theWall.run_machine();
     theWall.trigger(events.GetWallEvent());
         
-    /*theBall.run_machine();
-    theBall.trigger(events.GetBallEvent());*/
+    theBall.run_machine();
+    theBall.trigger(events.GetBallEvent());
 
     run_machine();
     trigger(events.GetGameEvent());

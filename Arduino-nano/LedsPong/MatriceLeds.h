@@ -23,8 +23,20 @@ public:
   }
   
   void SetLed(int row, int col, bool stateLed){ this->setLed(0, row, col, stateLed); }  
-  void SetColumn(int col, byte patern){ this->setColumn(0, col, patern); }
-  void SetRow(int row, byte patern){ this->setRow(0, row, patern); }
+  void SetColumn(int col, byte patern){ 
+    //this->setColumn(0, col, patern); 
+    for(int i = 0 ; i < 8; i++){
+      this->setLed(0, i, col, patern & 1);
+      patern >>= 1;
+    }
+  }
+  void SetRow(int row, byte patern){ 
+    //this->setRow(0, row, patern); 
+    for(int i = 0 ; i < 8; i++){
+      this->setLed(0, row, i, patern & 1);
+      patern >>= 1;
+    }
+  }
 };
 
 #endif

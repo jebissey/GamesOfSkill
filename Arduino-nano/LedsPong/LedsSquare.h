@@ -20,21 +20,13 @@ private:
   SquareLight squareLight;
   
   void SetSquare(bool stateLed){
-    Serial.print(", stateLed=");
-    Serial.print(stateLed);
     for(int row = squareCoordonate.row; row < squareCoordonate.row + squareSize.row; row++){
       for(int col = squareCoordonate.col; col < squareCoordonate.col + squareSize.col; col++){
         if(row >= 0 && row < matriceSize && col >= 0 && col < matriceSize){ 
           matriceLeds.SetLed(row, col, stateLed);
-          Serial.print(", row=");
-          Serial.print(row);
-          Serial.print(", col=");
-          Serial.print(col);
-          Serial.print(". ");
         }
       }
     }
-    Serial.println("___");
   }
   
 public:

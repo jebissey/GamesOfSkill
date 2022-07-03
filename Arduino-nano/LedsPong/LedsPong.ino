@@ -9,7 +9,7 @@ static Pong pong;
 
 void setup() {
   pong.Setup();
-  randomSeed(4);
+  randomSeed(3);
   Serial.begin(9600);
 }
 
