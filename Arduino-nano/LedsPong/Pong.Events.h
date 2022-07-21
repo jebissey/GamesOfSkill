@@ -1,6 +1,7 @@
 class Events{
 private:
-  static int event;  
+  static int event; 
+  int lastEvent = nothing; 
 
 public:
   Events(){
@@ -23,6 +24,12 @@ public:
     gameOverAnimationIsOver,
   };
 
+  static Event GetWallEvent(){
+    int event_ = TheWall::GetEvent();
+    if(event_ == wallCreated || event_ == wallErased) event = event_;
+    return event_;
+  }
+
   static Event GetBallEvent(){
     if(event == wallCreated){
       event = nothing; 
@@ -37,18 +44,10 @@ public:
     return nothing;
   }
 
-  static Event GetWallEvent(){
-    int event_ = TheWall::GetEvent();
-    if(event_ == wallCreated || event_ == wallErased) event = event_;
-    else event = nothing;
-    return event_;
-  }
-
   Event GetGameEvent(){ 
-    if(event != nothing){
-      int event_ = event;
-      event = nothing; 
-      return event_;
+    if(event != nothing && lastEvent != event){
+      lastEvent = event; 
+      return event;
     }
     return Pong::GetEvent(); 
   }

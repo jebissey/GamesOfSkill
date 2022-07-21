@@ -120,12 +120,13 @@ private:
       B00000000,
       B00000000,
     };
+    static const int maxStep = sizeof(masks) - LedsSquare::matrixSize;
     static int step = 0;
     static int mask;
     static const int animationTime = 100;
     static unsigned long animationTimer;
     if(time.IsOver(animationTime, &animationTimer)){
-      if(step++ > sizeof(masks)){
+      if(step++ > maxStep){
           gameEvent = Events::gameOverAnimationIsOver; 
           step = 0;
       }
