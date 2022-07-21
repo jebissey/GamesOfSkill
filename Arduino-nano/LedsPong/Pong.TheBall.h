@@ -4,7 +4,7 @@ private:
   static int ballStatus;
   
   State moveBall =  State(Display,   Move,      NULL);
-  State eraseBall = State(NULL,      Erasing,   NULL);
+  State eraseBall = State(EraseBallEntry,      EraseBall,   EraseBallExit);
   State wait =      State(WaitEntry, WaitState, WaitExit);
 
 
@@ -43,7 +43,9 @@ private:
     
   static void Display(){ ledsSquare.SetLight(On); Serial.println("display ball");}
 
-  static void Erasing(){
+  static void EraseBallEntry(){ Serial.println("EraseBallEntry");}
+  static void EraseBallExit() { Serial.println("EraseBallExit");}
+  static void EraseBall(){
     static int step = 0;
     static int mask;
     static const int eraseTime = 100;
@@ -81,12 +83,17 @@ private:
 public:
   TheBall() : Fsm(&wait){
     this->add_transition(&wait,     &moveBall,  Events::wallCreated,              NULL);
-    this->add_transition(&moveBall, &eraseBall, Events::ballMovedOutsidetheBoard, NULL);
+    this->add_transition(&moveBall, &eraseBall, Events::ballMovedOutsideTheBoard, NULL);
     this->add_transition(&moveBall, &wait,      Events::ballHitTheWall,           NULL);
+    this->add_transition(&moveBall, &wait,      Events::wallErased,               NULL);
     this->add_transition(&eraseBall,&wait,      Events::ballErased,               NULL);
   }
 
-  static bool IsBallMovedOutsideTheBoard(){ return (GetBallStatus() == ballOutsideTheBoard); }
-  static bool IsBallHitedTheWall(){         return (GetBallStatus() == ballHitTheWall); }
-  static bool IsBallErased(){               return (ledsSquare.GetLight() == Off); }
+  static int GetEvent(){ 
+    int ballStatus = GetBallStatus();
+    if(ballStatus == ballOutsideTheBoard) return Events::ballMovedOutsideTheBoard;
+    if(ballStatus == ballHitTheWall)      return Events::ballHitTheWall;
+    if(ledsSquare.GetLight() == Off)      return Events::ballErased;
+    return Events::nothing; 
+  }
 };

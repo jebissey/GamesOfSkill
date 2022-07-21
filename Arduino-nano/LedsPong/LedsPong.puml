@@ -4,12 +4,12 @@ state DisplayBall {
     [*] --> WaitEvent_B
 
     WaitEvent_B : Wait for wall event
-    WaitEvent_B -> MoveBall : wallCreated
+    WaitEvent_B -> MoveBall : **wallCreated**
 
     MoveBall : Move the ball\naccording the tilt\nof the board
-    MoveBall -up-> MoveBall : ball Inside\nThe Board\nAnd Did Not\nHit the Wall
+    MoveBall -up-> MoveBall : Ball inside\nthe board\nand didn't\nhit the wall
     MoveBall --> EraseBall :  Ball Moved\nOutside The Board
-    MoveBall --> WaitEvent_B : Ball\nHit\nThe wall
+    MoveBall --> WaitEvent_B : Ball Hit The wall\nor\n**wallErased**
 
     EraseBall : Ball erasing
     EraseBall -up-> EraseBall : BallErasing
@@ -26,16 +26,16 @@ state DisplayWall {
     FixWall : Display the wall at its position
     FixWall -up-> FixWall : timeout\nBefore\nWall Blinking\nIs Not Over
     FixWall --> BlinkWall : timeout\nBefore\nWall Blinking\nIs Over
-    FixWall ->  WaitEvent_W :  Ball\nHit\nThe wall
+    FixWall ->  WaitEvent_W : **ballHitTheWall**\nor\n**ballErased**
     
     BlinkWall -up-> BlinkWall : wallBlinking
     BlinkWall --> EraseWall : timeout\nWall Blinking\nIs Over
-    BlinkWall ->  WaitEvent_W :  Ball\nHit\nThe wall
+    BlinkWall ->  WaitEvent_W : **ballHitTheWall**\nor\n**ballErased**
 
     EraseWall -up-> EraseWall : wallErasing
     EraseWall --> WaitEvent_W : WallErased
-    EraseWall ->  WaitEvent_W :  Ball\nHit\nThe wall
-
+    EraseWall ->  WaitEvent_W : **ballHitTheWall**\nor\n**ballErased**
+    
     WaitEvent_W : Wait for game event
     WaitEvent_W -> CreateWall : winAnimation\nIs Over
 }
@@ -44,10 +44,10 @@ state Game {
     [*] --> WaitEvent_G
 
     WaitEvent_G : Wait for ball and wall events
-    WaitEvent_G --> GameOverAnimation : WallErased
-    WaitEvent_G --> GameOverAnimation : BallErased
+    WaitEvent_G --> GameOverAnimation : **wallErased**
+    WaitEvent_G --> GameOverAnimation : **ballErased**
 
-    WaitEvent_G --> WinAnimation : Ball\nHit\nThe wall
+    WaitEvent_G --> WinAnimation : **ballHitTheWall**
 
     WinAnimation : Added points to the game score
     WinAnimation -up-> WinAnimation : winAnimation\nIs Not Over

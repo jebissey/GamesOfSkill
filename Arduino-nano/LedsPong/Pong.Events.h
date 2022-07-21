@@ -1,11 +1,11 @@
 class Events{
 private:
-  static int event; 
-  int lastEvent = nothing; 
+  static int gameEvent; 
+  int lastGameEvent = nothing; 
 
 public:
   Events(){
-    event = nothing;
+    gameEvent = nothing;
   }
   
   enum Event{
@@ -13,7 +13,7 @@ public:
     
     ballErased,
     ballHitTheWall, 
-    ballMovedOutsidetheBoard, 
+    ballMovedOutsideTheBoard, 
 
     wallCreated,
     timeoutBeforeWallBlinkingIsOver, 
@@ -24,30 +24,32 @@ public:
     gameOverAnimationIsOver,
   };
 
-  static Event GetWallEvent(){
-    int event_ = TheWall::GetEvent();
-    if(event_ == wallCreated || event_ == wallErased) event = event_;
-    return event_;
+  // Called first
+  Event GetWallEvent(){
+    if(gameEvent == ballErased || gameEvent == ballHitTheWall) return gameEvent;
+    int wallEvent = TheWall::GetEvent();
+    if(wallEvent == wallCreated || wallEvent == wallErased) gameEvent = wallEvent;
+    return wallEvent;
   }
 
-  static Event GetBallEvent(){
-    if(event == wallCreated){
-      event = nothing; 
-      return wallCreated;
+  // Called second
+  Event GetBallEvent(){
+    static int ballEvent = nothing; 
+    static int lastBallEvent = nothing;
+    if(gameEvent != lastBallEvent){
+      lastBallEvent = gameEvent;
+      if(gameEvent == wallCreated || gameEvent == wallErased) return gameEvent;
     }
-    if(TheBall::IsBallErased()){
-      event = ballErased;
-      return ballErased;
-    }
-    if(TheBall::IsBallHitedTheWall())         return ballHitTheWall;
-    if(TheBall::IsBallMovedOutsideTheBoard()) return ballMovedOutsidetheBoard;
-    return nothing;
+    if((ballEvent = TheBall::GetEvent()) != nothing) gameEvent = ballEvent;
+    Serial.print(ballEvent);
+    return ballEvent;
   }
 
+  //Called third
   Event GetGameEvent(){ 
-    if(event != nothing && lastEvent != event){
-      lastEvent = event; 
-      return event;
+    if(gameEvent == ballErased || gameEvent == ballHitTheWall || gameEvent == wallErased && lastGameEvent != gameEvent){
+      lastGameEvent = gameEvent; 
+      return gameEvent;
     }
     return Pong::GetEvent(); 
   }

@@ -94,10 +94,13 @@ public:
     this->add_transition(&createWall, &fixWall,    Events::wallCreated, NULL);
     this->add_transition(&fixWall,    &blinkWall,  Events::timeoutBeforeWallBlinkingIsOver, NULL);
     this->add_transition(&fixWall,    &wait,       Events::ballHitTheWall, NULL);
+    this->add_transition(&fixWall,    &wait,       Events::ballErased, NULL);
     this->add_transition(&blinkWall,  &eraseWall,  Events::timeoutWallBlinkingIsOver, NULL);
     this->add_transition(&blinkWall,  &wait,       Events::ballHitTheWall, NULL);
+    this->add_transition(&blinkWall,  &wait,       Events::ballErased, NULL);
     this->add_transition(&eraseWall,  &wait,       Events::wallErased, NULL);
     this->add_transition(&eraseWall,  &wait,       Events::ballHitTheWall, NULL);
+    this->add_transition(&eraseWall,  &wait,       Events::ballErased, NULL);
     this->add_transition(&wait,       &createWall, Events::winAnimationIsOver, NULL);
   }
 

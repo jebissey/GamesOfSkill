@@ -23,7 +23,7 @@ class Pong : public Fsm {
 private:
   State wait =              State(NULL, WaitAnimation, NULL);
   State winAnimation =      State(NULL, WinAnimation, NULL);
-  State gameOverAnimation = State(GameOverAnimationEntry, GameOverAnimation, GameOverAnimationExit);
+  State gameOverAnimation = State(NULL, GameOverAnimation, NULL);
   State displayScore =      State(NULL, DisplayScore, NULL);
   
   const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
@@ -50,8 +50,6 @@ private:
     Serial.println("WinAnimation");
   }
 
-  static void GameOverAnimationEntry(){Serial.println("GameOverAnimation (entry)");}
-  static void GameOverAnimationExit() {Serial.println("GameOverAnimation (exit)");}
   static void GameOverAnimation(){
     static byte masks[] = {
       B00000000,
@@ -139,7 +137,7 @@ private:
   }
   
   static void DisplayScore(){
-    Serial.println("DisplayScoreAnimation");
+    Serial.print("*");
     
   }
   
@@ -180,7 +178,7 @@ int Pong::TheWall::wallEvent;
 int Pong::TheBall::ballStatus;
 unsigned long Pong::TheWall::beforeWallBlinkingTimer;
 unsigned long Pong::TheWall::wallBlinkingTimer;
-int Pong::Events::event;
+int Pong::Events::gameEvent;
 int Pong::gameEvent;
 
 #endif
