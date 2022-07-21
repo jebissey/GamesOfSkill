@@ -15,7 +15,7 @@ private:
   static void Display_(int mask){
     switch(wallPosition){
       case north: ledsSquare.setRow(0, 7, mask); break;
-      case est:   ledsSquare.setColumn(0, 0, mask); break;
+      case east:  ledsSquare.setColumn(0, 0, mask); break;
       case south: ledsSquare.setRow(0, 0, mask); break;
       case west:  ledsSquare.setColumn(0, 7, mask); break;
     }
@@ -27,9 +27,9 @@ private:
   static unsigned long wallBlinkingTimer;
   static void InitWallBlinkingTimer(){ time.Reset(&wallBlinkingTimer); }
 
-  static void WaitEntry(){ Serial.println("WaitEntry"); }
+  static void WaitEntry(){ Serial.println("WaitEntry (wall)"); }
   static void Wait(){ Serial.print("+"); }
-  static void WaitExit(){ Serial.println("WaitExit"); }
+  static void WaitExit(){ Serial.println("WaitExit (wall)"); }
 
 
   static void Create(){
@@ -85,7 +85,7 @@ private:
   }
 
 public:
-  enum WallPosition{noWall, north, est, south, west};
+  enum WallPosition{noWall, north, east, south, west};
   static int wallPosition;
   
   TheWall() : Fsm(&createWall){
@@ -93,11 +93,11 @@ public:
     
     this->add_transition(&createWall, &fixWall,    Events::wallCreated, NULL);
     this->add_transition(&fixWall,    &blinkWall,  Events::timeoutBeforeWallBlinkingIsOver, NULL);
-    this->add_transition(&fixWall,    &wait,       Events::ballHitedTheWall, NULL);
+    this->add_transition(&fixWall,    &wait,       Events::ballHitTheWall, NULL);
     this->add_transition(&blinkWall,  &eraseWall,  Events::timeoutWallBlinkingIsOver, NULL);
-    this->add_transition(&blinkWall,  &wait,       Events::ballHitedTheWall, NULL);
+    this->add_transition(&blinkWall,  &wait,       Events::ballHitTheWall, NULL);
     this->add_transition(&eraseWall,  &wait,       Events::wallErased, NULL);
-    this->add_transition(&eraseWall,  &wait,       Events::ballHitedTheWall, NULL);
+    this->add_transition(&eraseWall,  &wait,       Events::ballHitTheWall, NULL);
     this->add_transition(&wait,       &createWall, Events::winAnimationIsOver, NULL);
   }
 

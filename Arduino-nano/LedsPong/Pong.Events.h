@@ -1,17 +1,17 @@
 class Events{
 private:
-  static int ballEvent;  
+  static int event;  
 
 public:
   Events(){
-    ballEvent = nothing;
+    event = nothing;
   }
   
   enum Event{
     nothing,
     
     ballErased,
-    ballHitedTheWall, 
+    ballHitTheWall, 
     ballMovedOutsidetheBoard, 
 
     wallCreated,
@@ -24,26 +24,32 @@ public:
   };
 
   static Event GetBallEvent(){
-    if(ballEvent == wallCreated){
-      ballEvent = nothing; 
+    if(event == wallCreated){
+      event = nothing; 
       return wallCreated;
     }
-    if(TheBall::IsBallErased())               return ballErased;
-    if(TheBall::IsBallHitedTheWall())         return ballHitedTheWall;
+    if(TheBall::IsBallErased()){
+      event = ballErased;
+      return ballErased;
+    }
+    if(TheBall::IsBallHitedTheWall())         return ballHitTheWall;
     if(TheBall::IsBallMovedOutsideTheBoard()) return ballMovedOutsidetheBoard;
     return nothing;
   }
 
   static Event GetWallEvent(){
-    int wallEvent = TheWall::GetEvent();
-    if(wallEvent == wallCreated) ballEvent = wallCreated;
-    return wallEvent;
+    int event_ = TheWall::GetEvent();
+    if(event_ == wallCreated || event_ == wallErased) event = event_;
+    else event = nothing;
+    return event_;
   }
 
-  Event GetGameEvent(){
-
-
-    
-    return nothing;
+  Event GetGameEvent(){ 
+    if(event != nothing){
+      int event_ = event;
+      event = nothing; 
+      return event_;
+    }
+    return Pong::GetEvent(); 
   }
 };

@@ -23,12 +23,13 @@ class Pong : public Fsm {
 private:
   State wait =              State(NULL, WaitAnimation, NULL);
   State winAnimation =      State(NULL, WinAnimation, NULL);
-  State gameOverAnimation = State(NULL, GameOverAnimation, NULL);
+  State gameOverAnimation = State(GameOverAnimationEntry, GameOverAnimation, GameOverAnimationExit);
   State displayScore =      State(NULL, DisplayScore, NULL);
   
   const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
   static Gy_521 gy521;
   static float boardTilts[3];
+  static int gameEvent;
 
 #include "Pong.TheWall.h"
   TheWall theWall;
@@ -43,17 +44,97 @@ private:
     Serial.println("WinPoint");
   }
 
-  static void WaitAnimation(){
-    Serial.print("-");
-  }
+  static void WaitAnimation(){ Serial.print("-"); }
 
   static void WinAnimation(){
     Serial.println("WinAnimation");
   }
 
+  static void GameOverAnimationEntry(){Serial.println("GameOverAnimation (entry)");}
+  static void GameOverAnimationExit() {Serial.println("GameOverAnimation (exit)");}
   static void GameOverAnimation(){
-    Serial.println("GameOverAnimation");
-    
+    static byte masks[] = {
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B01111110,
+      B10000001,
+      B10010001,
+      B10010001,
+      B01100000,
+      B00000000,
+      B11111110,
+      B00010001,
+      B00010001,
+      B00010001,
+      B11111110,
+      B00000000,
+      B11111111,
+      B00000010,
+      B00000100,
+      B00001000,
+      B00000100,
+      B00000010,
+      B11111111,
+      B00000000,
+      B11111111,
+      B10010001,
+      B10010001,
+      B10010001,
+      B10000001,
+      B00000000,
+      B00000000,
+      B00000000,
+      B01111110,
+      B10000001,
+      B10000001,
+      B10000001,
+      B01111110,
+      B00000000,
+      B00111111,
+      B01000000,
+      B10000000,
+      B01000000,
+      B00111111,
+      B00000000,
+      B11111111,
+      B10010001,
+      B10010001,
+      B10010001,
+      B10000001,
+      B00000000,
+      B11111111,
+      B00010001,
+      B00110001,
+      B01010001,
+      B10001110,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+    };
+    static int step = 0;
+    static int mask;
+    static const int animationTime = 100;
+    static unsigned long animationTimer;
+    if(time.IsOver(animationTime, &animationTimer)){
+      if(step++ > sizeof(masks)){
+          gameEvent = Events::gameOverAnimationIsOver; 
+          step = 0;
+      }
+      else{
+        for(int i = 0; i < LedsSquare::matrixSize; i++){
+          ledsSquare.setRow(0, i,masks[step + i]);
+        }
+      }
+    }
   }
   
   static void DisplayScore(){
@@ -66,8 +147,6 @@ public:
     gy521.Setup();
     ledsSquare.MoveAbsolute(ballCoordonateAtStartUp);
   }
-
-  float GetTemperature(){ return gy521.temperature; }
   
   void Run(){
     theWall.run_machine();
@@ -81,12 +160,16 @@ public:
   }
 
   Pong() : Fsm(&wait){
-    this->add_transition(&wait,              &winAnimation,      Events::ballHitedTheWall,        NULL);
+    this->add_transition(&wait,              &winAnimation,      Events::ballHitTheWall,          NULL);
     this->add_transition(&wait,              &gameOverAnimation, Events::ballErased,              NULL);
     this->add_transition(&wait,              &gameOverAnimation, Events::wallErased,              NULL);
     this->add_transition(&winAnimation,      &wait,              Events::winAnimationIsOver,      NULL);
     this->add_transition(&gameOverAnimation, &displayScore,      Events::gameOverAnimationIsOver, NULL);
+
+    gameEvent = Events::nothing;
   } 
+
+  static int GetEvent(){ return gameEvent; }
 };
 
 
@@ -96,6 +179,7 @@ int Pong::TheWall::wallEvent;
 int Pong::TheBall::ballStatus;
 unsigned long Pong::TheWall::beforeWallBlinkingTimer;
 unsigned long Pong::TheWall::wallBlinkingTimer;
-int Pong::Events::ballEvent;
+int Pong::Events::event;
+int Pong::gameEvent;
 
 #endif

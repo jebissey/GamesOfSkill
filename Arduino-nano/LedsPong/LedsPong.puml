@@ -9,7 +9,7 @@ state DisplayBall {
     MoveBall : Move the ball\naccording the tilt\nof the board
     MoveBall -up-> MoveBall : ball Inside\nThe Board\nAnd Did Not\nHit the Wall
     MoveBall --> EraseBall :  Ball Moved\nOutside The Board
-    MoveBall --> WaitEvent_B : Ball\nHited\nThe wall
+    MoveBall --> WaitEvent_B : Ball\nHit\nThe wall
 
     EraseBall : Ball erasing
     EraseBall -up-> EraseBall : BallErasing
@@ -23,17 +23,18 @@ state DisplayWall {
     CreateWall : Create a wall on a random side
     CreateWall --> FixWall : wallCreated
 
+    FixWall : Display the wall at its position
     FixWall -up-> FixWall : timeout\nBefore\nWall Blinking\nIs Not Over
     FixWall --> BlinkWall : timeout\nBefore\nWall Blinking\nIs Over
-    FixWall ->  WaitEvent_W :  Ball\nHited\nThe wall
+    FixWall ->  WaitEvent_W :  Ball\nHit\nThe wall
     
     BlinkWall -up-> BlinkWall : wallBlinking
     BlinkWall --> EraseWall : timeout\nWall Blinking\nIs Over
-    BlinkWall ->  WaitEvent_W :  Ball\nHited\nThe wall
+    BlinkWall ->  WaitEvent_W :  Ball\nHit\nThe wall
 
     EraseWall -up-> EraseWall : wallErasing
     EraseWall --> WaitEvent_W : WallErased
-    EraseWall ->  WaitEvent_W :  Ball\nHited\nThe wall
+    EraseWall ->  WaitEvent_W :  Ball\nHit\nThe wall
 
     WaitEvent_W : Wait for game event
     WaitEvent_W -> CreateWall : winAnimation\nIs Over
@@ -46,7 +47,7 @@ state Game {
     WaitEvent_G --> GameOverAnimation : WallErased
     WaitEvent_G --> GameOverAnimation : BallErased
 
-    WaitEvent_G --> WinAnimation : Ball\nHited\nThe wall
+    WaitEvent_G --> WinAnimation : Ball\nHit\nThe wall
 
     WinAnimation : Added points to the game score
     WinAnimation -up-> WinAnimation : winAnimation\nIs Not Over

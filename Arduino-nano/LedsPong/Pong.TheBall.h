@@ -14,23 +14,23 @@ private:
     RowCol ballCoordonate = ledsSquare.GetCoordonate();
     if(ballCoordonate.row < 0) return west;
     if(ballCoordonate.col < 0) return south;
-    if(ballCoordonate.row + ballSize.row - 1 >= ledsSquare.matriceSize) return est;
-    if(ballCoordonate.col + ballSize.col - 1 >= ledsSquare.matriceSize) return north;
+    if(ballCoordonate.row + ballSize.row - 1 >= ledsSquare.matrixSize) return est;
+    if(ballCoordonate.col + ballSize.col - 1 >= ledsSquare.matrixSize) return north;
     return inside;
   }
 
   static void Display(int mask){
     switch(GetBalStatus_()){
-      case north: ledsSquare.setColumn(0, ledsSquare.matriceSize - 1, mask); break;
+      case north: ledsSquare.setColumn(0, ledsSquare.matrixSize - 1, mask); break;
       case south: ledsSquare.setColumn(0, 0, mask); break;
-      case est:   ledsSquare.setRow(0, ledsSquare.matriceSize - 1, mask); break;
+      case est:   ledsSquare.setRow(0, ledsSquare.matrixSize - 1, mask); break;
       case west:  ledsSquare.setRow(0, 0, mask); break;
     }
   }
 
-  static void WaitEntry(){ Serial.println("WaitEntry(ball)"); }
+  static void WaitEntry(){ Serial.println("WaitEntry (ball)"); }
   static void WaitState(){ Serial.print("#"); }
-  static void WaitExit(){ Serial.println("WaitExit(ball)"); }
+  static void WaitExit(){ Serial.println("WaitExit (ball)"); }
 
   static void Move(){
     if(time.IsOver(timeBetweenBallMove, &timerForMoveTheBall)){
@@ -71,8 +71,8 @@ private:
     RowCol ballCoordonate = ledsSquare.GetCoordonate();
     if(ballCoordonate.row == 1 && TheWall::wallPosition == TheWall::north 
     || ballCoordonate.col == 1 && TheWall::wallPosition == TheWall::west 
-    || ballCoordonate.row + ballSize.row == ledsSquare.matriceSize - 1 && TheWall::wallPosition == TheWall::south 
-    || ballCoordonate.col + ballSize.col == ledsSquare.matriceSize - 1 && TheWall::wallPosition == TheWall::est ) return ballHitTheWall;
+    || ballCoordonate.row + ballSize.row == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::south 
+    || ballCoordonate.col + ballSize.col == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::east ) return ballHitTheWall;
     
     if(GetBalStatus_() != inside) return ballOutsideTheBoard;  
     return ballInTheBoard;
@@ -82,7 +82,7 @@ public:
   TheBall() : Fsm(&wait){
     this->add_transition(&wait,     &moveBall,  Events::wallCreated,              NULL);
     this->add_transition(&moveBall, &eraseBall, Events::ballMovedOutsidetheBoard, NULL);
-    this->add_transition(&moveBall, &wait,      Events::ballHitedTheWall,         NULL);
+    this->add_transition(&moveBall, &wait,      Events::ballHitTheWall,           NULL);
     this->add_transition(&eraseBall,&wait,      Events::ballErased,               NULL);
   }
 

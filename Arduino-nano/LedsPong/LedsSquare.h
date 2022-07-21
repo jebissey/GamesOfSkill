@@ -23,7 +23,7 @@ private:
   void SetSquare(bool stateLed){
     for(int row = squareCoordonate.row; row < squareCoordonate.row + squareSize.row; row++){
       for(int col = squareCoordonate.col; col < squareCoordonate.col + squareSize.col; col++){
-        if(row >= 0 && row < matriceSize && col >= 0 && col < matriceSize){ 
+        if(row >= 0 && row < matrixSize && col >= 0 && col < matrixSize){ 
           this->setLed(0, row, col, stateLed);
         }
       }
@@ -31,7 +31,7 @@ private:
   }
   
 public:
-  static const int matriceSize = 8;
+  static const int matrixSize = 8;
   LedsSquare(RowCol squareSize_) : LedControl(leds_DataIn, leds_CLK, leds_CS, 1){
     squareSize = squareSize_;
     
@@ -57,11 +57,11 @@ public:
     
     squareCoordonate.row += squareIncrement.row;
     if(squareCoordonate.row < -squareSize.row + 1) squareCoordonate.row = -squareSize.row + 1;
-    if(squareCoordonate.row > matriceSize - squareSize.row + 1) squareCoordonate.row = matriceSize - squareSize.row + 1;
+    if(squareCoordonate.row > matrixSize - squareSize.row + 1) squareCoordonate.row = matrixSize - squareSize.row + 1;
     
     squareCoordonate.col += squareIncrement.col;
     if(squareCoordonate.col < -squareSize.col + 1) squareCoordonate.col = -squareSize.col + 1;
-    if(squareCoordonate.col > matriceSize - squareSize.col + 1) squareCoordonate.col = matriceSize - squareSize.col + 1;
+    if(squareCoordonate.col > matrixSize - squareSize.col + 1) squareCoordonate.col = matrixSize - squareSize.col + 1;
     
     if(squareLight == On) SetSquare(true);
   }
