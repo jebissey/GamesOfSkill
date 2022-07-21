@@ -41,14 +41,13 @@ public:
       if(gameEvent == wallCreated || gameEvent == wallErased) return gameEvent;
     }
     if((ballEvent = TheBall::GetEvent()) != nothing) gameEvent = ballEvent;
-    Serial.print(ballEvent);
     return ballEvent;
   }
 
   //Called third
   Event GetGameEvent(){ 
-    if(gameEvent == ballErased || gameEvent == ballHitTheWall || gameEvent == wallErased && lastGameEvent != gameEvent){
-      lastGameEvent = gameEvent; 
+    if((gameEvent == ballErased || gameEvent == ballHitTheWall || gameEvent == wallErased) && lastGameEvent != gameEvent){
+      lastGameEvent = gameEvent;
       return gameEvent;
     }
     return Pong::GetEvent(); 

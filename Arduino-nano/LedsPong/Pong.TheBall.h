@@ -71,7 +71,7 @@ private:
   enum BallStatus{ballHitTheWall, ballOutsideTheBoard, ballInTheBoard};
   static int GetBallStatus(){
     RowCol ballCoordonate = ledsSquare.GetCoordonate();
-    if(ballCoordonate.row == 1 && TheWall::wallPosition == TheWall::north 
+    if(ballCoordonate.row == 1 && TheWall::wallPosition == TheWall::north
     || ballCoordonate.col == 1 && TheWall::wallPosition == TheWall::west 
     || ballCoordonate.row + ballSize.row == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::south 
     || ballCoordonate.col + ballSize.col == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::east ) return ballHitTheWall;
@@ -90,10 +90,10 @@ public:
   }
 
   static int GetEvent(){ 
-    int ballStatus = GetBallStatus();
-    if(ballStatus == ballOutsideTheBoard) return Events::ballMovedOutsideTheBoard;
-    if(ballStatus == ballHitTheWall)      return Events::ballHitTheWall;
     if(ledsSquare.GetLight() == Off)      return Events::ballErased;
+    int ballStatus = GetBallStatus();
+    if(ballStatus == ballHitTheWall)      return Events::ballHitTheWall;
+    if(ballStatus == ballOutsideTheBoard) return Events::ballMovedOutsideTheBoard;
     return Events::nothing; 
   }
 };
