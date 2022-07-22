@@ -1,9 +1,12 @@
 class Events{
 private:
-  static int gameEvent; 
-  int lastGameEvent = nothing; 
+  int externalGameEvent = nothing; 
+  int lastExternalGameEvent = nothing; 
+  int ballEvent = nothing; 
 
 public:
+  static int gameEvent; 
+  static int wallEvent;
   Events(){
     gameEvent = nothing;
   }
@@ -26,15 +29,16 @@ public:
 
   // Called first
   Event GetWallEvent(){
-    if(gameEvent == ballErased || gameEvent == ballHitTheWall) return gameEvent;
-    int wallEvent = TheWall::GetEvent();
+    Serial.print(gameEvent);
+    if(gameEvent == ballErased || gameEvent == ballHitTheWall || gameEvent == winAnimationIsOver) return gameEvent;
+    Serial.print("_");
+    Serial.print(wallEvent);
     if(wallEvent == wallCreated || wallEvent == wallErased) gameEvent = wallEvent;
     return wallEvent;
   }
 
   // Called second
   Event GetBallEvent(){
-    static int ballEvent = nothing; 
     static int lastBallEvent = nothing;
     if(gameEvent != lastBallEvent){
       lastBallEvent = gameEvent;
@@ -46,10 +50,11 @@ public:
 
   //Called third
   Event GetGameEvent(){ 
-    if((gameEvent == ballErased || gameEvent == ballHitTheWall || gameEvent == wallErased) && lastGameEvent != gameEvent){
-      lastGameEvent = gameEvent;
-      return gameEvent;
+    if((ballEvent == ballErased || ballEvent == ballHitTheWall || wallEvent == wallErased) && lastExternalGameEvent != externalGameEvent){
+      lastExternalGameEvent = externalGameEvent;
+      externalGameEvent = ballEvent == ballErased || ballEvent == ballHitTheWall ? ballEvent : wallEvent;
+      return externalGameEvent;
     }
-    return Pong::GetEvent(); 
+    return gameEvent; 
   }
 };

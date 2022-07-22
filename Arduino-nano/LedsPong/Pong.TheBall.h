@@ -7,7 +7,6 @@ private:
   State eraseBall = State(EraseBallEntry,      EraseBall,   EraseBallExit);
   State wait =      State(WaitEntry, WaitState, WaitExit);
 
-
   enum BallExit{inside, north, est, south, west};
   
   static GetBalStatus_(){

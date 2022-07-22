@@ -37,7 +37,7 @@ state DisplayWall {
     EraseWall ->  WaitEvent_W : **ballHitTheWall**\nor\n**ballErased**
     
     WaitEvent_W : Wait for game event
-    WaitEvent_W -> CreateWall : winAnimation\nIs Over
+    WaitEvent_W -> CreateWall : **winAnimationIsOver**
 }
 
 state Game {

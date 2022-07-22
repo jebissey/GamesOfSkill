@@ -21,16 +21,14 @@ static LedsSquare ledsSquare = LedsSquare(ballSize);
 
 class Pong : public Fsm {
 private:
-  State wait =              State(NULL, NULL, NULL);
+  State wait =              State(NULL, Wait, NULL);
   State winAnimation =      State(NULL, WinAnimation, NULL);
   State gameOverAnimation = State(NULL, GameOverAnimation, NULL);
-  State displayScore =      State(NULL, DisplayScore, NULL);
+  State displayScore =      State(DisplayScore, NULL, NULL);
   
   const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
   static Gy_521 gy521;
   static float boardTilts[3];
-  static int gameEvent;
-
     
 #include "Pong.TheWall.h"
   TheWall theWall;
@@ -41,10 +39,7 @@ private:
 #include "Pong.Events.h"
   Events events;
   
-  static void WinPoint(){
-    Serial.println("WinPoint");
-  }
-
+  static void Wait(){ Serial.print("g"); }
 
   static bool GameAnimation(byte masks[], int sizeOfMasks){
     static const int maxStep = sizeOfMasks - LedsSquare::matrixSize;
@@ -56,7 +51,7 @@ private:
       if(step++ > maxStep) step = 0;
       else{
         for(int i = 0; i < LedsSquare::matrixSize; i++){
-          ledsSquare.setRow(0, i,masks[step + i]);
+          ledsSquare.setRow(0, i, masks[step + i]);
         }
       }
     }
@@ -97,7 +92,7 @@ private:
       B00000000,
       B00000000,
     };
-    if(GameAnimation(win, sizeof(win))) gameEvent = Events::winAnimationIsOver; 
+    if(GameAnimation(win, sizeof(win))) Events::gameEvent = Events::winAnimationIsOver; 
   }
   
   static void GameOverAnimation(){
@@ -168,11 +163,11 @@ private:
       B00000000,
       B00000000,
     };
-    if(GameAnimation(gameOver, sizeof(gameOver))) gameEvent = Events::gameOverAnimationIsOver; 
+    if(GameAnimation(gameOver, sizeof(gameOver))) Events::gameEvent = Events::gameOverAnimationIsOver; 
   }
   
   static void DisplayScore(){
-    Serial.print("*");
+    Serial.println("\nDisplay score");
     
   }
   
@@ -200,20 +195,17 @@ public:
     this->add_transition(&winAnimation,      &wait,              Events::winAnimationIsOver,      NULL);
     this->add_transition(&gameOverAnimation, &displayScore,      Events::gameOverAnimationIsOver, NULL);
 
-    gameEvent = Events::nothing;
+    Events::gameEvent = Events::nothing;
   } 
-
-  static int GetEvent(){ return gameEvent; }
 };
 
 
 float Pong::boardTilts[3];
 int Pong::TheWall::wallPosition;
-int Pong::TheWall::wallEvent;
 int Pong::TheBall::ballStatus;
 unsigned long Pong::TheWall::beforeWallBlinkingTimer;
 unsigned long Pong::TheWall::wallBlinkingTimer;
 int Pong::Events::gameEvent;
-int Pong::gameEvent;
+int Pong::Events::wallEvent;
 
 #endif

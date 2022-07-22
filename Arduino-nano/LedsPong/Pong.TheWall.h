@@ -4,8 +4,6 @@ private:
   static const int wallBlinkingTime = 3000;
   static const int blinkTime = 200;
   
-  static int wallEvent;
-  
   State createWall = State(Create,                      Display,      NULL);
   State fixWall =    State(InitBeforeWallBlinkingTimer, FixThenBlink, NULL);
   State blinkWall =  State(InitWallBlinkingTimer,       FixThenBlink, NULL);
@@ -41,7 +39,7 @@ private:
         break;
       }
     }
-    wallEvent = Events::wallCreated;
+    Events::wallEvent = Events::wallCreated;
   }
   
   static void Display(){ Display_(B11111111); }
@@ -49,12 +47,12 @@ private:
   static void FixThenBlink(){
     static int mask = 0;
     static unsigned long blinkTimer;
-    if(wallEvent == Events::wallCreated && time.IsOver(beforeWallBlinkingTime, &beforeWallBlinkingTimer)){
-      wallEvent = Events::timeoutBeforeWallBlinkingIsOver;
+    if(Events::wallEvent == Events::wallCreated && time.IsOver(beforeWallBlinkingTime, &beforeWallBlinkingTimer)){
+      Events::wallEvent = Events::timeoutBeforeWallBlinkingIsOver;
       return; // mandatory for fsm
     }
-    if(wallEvent == Events::timeoutBeforeWallBlinkingIsOver){
-      if(time.IsOver(wallBlinkingTime, &wallBlinkingTimer)) wallEvent = Events::timeoutWallBlinkingIsOver;
+    if(Events::wallEvent == Events::timeoutBeforeWallBlinkingIsOver){
+      if(time.IsOver(wallBlinkingTime, &wallBlinkingTimer)) Events::wallEvent = Events::timeoutWallBlinkingIsOver;
       if(time.IsOver(blinkTime, &blinkTimer)){
         Display_(mask);
         if(mask == 0) mask = B11111111;
@@ -76,7 +74,7 @@ private:
         case 3 : mask = B00011000; break;
         case 4 : mask = B00000000; break;
         default : 
-          wallEvent = Events::wallErased; 
+          Events::wallEvent = Events::wallErased; 
           step = 0; 
           break;
       }
@@ -103,6 +101,4 @@ public:
     this->add_transition(&eraseWall,  &wait,       Events::ballErased, NULL);
     this->add_transition(&wait,       &createWall, Events::winAnimationIsOver, NULL);
   }
-
-  static int GetEvent(){ return wallEvent; }
 };
