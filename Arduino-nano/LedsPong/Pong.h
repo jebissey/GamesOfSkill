@@ -21,7 +21,7 @@ static LedsSquare ledsSquare = LedsSquare(ballSize);
 
 class Pong : public Fsm {
 private:
-  State wait =              State(NULL, WaitAnimation, NULL);
+  State wait =              State(NULL, NULL, NULL);
   State winAnimation =      State(NULL, WinAnimation, NULL);
   State gameOverAnimation = State(NULL, GameOverAnimation, NULL);
   State displayScore =      State(NULL, DisplayScore, NULL);
@@ -31,6 +31,7 @@ private:
   static float boardTilts[3];
   static int gameEvent;
 
+    
 #include "Pong.TheWall.h"
   TheWall theWall;
   
@@ -44,14 +45,63 @@ private:
     Serial.println("WinPoint");
   }
 
-  static void WaitAnimation(){ Serial.print("-"); }
 
-  static void WinAnimation(){
-    Serial.println("WinAnimation");
+  static bool GameAnimation(byte masks[], int sizeOfMasks){
+    static const int maxStep = sizeOfMasks - LedsSquare::matrixSize;
+    static int step = 0;
+    static int mask;
+    static const int animationTime = 100;
+    static unsigned long animationTimer;
+    if(time.IsOver(animationTime, &animationTimer)){
+      if(step++ > maxStep) step = 0;
+      else{
+        for(int i = 0; i < LedsSquare::matrixSize; i++){
+          ledsSquare.setRow(0, i,masks[step + i]);
+        }
+      }
+    }
+    return step == 0;
   }
 
+  static void WinAnimation(){
+    byte win[] = {
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00111111,
+      B01000000,
+      B10000000,
+      B01000000,
+      B00100000,
+      B01000000,
+      B10000000,
+      B01000000,
+      B00111111,
+      B00000000,
+      B11111111,
+      B00000000,
+      B11111111,
+      B00000010,
+      B00000100,
+      B00001000,
+      B00010000,
+      B00100000,
+      B01000000,
+      B11111111,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+    };
+    if(GameAnimation(win, sizeof(win))) gameEvent = Events::winAnimationIsOver; 
+  }
+  
   static void GameOverAnimation(){
-    static byte masks[] = {
+    byte gameOver[] = {
       B00000000,
       B00000000,
       B00000000,
@@ -118,22 +168,7 @@ private:
       B00000000,
       B00000000,
     };
-    static const int maxStep = sizeof(masks) - LedsSquare::matrixSize;
-    static int step = 0;
-    static int mask;
-    static const int animationTime = 100;
-    static unsigned long animationTimer;
-    if(time.IsOver(animationTime, &animationTimer)){
-      if(step++ > maxStep){
-          gameEvent = Events::gameOverAnimationIsOver; 
-          step = 0;
-      }
-      else{
-        for(int i = 0; i < LedsSquare::matrixSize; i++){
-          ledsSquare.setRow(0, i,masks[step + i]);
-        }
-      }
-    }
+    if(GameAnimation(gameOver, sizeof(gameOver))) gameEvent = Events::gameOverAnimationIsOver; 
   }
   
   static void DisplayScore(){

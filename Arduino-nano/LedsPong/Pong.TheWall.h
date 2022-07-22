@@ -28,7 +28,7 @@ private:
   static void InitWallBlinkingTimer(){ time.Reset(&wallBlinkingTimer); }
 
   static void WaitEntry(){ Serial.println("WaitEntry (wall)"); }
-  static void Wait(){ Serial.print("+"); }
+  static void Wait(){ Serial.print("w"); }
   static void WaitExit(){ Serial.println("WaitExit (wall)"); }
 
 

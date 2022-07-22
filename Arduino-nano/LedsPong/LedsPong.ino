@@ -24,6 +24,6 @@ delay(50);
   if(time.IsOver(1000, &temperatureTime)){
 /*    Serial.print("temperature=");
     Serial.println(pong.GetTemperature());*/
-    Serial.println("1sec");
+    Serial.println(" 1sec");
   }
 }

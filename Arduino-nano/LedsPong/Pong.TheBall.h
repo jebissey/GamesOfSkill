@@ -29,7 +29,7 @@ private:
   }
 
   static void WaitEntry(){ Serial.println("WaitEntry (ball)"); }
-  static void WaitState(){ Serial.print("#"); }
+  static void WaitState(){ Serial.print("b"); }
   static void WaitExit(){ Serial.println("WaitExit (ball)"); }
 
   static void Move(){
@@ -71,10 +71,10 @@ private:
   enum BallStatus{ballHitTheWall, ballOutsideTheBoard, ballInTheBoard};
   static int GetBallStatus(){
     RowCol ballCoordonate = ledsSquare.GetCoordonate();
-    if(ballCoordonate.row == 1 && TheWall::wallPosition == TheWall::north
-    || ballCoordonate.col == 1 && TheWall::wallPosition == TheWall::west 
-    || ballCoordonate.row + ballSize.row == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::south 
-    || ballCoordonate.col + ballSize.col == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::east ) return ballHitTheWall;
+    if(ballCoordonate.row == 1 && TheWall::wallPosition == TheWall::south
+    || ballCoordonate.col == 1 && TheWall::wallPosition == TheWall::east
+    || ballCoordonate.row + ballSize.row == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::north 
+    || ballCoordonate.col + ballSize.col == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::west ) return ballHitTheWall;
     
     if(GetBalStatus_() != inside) return ballOutsideTheBoard;  
     return ballInTheBoard;
