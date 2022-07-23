@@ -3,9 +3,9 @@ private:
   static const int timeBetweenBallMove = 100;
   static int ballStatus;
   
-  State moveBall =  State(Display,   Move,      NULL);
-  State eraseBall = State(EraseBallEntry,      EraseBall,   EraseBallExit);
-  State wait =      State(WaitEntry, WaitState, WaitExit);
+  State moveBall =  State(Display, Move, NULL);
+  State eraseBall = State(NULL, EraseBall, NULL);
+  State wait =      State(NULL, WaitState, NULL);
 
   enum BallExit{inside, north, est, south, west};
   
@@ -27,9 +27,7 @@ private:
     }
   }
 
-  static void WaitEntry(){ Serial.println("WaitEntry (ball)"); }
   static void WaitState(){ Serial.print("b"); }
-  static void WaitExit(){ Serial.println("WaitExit (ball)"); }
 
   static void Move(){
     if(time.IsOver(timeBetweenBallMove, &timerForMoveTheBall)){
@@ -40,10 +38,8 @@ private:
     }
   }
     
-  static void Display(){ ledsSquare.SetLight(On); Serial.println("display ball");}
+  static void Display(){ ledsSquare.SetLight(On); }
 
-  static void EraseBallEntry(){ Serial.println("EraseBallEntry");}
-  static void EraseBallExit() { Serial.println("EraseBallExit");}
   static void EraseBall(){
     static int step = 0;
     static int mask;

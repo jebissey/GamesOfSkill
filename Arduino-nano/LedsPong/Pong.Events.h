@@ -1,14 +1,12 @@
 class Events{
 private:
-  int externalGameEvent = nothing; 
-  int lastExternalGameEvent = nothing; 
-  int ballEvent = nothing; 
 
 public:
   static int gameEvent; 
   static int wallEvent;
+  static int ballEvent; 
   Events(){
-    gameEvent = nothing;
+    gameEvent = wallEvent = ballEvent = nothing;
   }
   
   enum Event{
@@ -25,36 +23,46 @@ public:
   
     winAnimationIsOver,
     gameOverAnimationIsOver,
+    boardShaked,
   };
 
-  // Called first
   Event GetWallEvent(){
-    Serial.print(gameEvent);
-    if(gameEvent == ballErased || gameEvent == ballHitTheWall || gameEvent == winAnimationIsOver) return gameEvent;
-    Serial.print("_");
+    static int externalWallEvent = nothing;
+    static int lastExternalWallEvent = nothing;
+    if(ballEvent == ballErased || ballEvent == ballHitTheWall) externalWallEvent = ballEvent;
+    else if(gameEvent == winAnimationIsOver || gameEvent == boardShaked) externalWallEvent = gameEvent;
+    if(lastExternalWallEvent != externalWallEvent){
+      lastExternalWallEvent = externalWallEvent;
+      return externalWallEvent;
+    }
     Serial.print(wallEvent);
-    if(wallEvent == wallCreated || wallEvent == wallErased) gameEvent = wallEvent;
     return wallEvent;
   }
 
-  // Called second
   Event GetBallEvent(){
-    static int lastBallEvent = nothing;
-    if(gameEvent != lastBallEvent){
-      lastBallEvent = gameEvent;
-      if(gameEvent == wallCreated || gameEvent == wallErased) return gameEvent;
+    static int externalBallEvent = nothing;
+    static int lastExternalBallEvent = nothing;
+    if(wallEvent == wallCreated || wallEvent == wallErased) externalBallEvent == wallEvent;
+    if(lastExternalBallEvent != externalBallEvent){
+      lastExternalBallEvent = externalBallEvent;
+      Serial.print("___");
+      return externalBallEvent;
     }
-    if((ballEvent = TheBall::GetEvent()) != nothing) gameEvent = ballEvent;
+    ballEvent = TheBall::GetEvent();
+    Serial.print(ballEvent);
     return ballEvent;
   }
 
-  //Called third
   Event GetGameEvent(){ 
-    if((ballEvent == ballErased || ballEvent == ballHitTheWall || wallEvent == wallErased) && lastExternalGameEvent != externalGameEvent){
+    static int externalGameEvent = nothing; 
+    static int lastExternalGameEvent = nothing; 
+    if(ballEvent == ballErased || ballEvent == ballHitTheWall ) externalGameEvent = ballEvent;
+    else if(wallEvent == wallErased) externalGameEvent = wallEvent;
+    if(lastExternalGameEvent != externalGameEvent){
       lastExternalGameEvent = externalGameEvent;
-      externalGameEvent = ballEvent == ballErased || ballEvent == ballHitTheWall ? ballEvent : wallEvent;
       return externalGameEvent;
     }
+    if(gy521.IsShaked()) gameEvent = boardShaked;
     return gameEvent; 
   }
 };

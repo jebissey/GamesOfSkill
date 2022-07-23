@@ -3,7 +3,6 @@
 state DisplayBall {
     [*] --> WaitEvent_B
 
-    WaitEvent_B : Wait for wall event
     WaitEvent_B -> MoveBall : **wallCreated**
 
     MoveBall : Move the ball\naccording the tilt\nof the board
@@ -11,14 +10,15 @@ state DisplayBall {
     MoveBall --> EraseBall :  Ball Moved\nOutside The Board
     MoveBall --> WaitEvent_B : Ball Hit The wall\nor\n**wallErased**
 
-    EraseBall : Ball erasing
     EraseBall -up-> EraseBall : BallErasing
     EraseBall --> WaitEvent_B : BallErased
 
 }
 
 state DisplayWall {
-    [*] --> CreateWall
+    [*] --> WaitEvent_W
+        
+    WaitEvent_W -> CreateWall : **winAnimationIsOver**\nor\n**boardShacked**
 
     CreateWall : Create a wall on a random side
     CreateWall --> FixWall : wallCreated
@@ -35,27 +35,27 @@ state DisplayWall {
     EraseWall -up-> EraseWall : wallErasing
     EraseWall --> WaitEvent_W : WallErased
     EraseWall ->  WaitEvent_W : **ballHitTheWall**\nor\n**ballErased**
-    
-    WaitEvent_W : Wait for game event
-    WaitEvent_W -> CreateWall : **winAnimationIsOver**
 }
 
 state Game {
-    [*] --> WaitEvent_G
+    [*] --> Start
 
-    WaitEvent_G : Wait for ball and wall events
-    WaitEvent_G --> GameOverAnimation : **wallErased**
-    WaitEvent_G --> GameOverAnimation : **ballErased**
+    Start --> Gaming : boardShacked
+    Start -up-> Start : startAnimation
 
-    WaitEvent_G --> WinAnimation : **ballHitTheWall**
+    Gaming : Wait for ball and wall events
+    Gaming --> GameOverAnimation : **wallErased**\nor\n**ballErased**
+
+    Gaming --> WinAnimation : **ballHitTheWall**
 
     WinAnimation : Added points to the game score
     WinAnimation -up-> WinAnimation : winAnimation\nIs Not Over
-    WinAnimation --> WaitEvent_G : winAnimation\nIs Over
+    WinAnimation --> Gaming : winAnimation\nIs Over
 
     GameOverAnimation -up-> GameOverAnimation : gameOverAnimation\nIs Not Over
     GameOverAnimation --> DisplayScore : gameOverAnimation\nIs Over
 
+    DisplayScore --> Gaming : boardShacked
     DisplayScore --> [*]
 }
 

@@ -4,11 +4,11 @@ private:
   static const int wallBlinkingTime = 3000;
   static const int blinkTime = 200;
   
-  State createWall = State(Create,                      Display,      NULL);
+  State createWall = State(Create, Display, NULL);
   State fixWall =    State(InitBeforeWallBlinkingTimer, FixThenBlink, NULL);
-  State blinkWall =  State(InitWallBlinkingTimer,       FixThenBlink, NULL);
-  State eraseWall =  State(NULL,                        WallErasing,  NULL);
-  State wait =       State(WaitEntry,                   Wait,         WaitExit);
+  State blinkWall =  State(InitWallBlinkingTimer, FixThenBlink, NULL);
+  State eraseWall =  State(NULL, WallErasing, NULL);
+  State wait =       State(NULL, Wait, NULL);
 
   static void Display_(int mask){
     switch(wallPosition){
@@ -25,13 +25,10 @@ private:
   static unsigned long wallBlinkingTimer;
   static void InitWallBlinkingTimer(){ time.Reset(&wallBlinkingTimer); }
 
-  static void WaitEntry(){ Serial.println("WaitEntry (wall)"); }
   static void Wait(){ Serial.print("w"); }
-  static void WaitExit(){ Serial.println("WaitExit (wall)"); }
-
 
   static void Create(){
-    Display_(0);
+    ledsSquare.ClearDisplay();
     while(1==1){
       int newWallPosition = random(north, west + 1);
       if(wallPosition != newWallPosition){
@@ -86,9 +83,11 @@ public:
   enum WallPosition{noWall, north, east, south, west};
   static int wallPosition;
   
-  TheWall() : Fsm(&createWall){
+  TheWall() : Fsm(&wait){
     wallPosition = noWall;
     
+    this->add_transition(&wait,       &createWall, Events::winAnimationIsOver, NULL);
+    this->add_transition(&wait,       &createWall, Events::boardShaked, NULL);
     this->add_transition(&createWall, &fixWall,    Events::wallCreated, NULL);
     this->add_transition(&fixWall,    &blinkWall,  Events::timeoutBeforeWallBlinkingIsOver, NULL);
     this->add_transition(&fixWall,    &wait,       Events::ballHitTheWall, NULL);
@@ -99,6 +98,5 @@ public:
     this->add_transition(&eraseWall,  &wait,       Events::wallErased, NULL);
     this->add_transition(&eraseWall,  &wait,       Events::ballHitTheWall, NULL);
     this->add_transition(&eraseWall,  &wait,       Events::ballErased, NULL);
-    this->add_transition(&wait,       &createWall, Events::winAnimationIsOver, NULL);
   }
 };

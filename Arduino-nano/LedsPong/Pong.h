@@ -21,7 +21,8 @@ static LedsSquare ledsSquare = LedsSquare(ballSize);
 
 class Pong : public Fsm {
 private:
-  State wait =              State(NULL, Wait, NULL);
+  State start =             State(NULL, StartAnimation, NULL);
+  State gaming =            State(NULL, Gaming, NULL);
   State winAnimation =      State(NULL, WinAnimation, NULL);
   State gameOverAnimation = State(NULL, GameOverAnimation, NULL);
   State displayScore =      State(DisplayScore, NULL, NULL);
@@ -39,13 +40,12 @@ private:
 #include "Pong.Events.h"
   Events events;
   
-  static void Wait(){ Serial.print("g"); }
+  static void Gaming(){ Serial.print("g"); }
 
-  static bool GameAnimation(byte masks[], int sizeOfMasks){
+  static bool GameAnimation(byte masks[], int sizeOfMasks, int animationTime = 100){
     static const int maxStep = sizeOfMasks - LedsSquare::matrixSize;
     static int step = 0;
     static int mask;
-    static const int animationTime = 100;
     static unsigned long animationTimer;
     if(time.IsOver(animationTime, &animationTimer)){
       if(step++ > maxStep) step = 0;
@@ -58,12 +58,98 @@ private:
     return step == 0;
   }
 
+  static void StartAnimation(){
+    byte shakeMe[] = {
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      
+      B01001110,
+      B10010001,
+      B10010001,
+      B10010001,
+      B01100010,
+
+      B00000000,
+      B00000000,
+      
+      B11111111,
+      B00010000,
+      B00010000,
+      B00010000,
+      B11111111,
+      
+      B00000000,
+      B00000000,
+      
+      B11111110,
+      B00010001,
+      B00010001,
+      B00010001,
+      B11111110,
+      
+      B00000000,
+      B00000000,
+      
+      B11111111,
+      B00010000,
+      B00010000,
+      B00101000,
+      B11000111,
+      
+      B00000000,
+      B00000000,
+      
+      B11111111,
+      B10010001,
+      B10010001,
+      B10010001,
+      B10000001,
+     
+      B00000000,
+      B00000000,
+      B00000000,
+      
+      B11111111,
+      B00000010,
+      B00000100,
+      B00001000,
+      B00000100,
+      B00000010,
+      B11111111,
+      
+      B00000000,
+      B00000000,
+      
+      B11111111,
+      B10010001,
+      B10010001,
+      B10010001,
+      B10000001,
+      
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+      B00000000,
+    };
+    GameAnimation(shakeMe, sizeof(shakeMe), 200); 
+  }
+  
   static void WinAnimation(){
     byte win[] = {
       B00000000,
       B00000000,
       B00000000,
       B00000000,
+      
       B00111111,
       B01000000,
       B10000000,
@@ -73,9 +159,13 @@ private:
       B10000000,
       B01000000,
       B00111111,
+      
       B00000000,
+      
       B11111111,
+      
       B00000000,
+      
       B11111111,
       B00000010,
       B00000100,
@@ -84,6 +174,7 @@ private:
       B00100000,
       B01000000,
       B11111111,
+      
       B00000000,
       B00000000,
       B00000000,
@@ -104,18 +195,23 @@ private:
       B00000000,
       B00000000,
       B00000000,
+      
       B01111110,
       B10000001,
       B10010001,
       B10010001,
       B01100000,
+      
       B00000000,
+      
       B11111110,
       B00010001,
       B00010001,
       B00010001,
       B11111110,
+      
       B00000000,
+      
       B11111111,
       B00000010,
       B00000100,
@@ -123,38 +219,49 @@ private:
       B00000100,
       B00000010,
       B11111111,
+      
       B00000000,
+      
       B11111111,
       B10010001,
       B10010001,
       B10010001,
       B10000001,
+      
       B00000000,
       B00000000,
       B00000000,
+      
       B01111110,
       B10000001,
       B10000001,
       B10000001,
       B01111110,
+      
       B00000000,
+      
       B00111111,
       B01000000,
       B10000000,
       B01000000,
       B00111111,
+      
       B00000000,
+      
       B11111111,
       B10010001,
       B10010001,
       B10010001,
       B10000001,
+      
       B00000000,
+      
       B11111111,
       B00010001,
       B00110001,
       B01010001,
       B10001110,
+      
       B00000000,
       B00000000,
       B00000000,
@@ -188,12 +295,14 @@ public:
     trigger(events.GetGameEvent());
   }
 
-  Pong() : Fsm(&wait){
-    this->add_transition(&wait,              &winAnimation,      Events::ballHitTheWall,          NULL);
-    this->add_transition(&wait,              &gameOverAnimation, Events::ballErased,              NULL);
-    this->add_transition(&wait,              &gameOverAnimation, Events::wallErased,              NULL);
-    this->add_transition(&winAnimation,      &wait,              Events::winAnimationIsOver,      NULL);
+  Pong() : Fsm(&start){
+    this->add_transition(&start,             &gaming,            Events::boardShaked, NULL);
+    this->add_transition(&gaming,            &winAnimation,      Events::ballHitTheWall, NULL);
+    this->add_transition(&gaming,            &gameOverAnimation, Events::ballErased, NULL);
+    this->add_transition(&gaming,            &gameOverAnimation, Events::wallErased, NULL);
+    this->add_transition(&winAnimation,      &gaming,            Events::winAnimationIsOver, NULL);
     this->add_transition(&gameOverAnimation, &displayScore,      Events::gameOverAnimationIsOver, NULL);
+    this->add_transition(&displayScore,      &gaming,            Events::boardShaked, NULL);
 
     Events::gameEvent = Events::nothing;
   } 
@@ -207,5 +316,6 @@ unsigned long Pong::TheWall::beforeWallBlinkingTimer;
 unsigned long Pong::TheWall::wallBlinkingTimer;
 int Pong::Events::gameEvent;
 int Pong::Events::wallEvent;
+int Pong::Events::ballEvent;
 
 #endif

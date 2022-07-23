@@ -76,6 +76,8 @@ public:
     squareSize = squareSize_;
     if(squareLight == On) SetSquare(true);
   }
+
+  void ClearDisplay() { this->clearDisplay(0);}
 };
 
 #endif
