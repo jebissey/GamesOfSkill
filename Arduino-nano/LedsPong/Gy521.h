@@ -56,7 +56,7 @@ public:
 
   bool IsShaked(){ 
     ReadGY521();
-    return abs(gyAccTemp[4]) + abs(gyAccTemp[5]) + abs(gyAccTemp[6]) > 25000; 
+    return abs(gyAccTemp[4]) + abs(gyAccTemp[5]) + abs(gyAccTemp[6]) > 22500; 
   }
 };
 

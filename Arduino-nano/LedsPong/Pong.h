@@ -7,6 +7,11 @@
 #include "WProgram.h"
 #endif
 
+
+#include "Time.h"
+static Time time;
+
+
 #include <Fsm.h>
 
 static unsigned long timerForMoveTheBall;
@@ -21,13 +26,12 @@ static LedsSquare ledsSquare = LedsSquare(ballSize);
 
 class Pong : public Fsm {
 private:
-  State start =             State(NULL, StartAnimation, NULL);
+  State start =             State(InitStep, StartAnimation, NULL);
   State gaming =            State(NULL, Gaming, NULL);
-  State winAnimation =      State(NULL, WinAnimation, NULL);
-  State gameOverAnimation = State(NULL, GameOverAnimation, NULL);
+  State winAnimation =      State(InitStep, WinAnimation, NULL);
+  State gameOverAnimation = State(InitStep, GameOverAnimation, NULL);
   State displayScore =      State(DisplayScore, NULL, NULL);
   
-  const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
   static Gy_521 gy521;
   static float boardTilts[3];
     
@@ -42,12 +46,13 @@ private:
   
   static void Gaming(){ Serial.print("g"); }
 
+  static int step;
+  static void InitStep(){step= 0;}
   static bool GameAnimation(byte masks[], int sizeOfMasks, int animationTime = 100){
-    static const int maxStep = sizeOfMasks - LedsSquare::matrixSize;
-    static int step = 0;
-    static int mask;
+    int maxStep = sizeOfMasks - LedsSquare::matrixSize;
     static unsigned long animationTimer;
     if(time.IsOver(animationTime, &animationTimer)){
+      Serial.print("_");
       if(step++ > maxStep) step = 0;
       else{
         for(int i = 0; i < LedsSquare::matrixSize; i++){
@@ -70,68 +75,68 @@ private:
       B00000000,
       B00000000,
       
-      B01001110,
-      B10010001,
-      B10010001,
-      B10010001,
-      B01100010,
+      B01001100,
+      B10010010,
+      B10010010,
+      B10010010,
+      B01100100,
 
       B00000000,
       B00000000,
       
-      B11111111,
-      B00010000,
-      B00010000,
-      B00010000,
-      B11111111,
-      
-      B00000000,
-      B00000000,
-      
       B11111110,
-      B00010001,
-      B00010001,
-      B00010001,
+      B00010000,
+      B00010000,
+      B00010000,
       B11111110,
       
       B00000000,
       B00000000,
       
-      B11111111,
+      B11111100,
+      B00010010,
+      B00010010,
+      B00010010,
+      B11111100,
+      
+      B00000000,
+      B00000000,
+      
+      B11111110,
       B00010000,
       B00010000,
       B00101000,
-      B11000111,
+      B11000100,
       
       B00000000,
       B00000000,
       
-      B11111111,
-      B10010001,
-      B10010001,
-      B10010001,
-      B10000001,
+      B11111110,
+      B10010010,
+      B10010010,
+      B10010010,
+      B10000010,
      
       B00000000,
       B00000000,
       B00000000,
       
-      B11111111,
-      B00000010,
+      B11111110,
       B00000100,
       B00001000,
+      B00010000,
+      B00001000,
       B00000100,
-      B00000010,
-      B11111111,
+      B11111110,
       
       B00000000,
       B00000000,
       
-      B11111111,
-      B10010001,
-      B10010001,
-      B10010001,
-      B10000001,
+      B11111110,
+      B10010010,
+      B10010010,
+      B10010010,
+      B10000010,
       
       B00000000,
       B00000000,
@@ -161,9 +166,13 @@ private:
       B00111111,
       
       B00000000,
-      
+      B00000000,
+
+      B10000001,
       B11111111,
+      B10000001,
       
+      B00000000,
       B00000000,
       
       B11111111,
@@ -281,18 +290,35 @@ private:
 public: 
   void Setup(){
     gy521.Setup();
-    ledsSquare.MoveAbsolute(ballCoordonateAtStartUp);
+    randomSeed(3);
   }
   
   void Run(){
     theWall.run_machine();
-    theWall.trigger(events.GetWallEvent());
+    int wallEvent = events.GetWallEvent();
+    theWall.trigger(wallEvent);
         
     theBall.run_machine();
-    theBall.trigger(events.GetBallEvent());
+    int ballEvent = events.GetBallEvent();
+    theBall.trigger(ballEvent);
 
     run_machine();
-    trigger(events.GetGameEvent());
+    int gameEvent = events.GetGameEvent();
+    trigger(gameEvent);
+
+    delay(50);
+    Serial.print("[");
+    Serial.print(wallEvent);
+    Serial.print(ballEvent);
+    Serial.print(ballEvent);
+    Serial.print("]");
+
+    
+
+    static unsigned long secondTime;
+    if(time.IsOver(1000, &secondTime)){
+      Serial.println("");
+    }
   }
 
   Pong() : Fsm(&start){
@@ -310,6 +336,7 @@ public:
 
 
 float Pong::boardTilts[3];
+int Pong::step;
 int Pong::TheWall::wallPosition;
 int Pong::TheBall::ballStatus;
 unsigned long Pong::TheWall::beforeWallBlinkingTimer;

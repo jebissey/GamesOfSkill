@@ -7,22 +7,21 @@ private:
   State eraseBall = State(NULL, EraseBall, NULL);
   State wait =      State(NULL, WaitState, NULL);
 
-  enum BallExit{inside, north, est, south, west};
-  
+  enum BallExit{inside, north, east, south, west};
   static GetBalStatus_(){
     RowCol ballCoordonate = ledsSquare.GetCoordonate();
     if(ballCoordonate.row < 0) return west;
     if(ballCoordonate.col < 0) return south;
-    if(ballCoordonate.row + ballSize.row - 1 >= ledsSquare.matrixSize) return est;
+    if(ballCoordonate.row + ballSize.row - 1 >= ledsSquare.matrixSize) return east;
     if(ballCoordonate.col + ballSize.col - 1 >= ledsSquare.matrixSize) return north;
     return inside;
   }
 
-  static void Display(int mask){
+  static void DisplayOuting(int mask){
     switch(GetBalStatus_()){
       case north: ledsSquare.setColumn(0, ledsSquare.matrixSize - 1, mask); break;
       case south: ledsSquare.setColumn(0, 0, mask); break;
-      case est:   ledsSquare.setRow(0, ledsSquare.matrixSize - 1, mask); break;
+      case east:  ledsSquare.setRow(0, ledsSquare.matrixSize - 1, mask); break;
       case west:  ledsSquare.setRow(0, 0, mask); break;
     }
   }
@@ -38,7 +37,11 @@ private:
     }
   }
     
-  static void Display(){ ledsSquare.SetLight(On); }
+  static void Display(){
+    static const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
+    ledsSquare.MoveAbsolute(ballCoordonateAtStartUp);
+    ledsSquare.SetLight(On); 
+  }
 
   static void EraseBall(){
     static int step = 0;
@@ -59,7 +62,7 @@ private:
         case 9 : mask = B00000000; break;
         default : ledsSquare.SetLight(Off);
       }
-      Display(mask);
+      DisplayOuting(mask);
     }
   }
   
@@ -69,10 +72,8 @@ private:
     if(ballCoordonate.row == 1 && TheWall::wallPosition == TheWall::south
     || ballCoordonate.col == 1 && TheWall::wallPosition == TheWall::east
     || ballCoordonate.row + ballSize.row == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::north 
-    || ballCoordonate.col + ballSize.col == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::west ) return ballHitTheWall;
-    
-    if(GetBalStatus_() != inside) return ballOutsideTheBoard;  
-    return ballInTheBoard;
+    || ballCoordonate.col + ballSize.col == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::west ) return ballHitTheWall; 
+    return GetBalStatus_() == inside ? ballInTheBoard : ballOutsideTheBoard;
   }
   
 public:

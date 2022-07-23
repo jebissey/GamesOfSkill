@@ -27,35 +27,32 @@ public:
   };
 
   Event GetWallEvent(){
-    static int externalWallEvent = nothing;
-    static int lastExternalWallEvent = nothing;
+    static int externalWallEvent;
+    static int lastExternalWallEvent;
     if(ballEvent == ballErased || ballEvent == ballHitTheWall) externalWallEvent = ballEvent;
     else if(gameEvent == winAnimationIsOver || gameEvent == boardShaked) externalWallEvent = gameEvent;
     if(lastExternalWallEvent != externalWallEvent){
       lastExternalWallEvent = externalWallEvent;
       return externalWallEvent;
     }
-    Serial.print(wallEvent);
     return wallEvent;
   }
 
   Event GetBallEvent(){
-    static int externalBallEvent = nothing;
-    static int lastExternalBallEvent = nothing;
-    if(wallEvent == wallCreated || wallEvent == wallErased) externalBallEvent == wallEvent;
+    static int externalBallEvent;
+    static int lastExternalBallEvent;
+    if(wallEvent == wallCreated || wallEvent == wallErased) externalBallEvent = wallEvent;
     if(lastExternalBallEvent != externalBallEvent){
       lastExternalBallEvent = externalBallEvent;
-      Serial.print("___");
       return externalBallEvent;
     }
     ballEvent = TheBall::GetEvent();
-    Serial.print(ballEvent);
     return ballEvent;
   }
 
   Event GetGameEvent(){ 
-    static int externalGameEvent = nothing; 
-    static int lastExternalGameEvent = nothing; 
+    static int externalGameEvent; 
+    static int lastExternalGameEvent; 
     if(ballEvent == ballErased || ballEvent == ballHitTheWall ) externalGameEvent = ballEvent;
     else if(wallEvent == wallErased) externalGameEvent = wallEvent;
     if(lastExternalGameEvent != externalGameEvent){
