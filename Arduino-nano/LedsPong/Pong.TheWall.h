@@ -7,8 +7,8 @@ private:
   State createWall = State(Create, Display, NULL);
   State fixWall =    State(InitBeforeWallBlinkingTimer, FixThenBlink, NULL);
   State blinkWall =  State(InitWallBlinkingTimer, FixThenBlink, NULL);
-  State eraseWall =  State(NULL, WallErasing, NULL);
-  State wait =       State(NULL, Wait, NULL);
+  State eraseWall =  State(InitStep, WallErasing, NULL);
+  State wait =       State(NULL, NULL, NULL);
 
   static void Display_(int mask){
     switch(wallPosition){
@@ -24,8 +24,6 @@ private:
   
   static unsigned long wallBlinkingTimer;
   static void InitWallBlinkingTimer(){ time.Reset(&wallBlinkingTimer); }
-
-  static void Wait(){ Serial.print("w"); }
 
   static void Create(){
     ledsSquare.ClearDisplay();
@@ -57,9 +55,10 @@ private:
       }
     }
   }
-  
+
+  static int step;
+  static void InitStep(){ step = 0; }
   static void WallErasing(){
-    static int step = 0;
     static int mask;
     static const int eraseTime = 250;
     static unsigned long eraseTimer;
@@ -79,6 +78,15 @@ private:
     }
   }
 
+  static void WaitToCreateWall(){ Serial.println("Wall: WaitToCreateWall");}
+  static void CreateWallToFixWall(){ Serial.println("Wall: CreateWallToFixWall");}
+  static void FixWalltoBlinkWall(){ Serial.println("Wall: FixWalltoBlinkWall");}
+  static void FixWakkToWait(){ Serial.println("Wall: FixWakkToWait =====\n");}
+  static void BlinkWallToEraseWall(){ Serial.println("Wall: BlinkWallToEraseWall");}
+  static void BlinkWallToWait(){ Serial.println("Wall: BlinkWallToWait");}
+  static void EraseWallToWait1(){ Serial.println("Wall: EraseWallToWait1");}
+  static void EraseWallToWait2(){ Serial.println("Wall: EraseWallToWait2");}
+
 public:
   enum WallPosition{noWall, north, east, south, west};
   static int wallPosition;
@@ -86,13 +94,13 @@ public:
   TheWall() : Fsm(&wait){
     wallPosition = noWall;
     
-    this->add_transition(&wait,       &createWall, Events::gameStarting, NULL);
-    this->add_transition(&createWall, &fixWall,    Events::wallCreated, NULL);
-    this->add_transition(&fixWall,    &blinkWall,  Events::timeoutBeforeWallBlinkingIsOver, NULL);
-    this->add_transition(&fixWall,    &wait,       Events::gameEnding, NULL);
-    this->add_transition(&blinkWall,  &eraseWall,  Events::timeoutWallBlinkingIsOver, NULL);
-    this->add_transition(&blinkWall,  &wait,       Events::gameEnding, NULL);
-    this->add_transition(&eraseWall,  &wait,       Events::wallErased, NULL);
-    this->add_transition(&eraseWall,  &wait,       Events::gameEnding, NULL);
+    this->add_transition(&wait,       &createWall, Events::gameStarting, WaitToCreateWall);
+    this->add_transition(&createWall, &fixWall,    Events::wallCreated, CreateWallToFixWall);
+    this->add_transition(&fixWall,    &blinkWall,  Events::timeoutBeforeWallBlinkingIsOver, FixWalltoBlinkWall);
+    this->add_transition(&fixWall,    &wait,       Events::gameEnding, FixWakkToWait);
+    this->add_transition(&blinkWall,  &eraseWall,  Events::timeoutWallBlinkingIsOver, BlinkWallToEraseWall);
+    this->add_transition(&blinkWall,  &wait,       Events::gameEnding, BlinkWallToWait);
+    this->add_transition(&eraseWall,  &wait,       Events::wallErased, EraseWallToWait1);
+    this->add_transition(&eraseWall,  &wait,       Events::gameEnding, EraseWallToWait2);
   }
 };

@@ -5,7 +5,7 @@ private:
   
   State moveBall =  State(Display, Move, NULL);
   State eraseBall = State(NULL, EraseBall, NULL);
-  State wait =      State(NULL, WaitState, NULL);
+  State wait =      State(NULL, NULL, NULL);
 
   enum BallExit{inside, north, east, south, west};
   static GetBalStatus_(){
@@ -25,8 +25,6 @@ private:
       case west:  ledsSquare.setRow(0, 0, mask); break;
     }
   }
-
-  static void WaitState(){ Serial.print("b"); }
 
   static void Move(){
     if(time.IsOver(timeBetweenBallMove, &timerForMoveTheBall)){
@@ -75,13 +73,21 @@ private:
     || ballCoordonate.col + ballSize.col == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::west ) return ballHitTheWall; 
     return GetBalStatus_() == inside ? ballInTheBoard : ballOutsideTheBoard;
   }
+
+  
+  static void WaitToMoveBall(){ Serial.println("Ball: WaitToMoveBall");}
+  static void MoveBallToEraseBall(){ Serial.println("Ball: MoveBallToEraseBall");}
+  static void EraseBallToWait(){ Serial.println("Ball: EraseBallToWait");}
+  static void MoveBallToWait1(){ Serial.println("Ball: MoveBallToWait1");}
+  static void MoveBallToWait2(){ Serial.println("Ball: MoveBallToWait2");}
   
 public:
   TheBall() : Fsm(&wait){
-    this->add_transition(&wait,     &moveBall,  Events::gameStarting, NULL);
-    this->add_transition(&moveBall, &eraseBall, Events::ballMovedOutsideTheBoard, NULL);
-    this->add_transition(&moveBall, &wait,      Events::ballHitTheWall, NULL);
-    this->add_transition(&moveBall, &wait,      Events::gameEnding, NULL);
+    this->add_transition(&wait,      &moveBall,  Events::gameStarting, WaitToMoveBall);
+    this->add_transition(&moveBall,  &eraseBall, Events::ballMovedOutsideTheBoard, MoveBallToEraseBall);
+    this->add_transition(&eraseBall, &wait,      Events::ballErased, EraseBallToWait);
+    this->add_transition(&moveBall,  &wait,      Events::ballHitTheWall, MoveBallToWait1);
+    this->add_transition(&moveBall,  &wait,      Events::gameEnding, MoveBallToWait2);
   }
 
   static int GetEvent(){ 

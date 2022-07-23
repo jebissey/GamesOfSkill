@@ -27,13 +27,14 @@ static LedsSquare ledsSquare = LedsSquare(ballSize);
 class Pong : public Fsm {
 private:
   State start =             State(InitStep, StartAnimation, NULL);
-  State gaming =            State(StartGaming, Gaming, EndGaming);
+  State gaming =            State(StartGaming, NULL, EndGaming);
   State winAnimation =      State(InitStep, WinAnimation, NewPoint);
   State gameOverAnimation = State(InitStep, GameOverAnimation, NULL);
   State displayScore =      State(DisplayScore, NULL, NewGame);
   
   static Gy_521 gy521;
   static float boardTilts[3];
+  static int points;
     
 #include "Pong.TheWall.h"
   TheWall theWall;
@@ -48,7 +49,6 @@ private:
   static void StartGaming(){ startGaming = true; }
   static bool endGaming;
   static void EndGaming(){ endGaming = true; }
-  static void Gaming(){ Serial.print("g"); }
 
   static int step;
   static void InitStep(){step= 0;}
@@ -56,7 +56,6 @@ private:
     int maxStep = sizeOfMasks - LedsSquare::matrixSize;
     static unsigned long animationTimer;
     if(time.IsOver(animationTime, &animationTimer)){
-      Serial.print("_");
       if(step++ > maxStep) step = 0;
       else{
         for(int i = 0; i < LedsSquare::matrixSize; i++){
@@ -277,18 +276,20 @@ private:
   }
   
   static void DisplayScore(){
-    Serial.println("\nDisplay score");
-    
+    Serial.print("\n##### Game score: ");
+    Serial.print(points);
+    Serial.println(" #####\n");
   }
   
   static void NewGame(){
     Serial.println("\nNew Game");
-    
+    points = 0;
+    Events::gameEvent = Events::wallEvent = Events::ballEvent = Events::nothing;
   }
     
   static void NewPoint(){
     Serial.println("\nNew Point");
-    
+    points++;
   }
   
 public: 
@@ -299,42 +300,33 @@ public:
   
   void Run(){
     theWall.run_machine();
-    int wallEvent = events.GetWallEvent();
-    theWall.trigger(wallEvent);
+    theWall.trigger(events.GetWallEvent());
         
     theBall.run_machine();
-    int ballEvent = events.GetBallEvent();
-    theBall.trigger(ballEvent);
+    theBall.trigger(events.GetBallEvent());
 
     run_machine();
-    int gameEvent = events.GetGameEvent();
-    trigger(gameEvent);
+    trigger(events.GetGameEvent());
 
-
-
-    delay(100);
-    Serial.print("[");
-    Serial.print(wallEvent);
-    Serial.print(";");
-    Serial.print(ballEvent);
-    Serial.print(";");
-    Serial.print(ballEvent);
-    Serial.print("]");
-
-    static unsigned long secondTime;
-    if(time.IsOver(1000, &secondTime)){
-      Serial.println("");
-    }
+    delay(20);
   }
 
+  static void StartToGamming(){ Serial.println("Game: StartToGamming");}
+  static void GamingToWinAnimation(){ Serial.println("Game: GamingToWinAnimation");}
+  static void GamintToGameOverAnimation1(){ Serial.println("Game: GamintToGameOverAnimation1");}
+  static void GamintToGameOverAnimation2(){ Serial.println("Game: GamintToGameOverAnimation2");}
+  static void WinAnimationToGaming(){ Serial.println("Game: WinAnimationToGaming");}
+  static void gameOverAnimationToDisplayScore(){ Serial.println("Game: gameOverAnimationToDisplayScore");}
+  static void DisplayScoreToStart(){ Serial.println("Game: DisplayScoreToStart");}
+
   Pong() : Fsm(&start){
-    this->add_transition(&start,             &gaming,            Events::boardShaked, NULL);
-    this->add_transition(&gaming,            &winAnimation,      Events::ballHitTheWall, NULL);
-    this->add_transition(&gaming,            &gameOverAnimation, Events::ballErased, NULL);
-    this->add_transition(&gaming,            &gameOverAnimation, Events::wallErased, NULL);
-    this->add_transition(&winAnimation,      &gaming,            Events::winAnimationIsOver, NULL);
-    this->add_transition(&gameOverAnimation, &displayScore,      Events::gameOverAnimationIsOver, NULL);
-    this->add_transition(&displayScore,      &gaming,            Events::boardShaked, NULL);
+    this->add_transition(&start,             &gaming,            Events::boardShaked, StartToGamming);
+    this->add_transition(&gaming,            &winAnimation,      Events::ballHitTheWall, GamingToWinAnimation);
+    this->add_transition(&gaming,            &gameOverAnimation, Events::ballErased, GamintToGameOverAnimation1);
+    this->add_transition(&gaming,            &gameOverAnimation, Events::wallErased, GamintToGameOverAnimation2);
+    this->add_transition(&winAnimation,      &gaming,            Events::winAnimationIsOver, WinAnimationToGaming);
+    this->add_transition(&gameOverAnimation, &displayScore,      Events::gameOverAnimationIsOver, gameOverAnimationToDisplayScore);
+    this->add_transition(&displayScore,      &start,             Events::boardShaked, DisplayScoreToStart);
 
     Events::gameEvent = Events::nothing;
   } 
@@ -360,6 +352,7 @@ public:
 float Pong::boardTilts[3];
 int Pong::step;
 int Pong::TheWall::wallPosition;
+int Pong::TheWall::step;
 int Pong::TheBall::ballStatus;
 unsigned long Pong::TheWall::beforeWallBlinkingTimer;
 unsigned long Pong::TheWall::wallBlinkingTimer;
@@ -368,5 +361,6 @@ int Pong::Events::wallEvent;
 int Pong::Events::ballEvent;
 bool Pong::startGaming;
 bool Pong::endGaming;
+int Pong::points;
 
 #endif

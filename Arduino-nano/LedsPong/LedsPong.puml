@@ -38,7 +38,7 @@ state DisplayWall {
 }
 
 state Game {
-    [*] --> Start
+    [*] -up-> Start
 
     Start --> Gaming : boardShacked
     Start -up-> Start : startAnimation
@@ -55,8 +55,7 @@ state Game {
     GameOverAnimation -up-> GameOverAnimation : gameOverAnimation\nIs Not Over
     GameOverAnimation --> DisplayScore : gameOverAnimation\nIs Over
 
-    DisplayScore --> Gaming : boardShacked
-    DisplayScore --> [*]
+    DisplayScore --> Start : boardShacked
 }
 
 @enduml
