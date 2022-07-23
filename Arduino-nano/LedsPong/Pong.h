@@ -27,10 +27,10 @@ static LedsSquare ledsSquare = LedsSquare(ballSize);
 class Pong : public Fsm {
 private:
   State start =             State(InitStep, StartAnimation, NULL);
-  State gaming =            State(NULL, Gaming, NULL);
-  State winAnimation =      State(InitStep, WinAnimation, NULL);
+  State gaming =            State(StartGaming, Gaming, EndGaming);
+  State winAnimation =      State(InitStep, WinAnimation, NewPoint);
   State gameOverAnimation = State(InitStep, GameOverAnimation, NULL);
-  State displayScore =      State(DisplayScore, NULL, NULL);
+  State displayScore =      State(DisplayScore, NULL, NewGame);
   
   static Gy_521 gy521;
   static float boardTilts[3];
@@ -43,7 +43,11 @@ private:
 
 #include "Pong.Events.h"
   Events events;
-  
+
+  static bool startGaming;
+  static void StartGaming(){ startGaming = true; }
+  static bool endGaming;
+  static void EndGaming(){ endGaming = true; }
   static void Gaming(){ Serial.print("g"); }
 
   static int step;
@@ -82,61 +86,51 @@ private:
       B01100100,
 
       B00000000,
+      
+      B11111110,
+      B00001000,
+      B00001000,
+      B11110000,
+      
+      B00000000,
+      
+      B01110000,
+      B10001000,
+      B10001000,
+      B11110000,
+      B10000000,
+      
       B00000000,
       
       B11111110,
       B00010000,
-      B00010000,
-      B00010000,
-      B11111110,
+      B00110000,
+      B01001000,
+      B10000000,
       
       B00000000,
-      B00000000,
       
-      B11111100,
-      B00010010,
-      B00010010,
-      B00010010,
-      B11111100,
-      
-      B00000000,
-      B00000000,
-      
-      B11111110,
-      B00010000,
-      B00010000,
-      B00101000,
-      B11000100,
-      
-      B00000000,
-      B00000000,
-      
-      B11111110,
-      B10010010,
-      B10010010,
-      B10010010,
-      B10000010,
+      B01110000,
+      B10101000,
+      B10101000,
+      B10010000,
      
       B00000000,
       B00000000,
       B00000000,
       
-      B11111110,
-      B00000100,
+      B11111000,
       B00001000,
-      B00010000,
+      B11111000,
       B00001000,
-      B00000100,
-      B11111110,
+      B11110000,
       
       B00000000,
-      B00000000,
       
-      B11111110,
-      B10010010,
-      B10010010,
-      B10010010,
-      B10000010,
+      B01110000,
+      B10101000,
+      B10101000,
+      B10010000,
       
       B00000000,
       B00000000,
@@ -279,11 +273,21 @@ private:
       B00000000,
       B00000000,
     };
-    if(GameAnimation(gameOver, sizeof(gameOver))) Events::gameEvent = Events::gameOverAnimationIsOver; 
+    if(GameAnimation(gameOver, sizeof(gameOver), 50)) Events::gameEvent = Events::gameOverAnimationIsOver; 
   }
   
   static void DisplayScore(){
     Serial.println("\nDisplay score");
+    
+  }
+  
+  static void NewGame(){
+    Serial.println("\nNew Game");
+    
+  }
+    
+  static void NewPoint(){
+    Serial.println("\nNew Point");
     
   }
   
@@ -306,14 +310,16 @@ public:
     int gameEvent = events.GetGameEvent();
     trigger(gameEvent);
 
-    delay(50);
+
+
+    delay(100);
     Serial.print("[");
     Serial.print(wallEvent);
+    Serial.print(";");
     Serial.print(ballEvent);
+    Serial.print(";");
     Serial.print(ballEvent);
     Serial.print("]");
-
-    
 
     static unsigned long secondTime;
     if(time.IsOver(1000, &secondTime)){
@@ -332,6 +338,22 @@ public:
 
     Events::gameEvent = Events::nothing;
   } 
+
+  static bool IsGameStarting(bool reset = false){ 
+    if(startGaming == true){
+      if(reset) startGaming = false;
+      return true;
+    }
+    return false;
+  }
+
+  static bool IsGameEnding(bool reset = false){ 
+    if(endGaming == true){
+      if(reset) endGaming = false;
+      return true;
+    }
+    return false;
+  }
 };
 
 
@@ -344,5 +366,7 @@ unsigned long Pong::TheWall::wallBlinkingTimer;
 int Pong::Events::gameEvent;
 int Pong::Events::wallEvent;
 int Pong::Events::ballEvent;
+bool Pong::startGaming;
+bool Pong::endGaming;
 
 #endif

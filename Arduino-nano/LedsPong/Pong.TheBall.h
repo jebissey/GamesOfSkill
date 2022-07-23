@@ -40,7 +40,7 @@ private:
   static void Display(){
     static const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
     ledsSquare.MoveAbsolute(ballCoordonateAtStartUp);
-    ledsSquare.SetLight(On); 
+    ledsSquare.SetLight(On);
   }
 
   static void EraseBall(){
@@ -78,11 +78,10 @@ private:
   
 public:
   TheBall() : Fsm(&wait){
-    this->add_transition(&wait,     &moveBall,  Events::wallCreated,              NULL);
+    this->add_transition(&wait,     &moveBall,  Events::gameStarting, NULL);
     this->add_transition(&moveBall, &eraseBall, Events::ballMovedOutsideTheBoard, NULL);
-    this->add_transition(&moveBall, &wait,      Events::ballHitTheWall,           NULL);
-    this->add_transition(&moveBall, &wait,      Events::wallErased,               NULL);
-    this->add_transition(&eraseBall,&wait,      Events::ballErased,               NULL);
+    this->add_transition(&moveBall, &wait,      Events::ballHitTheWall, NULL);
+    this->add_transition(&moveBall, &wait,      Events::gameEnding, NULL);
   }
 
   static int GetEvent(){ 

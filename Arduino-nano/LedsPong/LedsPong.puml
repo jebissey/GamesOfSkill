@@ -3,12 +3,12 @@
 state DisplayBall {
     [*] --> WaitEvent_B
 
-    WaitEvent_B -> MoveBall : **wallCreated**
+    WaitEvent_B -> MoveBall : **IsGameStarting**
 
     MoveBall : Move the ball\naccording the tilt\nof the board
     MoveBall -up-> MoveBall : Ball inside\nthe board\nand didn't\nhit the wall
     MoveBall --> EraseBall :  Ball Moved\nOutside The Board
-    MoveBall --> WaitEvent_B : Ball Hit The wall\nor\n**wallErased**
+    MoveBall --> WaitEvent_B : Ball Hit The wall\nor\n**IsGameEnding**
 
     EraseBall -up-> EraseBall : BallErasing
     EraseBall --> WaitEvent_B : BallErased
@@ -18,7 +18,7 @@ state DisplayBall {
 state DisplayWall {
     [*] --> WaitEvent_W
         
-    WaitEvent_W -> CreateWall : **winAnimationIsOver**\nor\n**boardShacked**
+    WaitEvent_W -> CreateWall : **IsGameStarting**
 
     CreateWall : Create a wall on a random side
     CreateWall --> FixWall : wallCreated
@@ -26,15 +26,15 @@ state DisplayWall {
     FixWall : Display the wall at its position
     FixWall -up-> FixWall : timeout\nBefore\nWall Blinking\nIs Not Over
     FixWall --> BlinkWall : timeout\nBefore\nWall Blinking\nIs Over
-    FixWall ->  WaitEvent_W : **ballHitTheWall**\nor\n**ballErased**
+    FixWall ->  WaitEvent_W : **IsGameEnding**
     
     BlinkWall -up-> BlinkWall : wallBlinking
     BlinkWall --> EraseWall : timeout\nWall Blinking\nIs Over
-    BlinkWall ->  WaitEvent_W : **ballHitTheWall**\nor\n**ballErased**
+    BlinkWall ->  WaitEvent_W : **IsGameEnding**
 
     EraseWall -up-> EraseWall : wallErasing
     EraseWall --> WaitEvent_W : WallErased
-    EraseWall ->  WaitEvent_W : **ballHitTheWall**\nor\n**ballErased**
+    EraseWall ->  WaitEvent_W : **IsGameEnding**
 }
 
 state Game {

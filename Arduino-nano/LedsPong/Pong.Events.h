@@ -24,30 +24,20 @@ public:
     winAnimationIsOver,
     gameOverAnimationIsOver,
     boardShaked,
+    gameStarting,
+    gameEnding,
   };
 
   Event GetWallEvent(){
-    static int externalWallEvent;
-    static int lastExternalWallEvent;
-    if(ballEvent == ballErased || ballEvent == ballHitTheWall) externalWallEvent = ballEvent;
-    else if(gameEvent == winAnimationIsOver || gameEvent == boardShaked) externalWallEvent = gameEvent;
-    if(lastExternalWallEvent != externalWallEvent){
-      lastExternalWallEvent = externalWallEvent;
-      return externalWallEvent;
-    }
+    if(Pong::IsGameStarting()) return gameStarting;
+    if(Pong::IsGameEnding())   return gameEnding;
     return wallEvent;
   }
 
   Event GetBallEvent(){
-    static int externalBallEvent;
-    static int lastExternalBallEvent;
-    if(wallEvent == wallCreated || wallEvent == wallErased) externalBallEvent = wallEvent;
-    if(lastExternalBallEvent != externalBallEvent){
-      lastExternalBallEvent = externalBallEvent;
-      return externalBallEvent;
-    }
-    ballEvent = TheBall::GetEvent();
-    return ballEvent;
+    if(Pong::IsGameStarting(true)) return gameStarting;
+    if(Pong::IsGameEnding(true))   return gameEnding;
+    return (ballEvent = TheBall::GetEvent());
   }
 
   Event GetGameEvent(){ 
