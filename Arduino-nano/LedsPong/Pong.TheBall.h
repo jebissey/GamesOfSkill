@@ -38,7 +38,7 @@ private:
   static void Display(){
     static const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
     ledsSquare.MoveAbsolute(ballCoordonateAtStartUp);
-    ledsSquare.SetLight(On);
+    ledsSquare.SetLightOn();
   }
 
   static void EraseBall(){
@@ -58,7 +58,7 @@ private:
         case 7 : mask = B01000010; break;
         case 8 : mask = B10000001; break;
         case 9 : mask = B00000000; break;
-        default : ledsSquare.SetLight(Off);
+        default : ledsSquare.SetLightOff();
       }
       DisplayOuting(mask);
     }
@@ -74,7 +74,6 @@ private:
     return GetBalStatus_() == inside ? ballInTheBoard : ballOutsideTheBoard;
   }
 
-  
   static void WaitToMoveBall(){ Serial.println("Ball: WaitToMoveBall");}
   static void MoveBallToEraseBall(){ Serial.println("Ball: MoveBallToEraseBall");}
   static void EraseBallToWait(){ Serial.println("Ball: EraseBallToWait");}
@@ -91,7 +90,7 @@ public:
   }
 
   static int GetEvent(){ 
-    if(ledsSquare.GetLight() == Off)      return Events::ballErased;
+    if(ledsSquare.IsLightOff())           return Events::ballErased;
     int ballStatus = GetBallStatus();
     if(ballStatus == ballHitTheWall)      return Events::ballHitTheWall;
     if(ballStatus == ballOutsideTheBoard) return Events::ballMovedOutsideTheBoard;

@@ -1,47 +1,47 @@
 @startuml
 
-state DisplayBall {
-    [*] --> WaitEvent_B
+state Ball {
+    [*] --> Wait_B
 
-    WaitEvent_B -> MoveBall : **IsGameStarting**
+    Wait_B -> MoveBall : **IsGameStarting**
 
     MoveBall : Move the ball\naccording the tilt\nof the board
     MoveBall -up-> MoveBall : Ball inside\nthe board\nand didn't\nhit the wall
-    MoveBall --> EraseBall :  Ball Moved\nOutside The Board
-    MoveBall --> WaitEvent_B : Ball Hit The wall\nor\n**IsGameEnding**
+    MoveBall --> EraseBall :  BallMovedOutsideTheBoard
+    MoveBall --> Wait_B : BallHitTheWall\nor\n**IsGameEnding**
 
-    EraseBall -up-> EraseBall : BallErasing
-    EraseBall --> WaitEvent_B : BallErased
+    EraseBall -up-> EraseBall : Ball erasing
+    EraseBall --> Wait_B : BallErased
 
 }
 
-state DisplayWall {
-    [*] --> WaitEvent_W
+state Wall {
+    [*] --> Wait_W
         
-    WaitEvent_W -> CreateWall : **IsGameStarting**
+    Wait_W -> CreateWall : **IsGameStarting**
 
     CreateWall : Create a wall on a random side
     CreateWall --> FixWall : wallCreated
 
     FixWall : Display the wall at its position
-    FixWall -up-> FixWall : timeout\nBefore\nWall Blinking\nIs Not Over
-    FixWall --> BlinkWall : timeout\nBefore\nWall Blinking\nIs Over
-    FixWall ->  WaitEvent_W : **IsGameEnding**
+    FixWall -up-> FixWall : Timeout\nbefore\nwall blinking\nis not over
+    FixWall --> BlinkWall : timeoutBeforeWallBlinkingIOver
+    FixWall ->  Wait_W : **IsGameEnding**
     
-    BlinkWall -up-> BlinkWall : wallBlinking
-    BlinkWall --> EraseWall : timeout\nWall Blinking\nIs Over
-    BlinkWall ->  WaitEvent_W : **IsGameEnding**
+    BlinkWall -up-> BlinkWall : Wall blinking
+    BlinkWall --> EraseWall : timeoutWallBlinkingIsOver
+    BlinkWall ->  Wait_W : **IsGameEnding**
 
-    EraseWall -up-> EraseWall : wallErasing
-    EraseWall --> WaitEvent_W : WallErased
-    EraseWall ->  WaitEvent_W : **IsGameEnding**
+    EraseWall -up-> EraseWall : Wall erasing
+    EraseWall --> Wait_W : WallErased
+    EraseWall ->  Wait_W : **IsGameEnding**
 }
 
 state Game {
     [*] -up-> Start
 
     Start --> Gaming : boardShacked
-    Start -up-> Start : startAnimation
+    Start -up-> Start : Start animation
 
     Gaming : Wait for ball and wall events
     Gaming --> GameOverAnimation : **wallErased**\nor\n**ballErased**
@@ -49,11 +49,11 @@ state Game {
     Gaming --> WinAnimation : **ballHitTheWall**
 
     WinAnimation : Added points to the game score
-    WinAnimation -up-> WinAnimation : winAnimation\nIs Not Over
-    WinAnimation --> Gaming : winAnimation\nIs Over
+    WinAnimation -up-> WinAnimation : Win animation is not over
+    WinAnimation --> Gaming : winAnimationIsOver
 
-    GameOverAnimation -up-> GameOverAnimation : gameOverAnimation\nIs Not Over
-    GameOverAnimation --> DisplayScore : gameOverAnimation\nIs Over
+    GameOverAnimation -up-> GameOverAnimation : Game over animation\nis not over
+    GameOverAnimation --> DisplayScore : gameOverAnimationIsOver
 
     DisplayScore --> Start : boardShacked
 }

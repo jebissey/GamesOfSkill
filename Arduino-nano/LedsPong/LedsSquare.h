@@ -12,10 +12,10 @@
 #include <LedControl.h>
 #include "AAA_PinsEnum.h"
 
-enum SquareLight {On, Off}; 
 
 class LedsSquare : public LedControl{
 private:
+  enum SquareLight {On, Off}; 
   RowCol squareSize;
   RowCol squareCoordonate;
   SquareLight squareLight;
@@ -29,6 +29,11 @@ private:
       }
     }
   }
+    
+  void SetLight(SquareLight squareLight_){
+    squareLight = squareLight_;
+    SetSquare(squareLight == On);
+  }
   
 public:
   static const int matrixSize = 8;
@@ -40,9 +45,11 @@ public:
     this->clearDisplay(0);
   }
 
-  RowCol      GetCoordonate() { return squareCoordonate; }
-  SquareLight GetLight()      { return squareLight; }
-  RowCol      GetSize()       { return squareSize; }
+  RowCol GetCoordonate() { return squareCoordonate; }
+  RowCol GetSize()       { return squareSize; }
+  void   SetLightOn()    { SetLight(On); }
+  void   SetLightOff()   { SetLight(Off); }
+  bool   IsLightOff()    { return squareLight == Off; }
 
   void MoveAbsolute(RowCol squareCoordonate_){
     if(squareLight == On) SetSquare(false);
@@ -64,11 +71,6 @@ public:
     if(squareCoordonate.col > matrixSize - squareSize.col + 1) squareCoordonate.col = matrixSize - squareSize.col + 1;
     
     if(squareLight == On) SetSquare(true);
-  }
-  
-  void SetLight(SquareLight squareLight_){
-    squareLight = squareLight_;
-    SetSquare(squareLight == On);
   }
   
   void SetSize(RowCol squareSize_){

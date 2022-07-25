@@ -288,14 +288,14 @@ private:
   }
     
   static void NewPoint(){
-    Serial.println("\nNew Point");
     points++;
+    TheWall::IncreaseDifficulty();
   }
   
 public: 
   void Setup(){
     gy521.Setup();
-    randomSeed(3);
+    randomSeed(analogRead(0));
   }
   
   void Run(){
@@ -350,17 +350,22 @@ public:
 
 
 float Pong::boardTilts[3];
-int Pong::step;
-int Pong::TheWall::wallPosition;
-int Pong::TheWall::step;
-int Pong::TheBall::ballStatus;
+bool  Pong::endGaming;
+int   Pong::points;
+bool  Pong::startGaming;
+int   Pong::step;
+
+int   Pong::Events::ballEvent;
+int   Pong::Events::gameEvent;
+int   Pong::Events::wallEvent;
+
+int   Pong::TheBall::ballStatus;
+
+int           Pong::TheWall::beforeWallBlinkingTime;
 unsigned long Pong::TheWall::beforeWallBlinkingTimer;
+int           Pong::TheWall::step;
+int           Pong::TheWall::wallBlinkingTime;
 unsigned long Pong::TheWall::wallBlinkingTimer;
-int Pong::Events::gameEvent;
-int Pong::Events::wallEvent;
-int Pong::Events::ballEvent;
-bool Pong::startGaming;
-bool Pong::endGaming;
-int Pong::points;
+int           Pong::TheWall::wallPosition;
 
 #endif

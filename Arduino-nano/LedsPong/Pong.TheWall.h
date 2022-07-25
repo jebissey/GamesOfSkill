@@ -1,8 +1,11 @@
 class TheWall : public Fsm{
 private: 
-  static const int beforeWallBlinkingTime = 5000;
-  static const int wallBlinkingTime = 3000;
-  static const int blinkTime = 200;
+  static int   beforeWallBlinkingTime;
+  static int   wallBlinkingTime;
+  static const int   initValueForBeforeWallBlinkingTime = 5000;
+  static const int   initValueForWallBlinkingTime = 3000;
+  static const float reductionFactor = 0.9;
+  static const int   blinkTime = 200;
   
   State createWall = State(Create, Display, NULL);
   State fixWall =    State(InitBeforeWallBlinkingTimer, FixThenBlink, NULL);
@@ -81,7 +84,7 @@ private:
   static void WaitToCreateWall(){ Serial.println("Wall: WaitToCreateWall");}
   static void CreateWallToFixWall(){ Serial.println("Wall: CreateWallToFixWall");}
   static void FixWalltoBlinkWall(){ Serial.println("Wall: FixWalltoBlinkWall");}
-  static void FixWakkToWait(){ Serial.println("Wall: FixWakkToWait =====\n");}
+  static void FixWallToWait(){ Serial.println("Wall: FixWallToWait");}
   static void BlinkWallToEraseWall(){ Serial.println("Wall: BlinkWallToEraseWall");}
   static void BlinkWallToWait(){ Serial.println("Wall: BlinkWallToWait");}
   static void EraseWallToWait1(){ Serial.println("Wall: EraseWallToWait1");}
@@ -97,10 +100,18 @@ public:
     this->add_transition(&wait,       &createWall, Events::gameStarting, WaitToCreateWall);
     this->add_transition(&createWall, &fixWall,    Events::wallCreated, CreateWallToFixWall);
     this->add_transition(&fixWall,    &blinkWall,  Events::timeoutBeforeWallBlinkingIsOver, FixWalltoBlinkWall);
-    this->add_transition(&fixWall,    &wait,       Events::gameEnding, FixWakkToWait);
+    this->add_transition(&fixWall,    &wait,       Events::gameEnding, FixWallToWait);
     this->add_transition(&blinkWall,  &eraseWall,  Events::timeoutWallBlinkingIsOver, BlinkWallToEraseWall);
     this->add_transition(&blinkWall,  &wait,       Events::gameEnding, BlinkWallToWait);
     this->add_transition(&eraseWall,  &wait,       Events::wallErased, EraseWallToWait1);
     this->add_transition(&eraseWall,  &wait,       Events::gameEnding, EraseWallToWait2);
+
+    beforeWallBlinkingTime = initValueForBeforeWallBlinkingTime;
+    wallBlinkingTime = initValueForWallBlinkingTime;
+  }
+
+  static void IncreaseDifficulty(){
+    beforeWallBlinkingTime *= reductionFactor;
+    wallBlinkingTime       *= reductionFactor;
   }
 };
