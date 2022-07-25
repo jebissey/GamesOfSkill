@@ -45,6 +45,7 @@ state Game {
 
     Gaming : Wait for ball and wall events
     Gaming --> GameOverAnimation : **wallErased**\nor\n**ballErased**
+    Gaming --> DisplayScore : MaxScoreReached
 
     Gaming --> WinAnimation : **ballHitTheWall**
 

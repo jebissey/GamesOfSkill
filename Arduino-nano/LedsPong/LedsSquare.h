@@ -85,7 +85,7 @@ public:
     for(int row = 0; row < matrixSize; row++){
       for(int col = 0; col < matrixSize; col++){
         if(row >= 0 && row < matrixSize && col >= 0 && col < matrixSize){ 
-          if(--points <=0) return;
+          if(points-- <=0) return;
           this->setLed(0, row, col, true);
         }
       }

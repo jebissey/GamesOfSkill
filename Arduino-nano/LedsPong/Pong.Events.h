@@ -17,6 +17,7 @@ public:
     boardShaked,
     gameStarting,
     gameEnding,
+    maxScoreReached,
   };
   
 private:

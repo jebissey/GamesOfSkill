@@ -5,7 +5,7 @@ private:
   static const int initValueForWallBlinkingTime = 3000;
   static const int minValueForWallBlinkingTime = 300;
   static const float reductionFactor = 0.8;
-  static const int blinkTime = 150;
+  static const int blinkTime = 100;
   static int beforeWallBlinkingTime;
   static int wallBlinkingTime;
   
