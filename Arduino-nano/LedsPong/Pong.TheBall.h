@@ -5,27 +5,10 @@ private:
   
   State moveBall =  State(Display, Move, NULL);
   State eraseBall = State(NULL, EraseBall, NULL);
-  State wait =      State(NULL, NULL, NULL);
+  State wait =      State(CenterBall, NULL, NULL);
 
-  enum BallExit{inside, north, east, south, west};
-  static GetBalStatus_(){
-    RowCol ballCoordonate = ledsSquare.GetCoordonate();
-    if(ballCoordonate.row < 0) return west;
-    if(ballCoordonate.col < 0) return south;
-    if(ballCoordonate.row + ballSize.row - 1 >= ledsSquare.matrixSize) return east;
-    if(ballCoordonate.col + ballSize.col - 1 >= ledsSquare.matrixSize) return north;
-    return inside;
-  }
-
-  static void DisplayOuting(int mask){
-    switch(GetBalStatus_()){
-      case north: ledsSquare.setColumn(0, ledsSquare.matrixSize - 1, mask); break;
-      case south: ledsSquare.setColumn(0, 0, mask); break;
-      case east:  ledsSquare.setRow(0, ledsSquare.matrixSize - 1, mask); break;
-      case west:  ledsSquare.setRow(0, 0, mask); break;
-    }
-  }
-
+  static void Display(){ ledsSquare.SetLightOn(); }
+  
   static void Move(){
     if(time.IsOver(timeBetweenBallMove, &timerForMoveTheBall)){
       gy521.Read(boardTilts);
@@ -33,13 +16,7 @@ private:
       int ballColIncrement = round(map(boardTilts[2], -90, +90, +10, -10) / 3.0);
       ledsSquare.MoveRelative(RowCol(ballRowIncrement, ballColIncrement));
     }
-  }
-    
-  static void Display(){
-    static const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
-    ledsSquare.MoveAbsolute(ballCoordonateAtStartUp);
-    ledsSquare.SetLightOn();
-  }
+  }    
 
   static void EraseBall(){
     static int step = 0;
@@ -63,15 +40,39 @@ private:
       DisplayOuting(mask);
     }
   }
+  static void DisplayOuting(int mask){
+    switch(GetBallPosition()){
+      case north: ledsSquare.setColumn(0, ledsSquare.matrixSize - 1, mask); break;
+      case south: ledsSquare.setColumn(0, 0, mask); break;
+      case east:  ledsSquare.setRow(0, ledsSquare.matrixSize - 1, mask); break;
+      case west:  ledsSquare.setRow(0, 0, mask); break;
+    }
+  }
+  
+  static void CenterBall(){
+    static const RowCol ballCoordonateAtStartUp = RowCol(3, 3);
+    ledsSquare.MoveAbsolute(ballCoordonateAtStartUp);
+  }
+// End of state functions
+
+  enum BallPosition{inside, north, east, south, west};
+  static enum BallPosition GetBallPosition(){
+    RowCol ballCoordonate = ledsSquare.GetCoordonate();
+    if(ballCoordonate.row < 0) return west;
+    if(ballCoordonate.col < 0) return south;
+    if(ballCoordonate.row + ballSize.row - 1 >= ledsSquare.matrixSize) return east;
+    if(ballCoordonate.col + ballSize.col - 1 >= ledsSquare.matrixSize) return north;
+    return inside;
+  }
   
   enum BallStatus{ballHitTheWall, ballOutsideTheBoard, ballInTheBoard};
-  static int GetBallStatus(){
+  static enum BallStatus GetBallStatus(){
     RowCol ballCoordonate = ledsSquare.GetCoordonate();
     if(ballCoordonate.row == 1 && TheWall::wallPosition == TheWall::south
     || ballCoordonate.col == 1 && TheWall::wallPosition == TheWall::east
     || ballCoordonate.row + ballSize.row == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::north 
     || ballCoordonate.col + ballSize.col == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::west ) return ballHitTheWall; 
-    return GetBalStatus_() == inside ? ballInTheBoard : ballOutsideTheBoard;
+    return GetBallPosition() == inside ? ballInTheBoard : ballOutsideTheBoard;
   }
 
   static void WaitToMoveBall(){ Serial.println("Ball: WaitToMoveBall");}

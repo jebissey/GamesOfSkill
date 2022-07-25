@@ -47,11 +47,13 @@ private:
 
   static bool startGaming;
   static void StartGaming(){ startGaming = true; }
+  
   static bool endGaming;
   static void EndGaming(){ endGaming = true; }
 
   static int step;
-  static void InitStep(){step= 0;}
+  static void InitStep(){step = 0;}
+  
   static bool GameAnimation(byte masks[], int sizeOfMasks, int animationTime = 100){
     int maxStep = sizeOfMasks - LedsSquare::matrixSize;
     static unsigned long animationTimer;
@@ -138,7 +140,7 @@ private:
       B00000000,
       B00000000,
     };
-    GameAnimation(shakeMe, sizeof(shakeMe), 200); 
+    GameAnimation(shakeMe, sizeof(shakeMe)); 
   }
   
   static void WinAnimation(){
@@ -148,34 +150,24 @@ private:
       B00000000,
       B00000000,
       
-      B00111111,
-      B01000000,
-      B10000000,
-      B01000000,
-      B00100000,
-      B01000000,
-      B10000000,
-      B01000000,
-      B00111111,
+      B00111110,
+      B11000000,
+      B01100000,
+      B11000000,
+      B00111110,
       
-      B00000000,
       B00000000,
 
-      B10000001,
-      B11111111,
-      B10000001,
-      
-      B00000000,
-      B00000000,
-      
-      B11111111,
-      B00000010,
-      B00000100,
-      B00001000,
       B00010000,
-      B00100000,
+      B01111010,
+      B10000000,
       B01000000,
-      B11111111,
+      
+      B00000000,
+      
+      B11111000,
+      B00001000,
+      B11110000,
       
       B00000000,
       B00000000,
@@ -185,7 +177,7 @@ private:
       B00000000,
       B00000000,
     };
-    if(GameAnimation(win, sizeof(win))) Events::gameEvent = Events::winAnimationIsOver; 
+    if(GameAnimation(win, sizeof(win), 75)) Events::gameEvent = Events::winAnimationIsOver; 
   }
   
   static void GameOverAnimation(){
@@ -272,24 +264,24 @@ private:
       B00000000,
       B00000000,
     };
-    if(GameAnimation(gameOver, sizeof(gameOver), 50)) Events::gameEvent = Events::gameOverAnimationIsOver; 
+    if(GameAnimation(gameOver, sizeof(gameOver), 75)) Events::gameEvent = Events::gameOverAnimationIsOver; 
   }
   
   static void DisplayScore(){
-    Serial.print("\n##### Game score: ");
-    Serial.print(points);
-    Serial.println(" #####\n");
+    ledsSquare.ClearDisplay();;
+    ledsSquare.DisplayPoints(points);
   }
   
   static void NewGame(){
-    Serial.println("\nNew Game");
     points = 0;
-    Events::gameEvent = Events::wallEvent = Events::ballEvent = Events::nothing;
+    TheWall::ResetDifficulty();
+    Events::ResetEvents();
   }
     
   static void NewPoint(){
     points++;
     TheWall::IncreaseDifficulty();
+    Events::ResetEvents();
   }
   
 public: 
@@ -308,13 +300,13 @@ public:
     run_machine();
     trigger(events.GetGameEvent());
 
-    delay(20);
+    //delay(25);
   }
 
   static void StartToGamming(){ Serial.println("Game: StartToGamming");}
   static void GamingToWinAnimation(){ Serial.println("Game: GamingToWinAnimation");}
-  static void GamintToGameOverAnimation1(){ Serial.println("Game: GamintToGameOverAnimation1");}
-  static void GamintToGameOverAnimation2(){ Serial.println("Game: GamintToGameOverAnimation2");}
+  static void GamingToGameOverAnimation1(){ Serial.println("Game: GamingToGameOverAnimation1");}
+  static void GamingToGameOverAnimation2(){ Serial.println("Game: GamingToGameOverAnimation2");}
   static void WinAnimationToGaming(){ Serial.println("Game: WinAnimationToGaming");}
   static void gameOverAnimationToDisplayScore(){ Serial.println("Game: gameOverAnimationToDisplayScore");}
   static void DisplayScoreToStart(){ Serial.println("Game: DisplayScoreToStart");}
@@ -322,8 +314,8 @@ public:
   Pong() : Fsm(&start){
     this->add_transition(&start,             &gaming,            Events::boardShaked, StartToGamming);
     this->add_transition(&gaming,            &winAnimation,      Events::ballHitTheWall, GamingToWinAnimation);
-    this->add_transition(&gaming,            &gameOverAnimation, Events::ballErased, GamintToGameOverAnimation1);
-    this->add_transition(&gaming,            &gameOverAnimation, Events::wallErased, GamintToGameOverAnimation2);
+    this->add_transition(&gaming,            &gameOverAnimation, Events::ballErased, GamingToGameOverAnimation1);
+    this->add_transition(&gaming,            &gameOverAnimation, Events::wallErased, GamingToGameOverAnimation2);
     this->add_transition(&winAnimation,      &gaming,            Events::winAnimationIsOver, WinAnimationToGaming);
     this->add_transition(&gameOverAnimation, &displayScore,      Events::gameOverAnimationIsOver, gameOverAnimationToDisplayScore);
     this->add_transition(&displayScore,      &start,             Events::boardShaked, DisplayScoreToStart);
@@ -356,7 +348,9 @@ bool  Pong::startGaming;
 int   Pong::step;
 
 int   Pong::Events::ballEvent;
+int   Pong::Events::externalGameEvent;
 int   Pong::Events::gameEvent;
+int   Pong::Events::lastExternalGameEvent;
 int   Pong::Events::wallEvent;
 
 int   Pong::TheBall::ballStatus;

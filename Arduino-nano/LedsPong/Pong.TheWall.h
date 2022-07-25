@@ -1,11 +1,13 @@
 class TheWall : public Fsm{
 private: 
-  static int   beforeWallBlinkingTime;
-  static int   wallBlinkingTime;
-  static const int   initValueForBeforeWallBlinkingTime = 5000;
-  static const int   initValueForWallBlinkingTime = 3000;
-  static const float reductionFactor = 0.9;
-  static const int   blinkTime = 200;
+  static const int initValueForBeforeWallBlinkingTime = 5000;
+  static const int minValueForBeforeWallBlinkingTime = 200;
+  static const int initValueForWallBlinkingTime = 3000;
+  static const int minValueForWallBlinkingTime = 300;
+  static const float reductionFactor = 0.8;
+  static const int blinkTime = 150;
+  static int beforeWallBlinkingTime;
+  static int wallBlinkingTime;
   
   State createWall = State(Create, Display, NULL);
   State fixWall =    State(InitBeforeWallBlinkingTimer, FixThenBlink, NULL);
@@ -63,7 +65,7 @@ private:
   static void InitStep(){ step = 0; }
   static void WallErasing(){
     static int mask;
-    static const int eraseTime = 250;
+    static const int eraseTime = 150;
     static unsigned long eraseTimer;
     if(time.IsOver(eraseTime, &eraseTimer)){
       switch(step++){
@@ -112,6 +114,12 @@ public:
 
   static void IncreaseDifficulty(){
     beforeWallBlinkingTime *= reductionFactor;
-    wallBlinkingTime       *= reductionFactor;
+    if(beforeWallBlinkingTime < minValueForBeforeWallBlinkingTime) beforeWallBlinkingTime = minValueForBeforeWallBlinkingTime;
+    wallBlinkingTime *= reductionFactor;
+    if(wallBlinkingTime < minValueForWallBlinkingTime) wallBlinkingTime = minValueForWallBlinkingTime;
+  }
+  static void ResetDifficulty(){
+    beforeWallBlinkingTime = initValueForBeforeWallBlinkingTime;
+    wallBlinkingTime = initValueForWallBlinkingTime;
   }
 };

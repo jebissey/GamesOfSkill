@@ -1,14 +1,5 @@
 class Events{
-private:
-
 public:
-  static int gameEvent; 
-  static int wallEvent;
-  static int ballEvent; 
-  Events(){
-    gameEvent = wallEvent = ballEvent = nothing;
-  }
-  
   enum Event{
     nothing,
     
@@ -27,7 +18,37 @@ public:
     gameStarting,
     gameEnding,
   };
+  
+private:
+  static int ballEvent; 
+  static int externalGameEvent; 
+  static int lastExternalGameEvent; 
 
+  static bool IsExternalEventEndedTheGame(){ 
+    if(ballEvent == ballErased || ballEvent == ballHitTheWall) {
+      externalGameEvent = ballEvent;
+      if(lastExternalGameEvent != externalGameEvent){
+        lastExternalGameEvent = externalGameEvent;
+        return true;
+      }
+    }
+    else if(wallEvent == wallErased){
+      externalGameEvent = wallEvent;
+      if(lastExternalGameEvent != externalGameEvent){
+        lastExternalGameEvent = externalGameEvent;
+        return true;
+      }
+    }
+    return false;
+  }
+
+public:
+  static int gameEvent; 
+  static int wallEvent;
+  Events(){
+    gameEvent = wallEvent = ballEvent = nothing;
+  }
+  
   Event GetWallEvent(){
     if(Pong::IsGameStarting()) return gameStarting;
     if(Pong::IsGameEnding())   return gameEnding;
@@ -41,15 +62,13 @@ public:
   }
 
   Event GetGameEvent(){ 
-    static int externalGameEvent; 
-    static int lastExternalGameEvent; 
-    if(ballEvent == ballErased || ballEvent == ballHitTheWall ) externalGameEvent = ballEvent;
-    else if(wallEvent == wallErased) externalGameEvent = wallEvent;
-    if(lastExternalGameEvent != externalGameEvent){
-      lastExternalGameEvent = externalGameEvent;
-      return externalGameEvent;
-    }
-    if(gy521.IsShaked()) gameEvent = boardShaked;
+    if(IsExternalEventEndedTheGame()) return externalGameEvent;
+    if((gameEvent == nothing || gameEvent == gameOverAnimationIsOver) && gy521.IsShaked()) gameEvent = boardShaked;
     return gameEvent; 
+  }
+
+  static void ResetEvents(){
+    externalGameEvent = lastExternalGameEvent =
+    ballEvent = gameEvent = wallEvent = nothing;
   }
 };
