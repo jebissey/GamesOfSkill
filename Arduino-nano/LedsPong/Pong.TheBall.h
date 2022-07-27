@@ -12,8 +12,8 @@ private:
   static void Move(){
     if(time.IsOver(timeBetweenBallMove, &timerForMoveTheBall)){
       gy521.Read(boardTilts);
-      int ballRowIncrement = round(map(boardTilts[1], -90, +90, -10, +10) / 3.0);
-      int ballColIncrement = round(map(boardTilts[2], -90, +90, +10, -10) / 3.0);
+      int ballRowIncrement = round(map(boardTilts[1], +90, -90, -10, +10) / 3.0);
+      int ballColIncrement = round(map(boardTilts[0], -90, +90, +10, -10) / 3.0);
       ledsSquare.MoveRelative(RowCol(ballRowIncrement, ballColIncrement));
     }
   }    
@@ -82,12 +82,12 @@ private:
   static void MoveBallToWait2(){ Serial.println("Ball: MoveBallToWait2");}
   
 public:
-  TheBall() : Fsm(&wait){
-    this->add_transition(&wait,      &moveBall,  Events::gameStarting, WaitToMoveBall);
+  TheBall() : Fsm(&moveBall){
+    /*this->add_transition(&wait,      &moveBall,  Events::gameStarting, WaitToMoveBall);
     this->add_transition(&moveBall,  &eraseBall, Events::ballMovedOutsideTheBoard, MoveBallToEraseBall);
     this->add_transition(&eraseBall, &wait,      Events::ballErased, EraseBallToWait);
     this->add_transition(&moveBall,  &wait,      Events::ballHitTheWall, MoveBallToWait1);
-    this->add_transition(&moveBall,  &wait,      Events::gameEnding, MoveBallToWait2);
+    this->add_transition(&moveBall,  &wait,      Events::gameEnding, MoveBallToWait2);*/
   }
 
   static int GetEvent(){ 

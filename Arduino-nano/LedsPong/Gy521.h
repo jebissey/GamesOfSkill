@@ -14,7 +14,7 @@ private:
   static const int numData = 7;
   static const int I2C_AddrOfMPU=0x68;
   static const int indexForTemperature = 3;
-  static int gyAccTemp[numData];
+  static int datum[numData];
   
   void ReadGY521(){
     Wire.beginTransmission(I2C_AddrOfMPU);
@@ -23,16 +23,15 @@ private:
     Wire.requestFrom(I2C_AddrOfMPU, numData * 2, true);
 
     for(int i=0; i<numData; i++){
-      gyAccTemp[i] = Wire.read()<<8 | Wire.read();
-      if(i==indexForTemperature) temperature = gyAccTemp[i] / 340.0 + 36.53; 
+      datum[i] = Wire.read()<<8 | Wire.read();
+      if(i==indexForTemperature) temperature = datum[i] / 340.0 + 36.53; 
     }
   }
 
   void ComputeAngle(float boardTilts[]){
-    float x = gyAccTemp[0];
-    float y = gyAccTemp[1];
-    float z = gyAccTemp[2];
-  
+    float x = datum[0];
+    float y = datum[1];
+    float z = datum[2];
     boardTilts[0] = (atan(x/sqrt((y*y) + (z*z)))) *  180.0 / PI;
     boardTilts[1] = (atan(y/sqrt((x*x) + (z*z)))) *  180.0 / PI;
     boardTilts[2] = (atan(z/sqrt((x*x) + (y*y)))) *  180.0 / PI;
@@ -56,11 +55,11 @@ public:
 
   bool IsShaked(){ 
     ReadGY521();
-    return abs(gyAccTemp[4]) + abs(gyAccTemp[5]) + abs(gyAccTemp[6]) > 22500; 
+    return abs(datum[4]) + abs(datum[5]) + abs(datum[6]) > 22500; 
   }
 };
 
 float Gy_521::temperature = 0;
-int Gy_521::gyAccTemp[numData];
+int Gy_521::datum[numData];
 
 #endif
