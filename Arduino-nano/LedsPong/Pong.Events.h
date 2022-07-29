@@ -15,8 +15,8 @@ public:
     winAnimationIsOver,
     gameOverAnimationIsOver,
     boardShaked,
-    gameStarting,
-    gameEnding,
+    gameStarted,
+    gameEnded,
     maxScoreReached,
   };
   
@@ -51,14 +51,14 @@ public:
   }
   
   Event GetWallEvent(){
-    if(Pong::IsGameStarting()) return gameStarting;
-    if(Pong::IsGameEnding())   return gameEnding;
+    if(Pong::IsGameStarting()) return gameStarted;
+    if(Pong::IsGameEnding())   return gameEnded;
     return wallEvent;
   }
 
   Event GetBallEvent(){
-    if(Pong::IsGameStarting(true)) return gameStarting;
-    if(Pong::IsGameEnding(true))   return gameEnding;
+    if(Pong::IsGameStarting(true)) return gameStarted;
+    if(Pong::IsGameEnding(true))   return gameEnded;
     return (ballEvent = TheBall::GetEvent());
   }
 

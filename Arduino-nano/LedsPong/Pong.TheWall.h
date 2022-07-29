@@ -99,14 +99,14 @@ public:
   TheWall() : Fsm(&wait){
     wallPosition = noWall;
     
-    this->add_transition(&wait,       &createWall, Events::gameStarting, WaitToCreateWall);
+    this->add_transition(&wait,       &createWall, Events::gameStarted, WaitToCreateWall);
     this->add_transition(&createWall, &fixWall,    Events::wallCreated, CreateWallToFixWall);
     this->add_transition(&fixWall,    &blinkWall,  Events::timeoutBeforeWallBlinkingIsOver, FixWalltoBlinkWall);
-    this->add_transition(&fixWall,    &wait,       Events::gameEnding, FixWallToWait);
+    this->add_transition(&fixWall,    &wait,       Events::gameEnded, FixWallToWait);
     this->add_transition(&blinkWall,  &eraseWall,  Events::timeoutWallBlinkingIsOver, BlinkWallToEraseWall);
-    this->add_transition(&blinkWall,  &wait,       Events::gameEnding, BlinkWallToWait);
+    this->add_transition(&blinkWall,  &wait,       Events::gameEnded, BlinkWallToWait);
     this->add_transition(&eraseWall,  &wait,       Events::wallErased, EraseWallToWait1);
-    this->add_transition(&eraseWall,  &wait,       Events::gameEnding, EraseWallToWait2);
+    this->add_transition(&eraseWall,  &wait,       Events::gameEnded, EraseWallToWait2);
 
     beforeWallBlinkingTime = initValueForBeforeWallBlinkingTime;
     wallBlinkingTime = initValueForWallBlinkingTime;

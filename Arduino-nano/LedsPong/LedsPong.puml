@@ -3,12 +3,12 @@
 state Ball {
     [*] --> Wait_B
 
-    Wait_B -> MoveBall : **IsGameStarting**
+    Wait_B -> MoveBall : **GameStarted**
 
     MoveBall : Move the ball\naccording the tilt\nof the board
     MoveBall -up-> MoveBall : Ball inside\nthe board\nand didn't\nhit the wall
     MoveBall --> EraseBall :  BallMovedOutsideTheBoard
-    MoveBall --> Wait_B : BallHitTheWall\nor\n**IsGameEnding**
+    MoveBall --> Wait_B : BallHitTheWall\nor\n**GameEnded**
 
     EraseBall -up-> EraseBall : Ball erasing
     EraseBall --> Wait_B : BallErased
@@ -18,7 +18,7 @@ state Ball {
 state Wall {
     [*] --> Wait_W
         
-    Wait_W -> CreateWall : **IsGameStarting**
+    Wait_W -> CreateWall : **GameStarted**
 
     CreateWall : Create a wall on a random side
     CreateWall --> FixWall : wallCreated
@@ -26,15 +26,15 @@ state Wall {
     FixWall : Display the wall at its position
     FixWall -up-> FixWall : Timeout\nbefore\nwall blinking\nis not over
     FixWall --> BlinkWall : timeoutBeforeWallBlinkingIOver
-    FixWall ->  Wait_W : **IsGameEnding**
+    FixWall ->  Wait_W : **GameEnded**
     
     BlinkWall -up-> BlinkWall : Wall blinking
     BlinkWall --> EraseWall : timeoutWallBlinkingIsOver
-    BlinkWall ->  Wait_W : **IsGameEnding**
+    BlinkWall ->  Wait_W : **GameEnded**
 
     EraseWall -up-> EraseWall : Wall erasing
     EraseWall --> Wait_W : WallErased
-    EraseWall ->  Wait_W : **IsGameEnding**
+    EraseWall ->  Wait_W : **GameEnded**
 }
 
 state Game {

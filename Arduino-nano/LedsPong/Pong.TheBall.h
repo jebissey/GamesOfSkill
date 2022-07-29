@@ -83,11 +83,11 @@ private:
   
 public:
   TheBall() : Fsm(&wait){
-    this->add_transition(&wait,      &moveBall,  Events::gameStarting, WaitToMoveBall);
+    this->add_transition(&wait,      &moveBall,  Events::gameStarted, WaitToMoveBall);
     this->add_transition(&moveBall,  &eraseBall, Events::ballMovedOutsideTheBoard, MoveBallToEraseBall);
     this->add_transition(&eraseBall, &wait,      Events::ballErased, EraseBallToWait);
     this->add_transition(&moveBall,  &wait,      Events::ballHitTheWall, MoveBallToWait1);
-    this->add_transition(&moveBall,  &wait,      Events::gameEnding, MoveBallToWait2);
+    this->add_transition(&moveBall,  &wait,      Events::gameEnded, MoveBallToWait2);
   }
 
   static int GetEvent(){ 
