@@ -29,11 +29,11 @@ private:
   static const int scoreMax = 64;
   static int winDelay;
 
-  State start =             State(InitStep, StartAnimation, NULL);
+  State start =             State(InitStep, StartAnimation, NewGame);
   State gaming =            State(StartGaming, NULL, EndGaming);
   State winAnimation =      State(InitStep, WinAnimation, NewPoint);
   State gameOverAnimation = State(InitStep, GameOverAnimation, NULL);
-  State displayScore =      State(DisplayScore, NULL, NewGame);
+  State displayScore =      State(DisplayScore, NULL, NULL);
 
   
   static Gy_521 gy521;
@@ -51,7 +51,7 @@ private:
 
 #include "Pong.Animation.h"
   static void StartAnimation(){Animation::StartAnimation(); }
-  static void WinAnimation(){Animation::WinAnimation(); }
+  static void WinAnimation(){Animation::WinAnimation(points); }
   static void GameOverAnimation(){Animation::GameOverAnimation(); }
   
 
@@ -61,8 +61,7 @@ private:
   static bool endGaming;
   static void EndGaming(){ endGaming = true; }
 
-  static int step;
-  static void InitStep(){step = 0;}
+  static void InitStep(){ Animation::InitStep();}
   
   static void DisplayScore(){
     ledsSquare.ClearDisplay();;
@@ -100,17 +99,17 @@ public:
     run_machine();
     trigger(events.GetGameEvent());
 
-    delay(10);
+    delay(1);
   }
 
-  static void StartToGamming(){ Serial.println("Game: StartToGamming");}
-  static void GamingToWinAnimation(){ Serial.println("Game: GamingToWinAnimation");}
-  static void GamingToGameOverAnimation1(){ Serial.println("Game: GamingToGameOverAnimation1");}
-  static void GamingToGameOverAnimation2(){ Serial.println("Game: GamingToGameOverAnimation2");}
-  static void GamingToDisplayScore(){ Serial.println("Game: GamingToDisplayScore");}
-  static void WinAnimationToGaming(){ Serial.println("Game: WinAnimationToGaming");}
-  static void gameOverAnimationToDisplayScore(){ Serial.println("Game: gameOverAnimationToDisplayScore");}
-  static void DisplayScoreToStart(){ Serial.println("Game: DisplayScoreToStart");}
+  static void StartToGamming(){ Serial.println("G: StartToGamming (board shaked)");}
+  static void GamingToWinAnimation(){ Serial.println("G: GamingToWinAnimation (ball hit the wall)");}
+  static void GamingToGameOverAnimation1(){ Serial.println("G: GamingToGameOverAnimation (ball erased)");}
+  static void GamingToGameOverAnimation2(){ Serial.println("G: GamingToGameOverAnimation (wall erased)");}
+  static void GamingToDisplayScore(){ Serial.println("G: GamingToDisplayScore (max score reached)");}
+  static void WinAnimationToGaming(){ Serial.println("G: WinAnimationToGaming (win animation is over)");}
+  static void gameOverAnimationToDisplayScore(){ Serial.println("G: gameOverAnimationToDisplayScore (game over animation is over)");}
+  static void DisplayScoreToStart(){ Serial.println("G: DisplayScoreToStart (board shaked)");}
 
   Pong() : Fsm(&start){
     this->add_transition(&start,             &gaming,            Events::boardShaked, StartToGamming);
@@ -147,8 +146,9 @@ float Pong::boardTilts[3];
 bool  Pong::endGaming;
 int   Pong::points;
 bool  Pong::startGaming;
-int   Pong::step;
 int   Pong::winDelay;
+
+int Pong::Animation::step;
 
 int   Pong::Events::ballEvent;
 int   Pong::Events::externalGameEvent;
@@ -157,6 +157,7 @@ int   Pong::Events::lastExternalGameEvent;
 int   Pong::Events::wallEvent;
 
 int   Pong::TheBall::ballStatus;
+int   Pong::TheBall::step;
 
 int           Pong::TheWall::beforeWallBlinkingTime;
 unsigned long Pong::TheWall::beforeWallBlinkingTimer;

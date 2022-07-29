@@ -1,5 +1,5 @@
 class Animation{
-private:
+private: 
   static bool GameAnimation(byte masks[], int sizeOfMasks, int animationTime = 100){
     int maxStep = sizeOfMasks - LedsSquare::matrixSize;
     static unsigned long animationTimer;
@@ -13,8 +13,11 @@ private:
     }
     return step == 0;
   }
+  static int step;
   
 public:
+  static void InitStep(){step = 0;}
+
   static void StartAnimation(){
     byte shakeMe[] = {
       B00000000,
@@ -90,7 +93,7 @@ public:
     GameAnimation(shakeMe, sizeof(shakeMe)); 
   }
   
-  static void WinAnimation(){
+  static void WinAnimation(int points){
     byte win[] = {
       B00000000,
       B00000000,
@@ -124,7 +127,7 @@ public:
       B00000000,
       B00000000,
     };
-    if(GameAnimation(win, sizeof(win), winDelay)) Events::gameEvent = Events::winAnimationIsOver; 
+    if(GameAnimation(win, sizeof(win) - points, winDelay)) Events::gameEvent = Events::winAnimationIsOver; 
   }
   
   static void GameOverAnimation(){

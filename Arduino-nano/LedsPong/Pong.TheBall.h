@@ -4,7 +4,7 @@ private:
   static int ballStatus;
   
   State moveBall =  State(Display, Move, NULL);
-  State eraseBall = State(NULL, EraseBall, NULL);
+  State eraseBall = State(InitStep, EraseBall, NULL);
   State wait =      State(CenterBall, NULL, NULL);
 
   static void Display(){ ledsSquare.SetLightOn(); }
@@ -18,8 +18,9 @@ private:
     }
   }    
 
+  static int step;
+  static void InitStep(){ step = 0; }
   static void EraseBall(){
-    static int step = 0;
     static int mask;
     static const int eraseTime = 100;
     static unsigned long eraseTimer;
@@ -75,19 +76,19 @@ private:
     return GetBallPosition() == inside ? ballInTheBoard : ballOutsideTheBoard;
   }
 
-  static void WaitToMoveBall(){ Serial.println("Ball: WaitToMoveBall");}
-  static void MoveBallToEraseBall(){ Serial.println("Ball: MoveBallToEraseBall");}
-  static void EraseBallToWait(){ Serial.println("Ball: EraseBallToWait");}
-  static void MoveBallToWait1(){ Serial.println("Ball: MoveBallToWait1");}
-  static void MoveBallToWait2(){ Serial.println("Ball: MoveBallToWait2");}
+  static void WaitToMoveBall(){ Serial.println("B: W->M(GS)");}
+  static void MoveBallToEraseBall(){ Serial.println("B: M->E(BO)");}
+  static void EraseBallToWait(){ Serial.println("B: E->W(BE)");}
+  static void MoveBallToWait1(){ Serial.println("B: M->W(BHW)");}
+  static void MoveBallToWait2(){ Serial.println("B: M->W(GE)");}
   
 public:
   TheBall() : Fsm(&wait){
     this->add_transition(&wait,      &moveBall,  Events::gameStarted, WaitToMoveBall);
     this->add_transition(&moveBall,  &eraseBall, Events::ballMovedOutsideTheBoard, MoveBallToEraseBall);
-    this->add_transition(&eraseBall, &wait,      Events::ballErased, EraseBallToWait);
     this->add_transition(&moveBall,  &wait,      Events::ballHitTheWall, MoveBallToWait1);
     this->add_transition(&moveBall,  &wait,      Events::gameEnded, MoveBallToWait2);
+    this->add_transition(&eraseBall, &wait,      Events::ballErased, EraseBallToWait);
   }
 
   static int GetEvent(){ 

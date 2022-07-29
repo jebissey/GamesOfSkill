@@ -4,7 +4,7 @@ private:
   static const int minValueForBeforeWallBlinkingTime = 200;
   static const int initValueForWallBlinkingTime = 3000;
   static const int minValueForWallBlinkingTime = 300;
-  static const float reductionFactor = 0.8;
+  static const float reductionFactor = 0.95;
   static const int blinkTime = 100;
   static int beforeWallBlinkingTime;
   static int wallBlinkingTime;
@@ -83,14 +83,14 @@ private:
     }
   }
 
-  static void WaitToCreateWall(){ Serial.println("Wall: WaitToCreateWall");}
-  static void CreateWallToFixWall(){ Serial.println("Wall: CreateWallToFixWall");}
-  static void FixWalltoBlinkWall(){ Serial.println("Wall: FixWalltoBlinkWall");}
-  static void FixWallToWait(){ Serial.println("Wall: FixWallToWait");}
-  static void BlinkWallToEraseWall(){ Serial.println("Wall: BlinkWallToEraseWall");}
-  static void BlinkWallToWait(){ Serial.println("Wall: BlinkWallToWait");}
-  static void EraseWallToWait1(){ Serial.println("Wall: EraseWallToWait1");}
-  static void EraseWallToWait2(){ Serial.println("Wall: EraseWallToWait2");}
+  static void WaitToCreateWall(){ Serial.println("W: W->C(GS)");}
+  static void CreateWallToFixWall(){ Serial.println("W: C->F(WC)");}
+  static void FixWalltoBlinkWall(){ Serial.println("W: F->B(TO)");}
+  static void FixWallToWait(){ Serial.println("W: F->W(GE)");}
+  static void BlinkWallToEraseWall(){ Serial.println("W: B->E(TO)");}
+  static void BlinkWallToWait(){ Serial.println("W: B->W(GE)");}
+  static void EraseWallToWait1(){ Serial.println("W: E->W(WE)");}
+  static void EraseWallToWait2(){ Serial.println("W: E->W(GE)");}
 
 public:
   enum WallPosition{noWall, north, east, south, west};
