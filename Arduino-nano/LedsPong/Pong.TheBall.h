@@ -69,18 +69,19 @@ private:
   enum BallStatus{ballHitTheWall, ballOutsideTheBoard, ballInTheBoard};
   static enum BallStatus GetBallStatus(){
     RowCol ballCoordonate = ledsSquare.GetCoordonate();
-    if(ballCoordonate.row == 1 && TheWall::wallPosition == TheWall::south
-    || ballCoordonate.col == 1 && TheWall::wallPosition == TheWall::east
-    || ballCoordonate.row + ballSize.row == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::north 
-    || ballCoordonate.col + ballSize.col == ledsSquare.matrixSize - 1 && TheWall::wallPosition == TheWall::west ) return ballHitTheWall; 
+    RowCol squareSize = ledsSquare.GetSize();
+    if(ballCoordonate.row == -ballSize.row + 1 && TheWall::wallPosition == TheWall::south
+    || ballCoordonate.col == -ballSize.col + 1 && TheWall::wallPosition == TheWall::east
+    || ballCoordonate.row == ledsSquare.matrixSize - squareSize.row + 1 && TheWall::wallPosition == TheWall::north 
+    || ballCoordonate.col == ledsSquare.matrixSize - squareSize.col + 1 && TheWall::wallPosition == TheWall::west ) return ballHitTheWall; 
     return GetBallPosition() == inside ? ballInTheBoard : ballOutsideTheBoard;
   }
 
-  static void WaitToMoveBall(){ Serial.println("B: W->M(GS)");}
-  static void MoveBallToEraseBall(){ Serial.println("B: M->E(BO)");}
-  static void EraseBallToWait(){ Serial.println("B: E->W(BE)");}
-  static void MoveBallToWait1(){ Serial.println("B: M->W(BHW)");}
-  static void MoveBallToWait2(){ Serial.println("B: M->W(GE)");}
+  static void WaitToMoveBall(){ Serial.println("B: W->M(GaSt)");}
+  static void MoveBallToEraseBall(){ Serial.println("B: M->E(BaOu)");}
+  static void EraseBallToWait(){ Serial.println("B: E->W(BaEr)");}
+  static void MoveBallToWait1(){ Serial.println("B: M->W(BaHiWa)");}
+  static void MoveBallToWait2(){ Serial.println("B: M->W(GaEn)");}
   
 public:
   TheBall() : Fsm(&wait){

@@ -83,14 +83,14 @@ private:
     }
   }
 
-  static void WaitToCreateWall(){ Serial.println("W: W->C(GS)");}
-  static void CreateWallToFixWall(){ Serial.println("W: C->F(WC)");}
-  static void FixWalltoBlinkWall(){ Serial.println("W: F->B(TO)");}
-  static void FixWallToWait(){ Serial.println("W: F->W(GE)");}
-  static void BlinkWallToEraseWall(){ Serial.println("W: B->E(TO)");}
-  static void BlinkWallToWait(){ Serial.println("W: B->W(GE)");}
-  static void EraseWallToWait1(){ Serial.println("W: E->W(WE)");}
-  static void EraseWallToWait2(){ Serial.println("W: E->W(GE)");}
+  static void WaitToCreateWall(){ Serial.println("W: W->C(GaSt)");}
+  static void CreateWallToFixWall(){ Serial.println("W: C->F(WaCr)");}
+  static void FixWalltoBlinkWall(){ Serial.println("W: F->B(TiOu)");}
+  static void FixWallToWait(){ Serial.println("W: F->W(GaEn)");}
+  static void BlinkWallToEraseWall(){ Serial.println("W: B->E(TiOu)");}
+  static void BlinkWallToWait(){ Serial.println("W: B->W(GaEn)");}
+  static void EraseWallToWait1(){ Serial.println("W: E->W(WaEr)");}
+  static void EraseWallToWait2(){ Serial.println("W: E->W(GaEn)");}
 
 public:
   enum WallPosition{noWall, north, east, south, west};
